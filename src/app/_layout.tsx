@@ -1,5 +1,6 @@
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { ActivityIndicator, StyleSheet, Text, useColorScheme, View } from 'react-native';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
@@ -23,29 +24,16 @@ export default function TabLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <StatusBar style="light" />
       <AnimatedSplashOverlay />
       {error ? (
         <View style={styles.center}>
           <Text style={styles.errorText}>Erro ao rodar as migrações: {error.message}</Text>
         </View>
       ) : success ? (
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            headerStyle: { backgroundColor: '#171717' },
-            headerTintColor: '#ffffff',
-          }}>
+        <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="exercicio/[id]" options={{ headerShown: true, title: 'Exercício' }} />
-          <Stack.Screen name="plano/[id]" options={{ headerShown: true, title: 'Plano' }} />
-          <Stack.Screen
-            name="plano/novo"
-            options={{ headerShown: true, title: 'Novo plano', presentation: 'modal' }}
-          />
-          <Stack.Screen
-            name="plano/selecionar-exercicio"
-            options={{ headerShown: true, title: 'Selecionar exercício' }}
-          />
+          <Stack.Screen name="plano/novo" options={{ presentation: 'modal' }} />
         </Stack>
       ) : (
         <View style={styles.center}>

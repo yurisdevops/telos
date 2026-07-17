@@ -1,9 +1,10 @@
 import type { ReactNode } from 'react';
-import { ScrollView, Text, View } from 'react-native';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { Text, View } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
 import { eq } from 'drizzle-orm';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 
+import { Screen } from '@/components/screen';
 import { db } from '@/db';
 import { exercises } from '@/db/schema';
 
@@ -19,9 +20,11 @@ export default function ExercicioDetailScreen() {
 
   if (!exercise) {
     return (
-      <View className="flex-1 items-center justify-center bg-neutral-950 px-4">
-        <Text className="text-neutral-500">Exercício não encontrado.</Text>
-      </View>
+      <Screen title="Exercício" showBack>
+        <View className="flex-1 items-center justify-center">
+          <Text className="text-neutral-500">Exercício não encontrado.</Text>
+        </View>
+      </Screen>
     );
   }
 
@@ -30,34 +33,34 @@ export default function ExercicioDetailScreen() {
   const musculosSecundarios: string[] = JSON.parse(exercise.musculosSecundarios);
 
   return (
-    <ScrollView className="flex-1 bg-neutral-950" contentContainerStyle={{ padding: 16 }}>
-      <Stack.Screen options={{ title: exercise.nome }} />
+    <Screen title={exercise.nome} showBack scrollable>
+      <View>
+        <Text className="text-2xl font-bold text-green-500">{exercise.nome}</Text>
+        <Text className="mt-1 text-sm italic text-neutral-400">{exercise.nomeEn}</Text>
 
-      <Text className="text-2xl font-bold text-green-500">{exercise.nome}</Text>
-      <Text className="mt-1 text-sm italic text-neutral-400">{exercise.nomeEn}</Text>
+        <View className="mt-4 self-start rounded-full bg-neutral-800 px-3 py-1">
+          <Text className="text-sm text-neutral-300">{exercise.categoria}</Text>
+        </View>
 
-      <View className="mt-4 self-start rounded-full bg-neutral-800 px-3 py-1">
-        <Text className="text-sm text-neutral-300">{exercise.categoria}</Text>
+        <Section title="Equipamento">
+          <TagList items={equipamento} emptyLabel="Nenhum equipamento necessário" />
+        </Section>
+
+        <Section title="Músculos primários">
+          <TagList items={musculos} emptyLabel="Não informado" />
+        </Section>
+
+        <Section title="Músculos secundários">
+          <TagList items={musculosSecundarios} emptyLabel="Não informado" />
+        </Section>
+
+        <Section title="Descrição">
+          <Text className="text-neutral-300">
+            {exercise.descricao ?? 'Sem descrição disponível'}
+          </Text>
+        </Section>
       </View>
-
-      <Section title="Equipamento">
-        <TagList items={equipamento} emptyLabel="Nenhum equipamento necessário" />
-      </Section>
-
-      <Section title="Músculos primários">
-        <TagList items={musculos} emptyLabel="Não informado" />
-      </Section>
-
-      <Section title="Músculos secundários">
-        <TagList items={musculosSecundarios} emptyLabel="Não informado" />
-      </Section>
-
-      <Section title="Descrição">
-        <Text className="text-neutral-300">
-          {exercise.descricao ?? 'Sem descrição disponível'}
-        </Text>
-      </Section>
-    </ScrollView>
+    </Screen>
   );
 }
 

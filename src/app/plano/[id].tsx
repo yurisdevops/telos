@@ -1,9 +1,11 @@
 import { useMemo, useState } from 'react';
-import { Alert, Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { Alert, Pressable, Text, TextInput, View } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { eq } from 'drizzle-orm';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 
+import { FormModal } from '@/components/form-modal';
+import { Screen } from '@/components/screen';
 import { db } from '@/db';
 import { exercises, workoutDayExercises, workoutDays, workoutPlans } from '@/db/schema';
 
@@ -114,10 +116,8 @@ export default function PlanoDetailScreen() {
   };
 
   return (
-    <View className="flex-1 bg-neutral-950">
-      <Stack.Screen options={{ title: plan?.nome ?? 'Plano' }} />
-
-      <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 32 }}>
+    <Screen title={plan?.nome ?? 'Plano'} showBack scrollable>
+      <View>
         {sortedDays.map((day) => (
           <View key={day.id} className="mb-4 rounded-xl bg-neutral-900 p-4">
             <View className="mb-3 flex-row items-center justify-between">
@@ -163,37 +163,31 @@ export default function PlanoDetailScreen() {
         <Pressable onPress={handleDeletePlan} className="rounded-xl bg-neutral-900 px-4 py-3">
           <Text className="text-center font-semibold text-red-500">Excluir plano</Text>
         </Pressable>
-      </ScrollView>
+      </View>
 
-      <Modal
+      <FormModal
         visible={isAddDayModalVisible}
-        transparent
-        animationType="fade"
         onRequestClose={() => setIsAddDayModalVisible(false)}>
-        <View className="flex-1 items-center justify-center bg-black/70 px-6">
-          <View className="w-full rounded-2xl bg-neutral-900 p-4">
-            <Text className="mb-3 text-lg font-semibold text-white">Nome do dia</Text>
-            <TextInput
-              value={dayLabel}
-              onChangeText={setDayLabel}
-              placeholder="Ex: Peito e Tríceps"
-              placeholderTextColor="#737373"
-              autoFocus
-              className="rounded-xl bg-neutral-800 px-4 py-3 text-white"
-            />
-            <View className="mt-4 flex-row gap-2">
-              <Pressable
-                onPress={() => setIsAddDayModalVisible(false)}
-                className="flex-1 rounded-xl bg-neutral-800 px-4 py-3">
-                <Text className="text-center font-semibold text-neutral-300">Cancelar</Text>
-              </Pressable>
-              <Pressable onPress={handleAddDay} className="flex-1 rounded-xl bg-green-600 px-4 py-3">
-                <Text className="text-center font-semibold text-black">Adicionar</Text>
-              </Pressable>
-            </View>
-          </View>
+        <Text className="mb-3 text-lg font-semibold text-white">Nome do dia</Text>
+        <TextInput
+          value={dayLabel}
+          onChangeText={setDayLabel}
+          placeholder="Ex: Peito e Tríceps"
+          placeholderTextColor="#737373"
+          autoFocus
+          className="rounded-xl bg-neutral-800 px-4 py-3 text-white"
+        />
+        <View className="mt-4 flex-row gap-2">
+          <Pressable
+            onPress={() => setIsAddDayModalVisible(false)}
+            className="flex-1 rounded-xl bg-neutral-800 px-4 py-3">
+            <Text className="text-center font-semibold text-neutral-300">Cancelar</Text>
+          </Pressable>
+          <Pressable onPress={handleAddDay} className="flex-1 rounded-xl bg-green-600 px-4 py-3">
+            <Text className="text-center font-semibold text-black">Adicionar</Text>
+          </Pressable>
         </View>
-      </Modal>
-    </View>
+      </FormModal>
+    </Screen>
   );
 }

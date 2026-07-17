@@ -18,7 +18,8 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.telos"
+      "package": "com.anonymous.telos",
+      "softwareKeyboardLayoutMode": "resize"
     },
     "web": {
       "output": "static",

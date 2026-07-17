@@ -51,7 +51,7 @@ export function ExerciseCatalogList({
 
   return (
     <View className="flex-1">
-      <View className="px-4 pb-3">
+      <View className="pb-3">
         <TextInput
           value={search}
           onChangeText={setSearch}
@@ -64,7 +64,7 @@ export function ExerciseCatalogList({
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 16, gap: 8, paddingBottom: 12 }}>
+        contentContainerStyle={{ gap: 8, paddingBottom: 12 }}>
         <CategoryChip label="Todos" selected={category === null} onPress={() => setCategory(null)} />
         {CATEGORIES.map((cat) => (
           <CategoryChip
@@ -84,7 +84,7 @@ export function ExerciseCatalogList({
         maxToRenderPerBatch={12}
         windowSize={7}
         removeClippedSubviews
-        contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 4, paddingBottom: 16 }}
+        contentContainerStyle={{ paddingTop: 4, paddingBottom: 16 }}
         renderItem={({ item }) => (
           <ExerciseCard item={item} onPress={() => onSelectExercise(item)} />
         )}

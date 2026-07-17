@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import { FlatList, Pressable, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 
+import { Screen } from '@/components/screen';
 import { db } from '@/db';
 import { workoutDays, workoutPlans, type WorkoutPlan } from '@/db/schema';
 
@@ -21,20 +21,20 @@ export default function PlanilhasScreen() {
   }, [days]);
 
   return (
-    <SafeAreaView edges={['top']} className="flex-1 bg-neutral-950">
-      <View className="flex-row items-center justify-between px-4 pb-3 pt-4">
-        <Text className="text-2xl font-bold text-white">Planilhas</Text>
+    <Screen
+      title="Planilhas"
+      edges={['top', 'left', 'right']}
+      headerRight={
         <Pressable
           onPress={() => router.push('/plano/novo')}
           className="rounded-full bg-green-600 px-4 py-2">
           <Text className="font-semibold text-black">+ Novo plano</Text>
         </Pressable>
-      </View>
-
+      }>
       <FlatList
         data={plans ?? []}
         keyExtractor={(item) => String(item.id)}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 16, gap: 8 }}
+        contentContainerStyle={{ paddingBottom: 16, gap: 8 }}
         renderItem={({ item }) => <PlanCard item={item} count={dayCountByPlan.get(item.id) ?? 0} />}
         ListEmptyComponent={
           <View className="items-center py-12">
@@ -42,7 +42,7 @@ export default function PlanilhasScreen() {
           </View>
         }
       />
-    </SafeAreaView>
+    </Screen>
   );
 }
 
