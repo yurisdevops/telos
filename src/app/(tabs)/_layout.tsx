@@ -1,16 +1,18 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 
+import { colors } from '@/theme/tokens';
+
 export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#22c55e',
-        tabBarInactiveTintColor: '#9ca3af',
+        tabBarActiveTintColor: colors.accent,
+        tabBarInactiveTintColor: colors.muted,
         tabBarStyle: {
-          backgroundColor: '#171717',
-          borderTopColor: '#262626',
+          backgroundColor: colors.bg,
+          borderTopColor: colors.border,
         },
       }}>
       <Tabs.Screen
@@ -35,6 +37,15 @@ export default function TabsLayout() {
           title: 'Hoje',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="calendar-outline" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="progresso"
+        options={{
+          title: 'Progresso',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="bar-chart-outline" color={color} size={size} />
           ),
         }}
       />
