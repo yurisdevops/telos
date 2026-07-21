@@ -1,13 +1,19 @@
 import { useMemo, useState } from 'react';
-import { Alert, Pressable, Text, TextInput, View } from 'react-native';
+import { Alert, Text, TextInput, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { eq } from 'drizzle-orm';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
+import { Ionicons } from '@expo/vector-icons';
 
 import { FormModal } from '@/components/form-modal';
 import { Screen } from '@/components/screen';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { ScreenTitle } from '@/components/ui/screen-title';
 import { db } from '@/db';
 import { exercises, workoutDayExercises, workoutDays, workoutPlans } from '@/db/schema';
+import { colors } from '@/theme/tokens';
 
 export default function PlanoDetailScreen() {
   const router = useRouter();
@@ -55,13 +61,18 @@ export default function PlanoDetailScreen() {
   const handleAddDay = async () => {
     const trimmed = dayLabel.trim();
     if (!trimmed) return;
-    await db.insert(workoutDays).values({
-      planId,
-      label: trimmed,
-      ordem: sortedDays.length,
-    });
-    setDayLabel('');
-    setIsAddDayModalVisible(false);
+    try {
+      await db.insert(workoutDays).values({
+        planId,
+        label: trimmed,
+        ordem: sortedDays.length,
+      });
+      setDayLabel('');
+      setIsAddDayModalVisible(false);
+    } catch (err) {
+      console.error('Falha ao adicionar dia:', err);
+      Alert.alert('Erro ao adicionar dia', String(err instanceof Error ? err.message : err));
+    }
   };
 
   const handleRemoveExercise = (dayExerciseId: number) => {
@@ -70,7 +81,14 @@ export default function PlanoDetailScreen() {
       {
         text: 'Remover',
         style: 'destructive',
-        onPress: () => db.delete(workoutDayExercises).where(eq(workoutDayExercises.id, dayExerciseId)),
+        onPress: async () => {
+          try {
+            await db.delete(workoutDayExercises).where(eq(workoutDayExercises.id, dayExerciseId));
+          } catch (err) {
+            console.error('Falha ao remover exercício:', err);
+            Alert.alert('Erro ao remover exercício', String(err instanceof Error ? err.message : err));
+          }
+        },
       },
     ]);
   };
@@ -85,8 +103,13 @@ export default function PlanoDetailScreen() {
           text: 'Remover',
           style: 'destructive',
           onPress: async () => {
-            await db.delete(workoutDayExercises).where(eq(workoutDayExercises.dayId, dayId));
-            await db.delete(workoutDays).where(eq(workoutDays.id, dayId));
+            try {
+              await db.delete(workoutDayExercises).where(eq(workoutDayExercises.dayId, dayId));
+              await db.delete(workoutDays).where(eq(workoutDays.id, dayId));
+            } catch (err) {
+              console.error('Falha ao remover dia:', err);
+              Alert.alert('Erro ao remover dia', String(err instanceof Error ? err.message : err));
+            }
           },
         },
       ]
@@ -103,12 +126,17 @@ export default function PlanoDetailScreen() {
           text: 'Excluir',
           style: 'destructive',
           onPress: async () => {
-            for (const day of sortedDays) {
-              await db.delete(workoutDayExercises).where(eq(workoutDayExercises.dayId, day.id));
+            try {
+              for (const day of sortedDays) {
+                await db.delete(workoutDayExercises).where(eq(workoutDayExercises.dayId, day.id));
+              }
+              await db.delete(workoutDays).where(eq(workoutDays.planId, planId));
+              await db.delete(workoutPlans).where(eq(workoutPlans.id, planId));
+              router.back();
+            } catch (err) {
+              console.error('Falha ao excluir plano:', err);
+              Alert.alert('Erro ao excluir plano', String(err instanceof Error ? err.message : err));
             }
-            await db.delete(workoutDays).where(eq(workoutDays.planId, planId));
-            await db.delete(workoutPlans).where(eq(workoutPlans.id, planId));
-            router.back();
           },
         },
       ]
@@ -116,76 +144,91 @@ export default function PlanoDetailScreen() {
   };
 
   return (
-    <Screen title={plan?.nome ?? 'Plano'} showBack scrollable>
+    <Screen showBack scrollable>
+      <ScreenTitle
+        title={plan?.nome ?? 'Plano'}
+        subtitle={`${sortedDays.length} ${sortedDays.length === 1 ? 'dia' : 'dias'}`}
+      />
+
       <View>
-        {sortedDays.map((day) => (
-          <View key={day.id} className="mb-4 rounded-xl bg-neutral-900 p-4">
-            <View className="mb-3 flex-row items-center justify-between">
-              <Text className="text-lg font-semibold text-white">{day.label}</Text>
-              <Pressable onPress={() => handleRemoveDay(day.id)}>
-                <Text className="text-sm text-red-500">Remover dia</Text>
-              </Pressable>
-            </View>
-
-            {(exercisesByDay.get(day.id) ?? []).map((row) => (
-              <View
-                key={row.id}
-                className="mb-2 flex-row items-center justify-between rounded-lg bg-neutral-800 px-3 py-2">
-                <View className="flex-1">
-                  <Text className="text-white">{row.exerciseNome}</Text>
-                  <Text className="text-sm text-neutral-400">
-                    {row.seriesAlvo}x{row.repsAlvo}
-                    {row.cargaAlvo != null ? ` - ${row.cargaAlvo}kg` : ''}
-                  </Text>
-                </View>
-                <Pressable onPress={() => handleRemoveExercise(row.id)}>
-                  <Text className="text-red-500">✕</Text>
-                </Pressable>
+        {sortedDays.map((day) => {
+          const dayExerciseList = exercisesByDay.get(day.id) ?? [];
+          return (
+            <Card key={day.id} className="mb-4">
+              <View className="mb-1 flex-row items-center justify-between">
+                <Text className="font-display text-2xl uppercase text-text" numberOfLines={1}>
+                  {day.label}
+                </Text>
+                <Button variant="destructive" onPress={() => handleRemoveDay(day.id)}>
+                  Remover
+                </Button>
               </View>
-            ))}
+              <Label className="mb-3">
+                {`${dayExerciseList.length} ${dayExerciseList.length === 1 ? 'exercício' : 'exercícios'}`}
+              </Label>
 
-            <Pressable
-              onPress={() =>
-                router.push({ pathname: '/plano/selecionar-exercicio', params: { dayId: String(day.id) } })
-              }
-              className="mt-2 rounded-lg bg-neutral-800 px-3 py-2">
-              <Text className="text-center font-semibold text-green-500">+ Adicionar exercício</Text>
-            </Pressable>
-          </View>
-        ))}
+              {dayExerciseList.map((row) => (
+                <View
+                  key={row.id}
+                  className="mb-2 flex-row items-center justify-between rounded border border-border bg-bg px-3 py-2">
+                  <Text className="flex-1 pr-2 font-body-medium text-base text-text" numberOfLines={1}>
+                    {row.exerciseNome}
+                  </Text>
+                  <Text className="font-display text-lg text-text" numberOfLines={1}>
+                    {`${row.seriesAlvo}x${row.repsAlvo}`}
+                    {row.cargaAlvo != null && (
+                      <Text className="font-display text-lg text-muted">{` · ${row.cargaAlvo}kg`}</Text>
+                    )}
+                  </Text>
+                  <Button variant="ghost" onPress={() => handleRemoveExercise(row.id)}>
+                    <Ionicons name="close" size={18} color={colors.muted} />
+                  </Button>
+                </View>
+              ))}
 
-        <Pressable
-          onPress={() => setIsAddDayModalVisible(true)}
-          className="mb-8 rounded-xl bg-green-600 px-4 py-3">
-          <Text className="text-center font-semibold text-black">+ Adicionar dia</Text>
-        </Pressable>
+              <Button
+                variant="primary"
+                className="mt-2"
+                onPress={() =>
+                  router.push({ pathname: '/plano/selecionar-exercicio', params: { dayId: String(day.id) } })
+                }>
+                + Adicionar exercício
+              </Button>
+            </Card>
+          );
+        })}
 
-        <Pressable onPress={handleDeletePlan} className="rounded-xl bg-neutral-900 px-4 py-3">
-          <Text className="text-center font-semibold text-red-500">Excluir plano</Text>
-        </Pressable>
+        <Button className="mb-3" onPress={() => setIsAddDayModalVisible(true)}>
+          + Adicionar dia
+        </Button>
+
+        <Button variant="destructive" onPress={handleDeletePlan}>
+          Excluir plano
+        </Button>
       </View>
 
       <FormModal
         visible={isAddDayModalVisible}
         onRequestClose={() => setIsAddDayModalVisible(false)}>
-        <Text className="mb-3 text-lg font-semibold text-white">Nome do dia</Text>
+        <Text className="mb-3 font-card-title text-lg text-text">Nome do dia</Text>
         <TextInput
           value={dayLabel}
           onChangeText={setDayLabel}
           placeholder="Ex: Peito e Tríceps"
-          placeholderTextColor="#737373"
+          placeholderTextColor={colors.muted}
           autoFocus
-          className="rounded-xl bg-neutral-800 px-4 py-3 text-white"
+          className="rounded border border-border bg-surface px-4 py-3 font-body text-base text-text"
         />
         <View className="mt-4 flex-row gap-2">
-          <Pressable
-            onPress={() => setIsAddDayModalVisible(false)}
-            className="flex-1 rounded-xl bg-neutral-800 px-4 py-3">
-            <Text className="text-center font-semibold text-neutral-300">Cancelar</Text>
-          </Pressable>
-          <Pressable onPress={handleAddDay} className="flex-1 rounded-xl bg-green-600 px-4 py-3">
-            <Text className="text-center font-semibold text-black">Adicionar</Text>
-          </Pressable>
+          <Button
+            variant="secondary"
+            className="flex-1"
+            onPress={() => setIsAddDayModalVisible(false)}>
+            Cancelar
+          </Button>
+          <Button className="flex-1" onPress={handleAddDay}>
+            Adicionar
+          </Button>
         </View>
       </FormModal>
     </Screen>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pressable, Text, TextInput, View } from 'react-native';
+import { Alert, Text, TextInput, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { eq } from 'drizzle-orm';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
@@ -7,8 +7,12 @@ import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { ExerciseCatalogList } from '@/components/exercise-catalog-list';
 import { FormModal } from '@/components/form-modal';
 import { Screen } from '@/components/screen';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { ScreenTitle } from '@/components/ui/screen-title';
 import { db } from '@/db';
-import { workoutDayExercises, type Exercise } from '@/db/schema';
+import { workoutDayExercises, workoutDays, type Exercise } from '@/db/schema';
+import { colors } from '@/theme/tokens';
 
 export default function SelecionarExercicioScreen() {
   const router = useRouter();
@@ -19,6 +23,12 @@ export default function SelecionarExercicioScreen() {
   const [series, setSeries] = useState('3');
   const [reps, setReps] = useState('12');
   const [carga, setCarga] = useState('');
+
+  const { data: dayRows } = useLiveQuery(
+    db.select({ label: workoutDays.label }).from(workoutDays).where(eq(workoutDays.id, dayIdNum)),
+    [dayIdNum]
+  );
+  const dayLabel = dayRows?.[0]?.label;
 
   const { data: existing } = useLiveQuery(
     db.select().from(workoutDayExercises).where(eq(workoutDayExercises.dayId, dayIdNum)),
@@ -32,60 +42,65 @@ export default function SelecionarExercicioScreen() {
     const cargaNum = carga.trim() ? Number(carga) : null;
     if (!seriesNum || !repsNum) return;
 
-    await db.insert(workoutDayExercises).values({
-      dayId: dayIdNum,
-      exerciseId: selected.id,
-      seriesAlvo: seriesNum,
-      repsAlvo: repsNum,
-      cargaAlvo: cargaNum,
-      ordem: existing?.length ?? 0,
-    });
+    try {
+      await db.insert(workoutDayExercises).values({
+        dayId: dayIdNum,
+        exerciseId: selected.id,
+        seriesAlvo: seriesNum,
+        repsAlvo: repsNum,
+        cargaAlvo: cargaNum,
+        ordem: existing?.length ?? 0,
+      });
 
-    router.back();
+      router.back();
+    } catch (err) {
+      console.error('Falha ao adicionar exercício ao dia:', err);
+      Alert.alert('Erro ao adicionar exercício', String(err instanceof Error ? err.message : err));
+    }
   };
 
   return (
-    <Screen title="Selecionar exercício" showBack>
-      <ExerciseCatalogList onSelectExercise={setSelected} searchPlaceholder="Buscar exercício..." />
+    <Screen showBack>
+      <ScreenTitle title="Selecionar exercício" subtitle={dayLabel} />
+
+      <ExerciseCatalogList onSelectExercise={setSelected} />
 
       <FormModal visible={!!selected} onRequestClose={() => setSelected(null)}>
-        <Text className="mb-3 text-lg font-semibold text-white">{selected?.nome}</Text>
+        <Text className="mb-3 font-card-title text-lg text-text">{selected?.nome}</Text>
 
-        <Text className="mb-1 text-sm text-neutral-400">Séries</Text>
+        <Label className="mb-1">Séries</Label>
         <TextInput
           value={series}
           onChangeText={setSeries}
           keyboardType="number-pad"
-          className="mb-3 rounded-xl bg-neutral-800 px-4 py-3 text-white"
+          className="mb-3 rounded border border-border bg-surface px-4 py-3 font-body text-base text-text"
         />
 
-        <Text className="mb-1 text-sm text-neutral-400">Repetições</Text>
+        <Label className="mb-1">Repetições</Label>
         <TextInput
           value={reps}
           onChangeText={setReps}
           keyboardType="number-pad"
-          className="mb-3 rounded-xl bg-neutral-800 px-4 py-3 text-white"
+          className="mb-3 rounded border border-border bg-surface px-4 py-3 font-body text-base text-text"
         />
 
-        <Text className="mb-1 text-sm text-neutral-400">Carga alvo (kg, opcional)</Text>
+        <Label className="mb-1">Carga alvo (kg, opcional)</Label>
         <TextInput
           value={carga}
           onChangeText={setCarga}
-          keyboardType="numeric"
+          keyboardType="decimal-pad"
           placeholder="Ex: 20"
-          placeholderTextColor="#737373"
-          className="mb-4 rounded-xl bg-neutral-800 px-4 py-3 text-white"
+          placeholderTextColor={colors.muted}
+          className="mb-4 rounded border border-border bg-surface px-4 py-3 font-body text-base text-text"
         />
 
         <View className="flex-row gap-2">
-          <Pressable
-            onPress={() => setSelected(null)}
-            className="flex-1 rounded-xl bg-neutral-800 px-4 py-3">
-            <Text className="text-center font-semibold text-neutral-300">Cancelar</Text>
-          </Pressable>
-          <Pressable onPress={handleConfirm} className="flex-1 rounded-xl bg-green-600 px-4 py-3">
-            <Text className="text-center font-semibold text-black">Adicionar</Text>
-          </Pressable>
+          <Button variant="secondary" className="flex-1" onPress={() => setSelected(null)}>
+            Cancelar
+          </Button>
+          <Button className="flex-1" onPress={handleConfirm}>
+            Adicionar
+          </Button>
         </View>
       </FormModal>
     </Screen>
