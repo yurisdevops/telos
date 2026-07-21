@@ -1,6 +1,6 @@
-The MIT License (MIT)
+MIT License
 
-Copyright (c) 2015-present 650 Industries, Inc. (aka Expo)
+Copyright (c) 2026 Yuri Souza Machado
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +19,14 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+Exception — exercise dataset:
+
+The MIT license above covers the application source code only. The exercise
+catalog dataset (assets/data/seed_final.json) is a derivative work based on
+data from wger (https://wger.de), licensed under Creative Commons
+Attribution-ShareAlike 4.0 International (CC BY-SA 4.0). That dataset is
+distributed under CC BY-SA 4.0, not MIT. See README.md for full attribution
+details.
