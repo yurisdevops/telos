@@ -10,6 +10,7 @@ export const exercises = sqliteTable('exercises', {
   musculos: text('musculos').notNull(),
   musculosSecundarios: text('musculos_secundarios').notNull(),
   descricao: text('descricao'),
+  dica: text('dica'),
 });
 
 export type Exercise = typeof exercises.$inferSelect;
