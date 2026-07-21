@@ -1,13 +1,5 @@
 import type { ReactNode } from 'react';
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-  type ViewStyle,
-} from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, View, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -22,20 +14,16 @@ const ALL_EDGES: Edge[] = ['top', 'bottom', 'left', 'right'];
 
 type ScreenProps = {
   children: ReactNode;
-  title?: string;
   showBack?: boolean;
   scrollable?: boolean;
-  headerRight?: ReactNode;
   edges?: Edge[];
   style?: ViewStyle;
 };
 
 export function Screen({
   children,
-  title,
   showBack = false,
   scrollable = false,
-  headerRight,
   edges = ALL_EDGES,
   style,
 }: ScreenProps) {
@@ -50,36 +38,24 @@ export function Screen({
     paddingRight: edges.includes('right') ? insets.right : 0,
   };
 
-  const hasHeader = Boolean(title || showBack || headerRight);
-
-  const header = hasHeader ? (
+  const header = showBack ? (
     <View
-      className="flex-row items-center justify-between pb-3 pt-3"
+      className="pb-3 pt-3"
       style={{ paddingHorizontal: CONTENT_HORIZONTAL_PADDING }}>
-      <View className="flex-1 flex-row items-center">
-        {showBack && (
-          <Pressable onPress={() => router.back()} hitSlop={8} className="-ml-1 mr-2">
-            <Ionicons name="chevron-back" size={24} color="#ffffff" />
-          </Pressable>
-        )}
-        {title && (
-          <Text className="text-2xl font-bold text-white" numberOfLines={1}>
-            {title}
-          </Text>
-        )}
-      </View>
-      {headerRight}
+      <Pressable onPress={() => router.back()} hitSlop={8} className="-ml-1 self-start">
+        <Ionicons name="chevron-back" size={24} color="#ffffff" />
+      </Pressable>
     </View>
   ) : null;
 
   return (
-    <View className="flex-1 bg-neutral-950" style={[insetStyle, style]}>
+    <View className="flex-1 bg-bg" style={[insetStyle, style]}>
       {header}
       {scrollable ? (
         <KeyboardAvoidingView
           className="flex-1"
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          keyboardVerticalOffset={hasHeader ? HEADER_CONTENT_HEIGHT : 0}>
+          keyboardVerticalOffset={showBack ? HEADER_CONTENT_HEIGHT : 0}>
           <ScrollView
             className="flex-1"
             contentContainerStyle={{

@@ -34,7 +34,7 @@ export function FormModal({ visible, onRequestClose, children }: FormModalProps)
             paddingRight: insets.right + CONTENT_HORIZONTAL_PADDING,
           }}
           keyboardShouldPersistTaps="handled">
-          <View className="w-full rounded-2xl bg-neutral-900 p-4">{children}</View>
+          <View className="w-full rounded border border-border bg-surface p-4">{children}</View>
         </ScrollView>
       </KeyboardAvoidingView>
     </Modal>
