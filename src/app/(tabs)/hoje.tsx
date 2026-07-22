@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { Alert, Pressable, Text, View } from 'react-native';
 import { eq, sql } from 'drizzle-orm';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
@@ -340,15 +340,12 @@ const ExerciseSessionCard = memo(
     const isComplete = completedCount === exercise.seriesAlvo;
     const isStarted = completedCount > 0;
 
+    // Collapse is manual-only (never auto-triggered by data changes): toggled
+    // exclusively by the header Pressable below. Auto-collapsing on
+    // completion used to fire mid-fill of the last field, since a
+    // still-typing series briefly looked "complete" the instant the other
+    // field's blur wrote a value.
     const [collapsed, setCollapsed] = useState(false);
-    const wasCompleteRef = useRef(isComplete);
-
-    useEffect(() => {
-      if (isComplete && !wasCompleteRef.current) {
-        setCollapsed(true);
-      }
-      wasCompleteRef.current = isComplete;
-    }, [isComplete]);
 
     const targetLabel = `${exercise.seriesAlvo}x${exercise.repsAlvo}${
       exercise.cargaAlvo != null ? ` · ${exercise.cargaAlvo}kg` : ''
@@ -419,14 +416,21 @@ function SetRow({
   const isFilled = logId !== null;
 
   const commit = async () => {
-    if (reps.trim() === '' && carga.trim() === '') {
-      // Nothing typed — don't create a phantom zero-valued log just from a
-      // tap-in/tap-out with no edit.
+    // reps and carga are NOT NULL columns, so a row can't be persisted with
+    // only one of them filled in. Wait until BOTH have real values before
+    // writing anything — otherwise blurring the first field (to move into
+    // the second) would write the still-empty one as a literal 0, which both
+    // shows up as a false "0" once the card collapses/reopens and prematurely
+    // counts this série as done.
+    if (reps.trim() === '' || carga.trim() === '') {
       return;
     }
 
-    const repsNum = Number(reps) || 0;
-    const cargaNum = Number(carga) || 0;
+    const repsNum = Number(reps);
+    const cargaNum = Number(carga);
+    if (!Number.isFinite(repsNum) || !Number.isFinite(cargaNum)) {
+      return;
+    }
 
     try {
       if (logId) {
