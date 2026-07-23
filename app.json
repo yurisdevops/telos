@@ -7,6 +7,7 @@
     "icon": "./assets/images/icon.png",
     "scheme": "telos",
     "userInterfaceStyle": "automatic",
+    "platforms": ["ios", "android"],
     "ios": {
       "icon": "./assets/expo.icon"
     },
@@ -18,10 +19,6 @@
       "predictiveBackGestureEnabled": false,
       "package": "com.anonymous.telos",
       "softwareKeyboardLayoutMode": "resize"
-    },
-    "web": {
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
       "expo-router",
