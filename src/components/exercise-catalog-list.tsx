@@ -1,6 +1,7 @@
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { useMemo, useState } from "react";
 import { FlatList, Pressable, ScrollView, Text, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 import { Card } from "@/components/ui/card";
 import { Chip } from "@/components/ui/chip";
@@ -8,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { db } from "@/db";
 import { exercises, type Exercise } from "@/db/schema";
+import { colors } from "@/theme/tokens";
 
 const CATEGORIES = [
   "Pernas",
@@ -34,9 +36,11 @@ function normalize(value: string) {
 
 export function ExerciseCatalogList({
   onSelectExercise,
+  onViewDetails,
   searchPlaceholder = "Buscar exercício",
 }: {
   onSelectExercise: (exercise: Exercise) => void;
+  onViewDetails?: (exercise: Exercise) => void;
   searchPlaceholder?: string;
 }) {
   const [search, setSearch] = useState("");
@@ -104,7 +108,11 @@ export function ExerciseCatalogList({
         removeClippedSubviews
         contentContainerStyle={{ paddingTop: 4, paddingBottom: 16 }}
         renderItem={({ item }) => (
-          <ExerciseCard item={item} onPress={() => onSelectExercise(item)} />
+          <ExerciseCard
+            item={item}
+            onPress={() => onSelectExercise(item)}
+            onPressInfo={onViewDetails ? () => onViewDetails(item) : undefined}
+          />
         )}
         ListEmptyComponent={
           <View className="items-center py-12">
@@ -121,9 +129,11 @@ export function ExerciseCatalogList({
 function ExerciseCard({
   item,
   onPress,
+  onPressInfo,
 }: {
   item: Exercise;
   onPress: () => void;
+  onPressInfo?: () => void;
 }) {
   const equipamento: string[] = JSON.parse(item.equipamento);
   const subtitle =
@@ -136,16 +146,27 @@ function ExerciseCard({
       onPress={onPress}
       style={{ height: CARD_HEIGHT, marginBottom: CARD_GAP }}
     >
-      <Card className="flex-1 justify-center">
-        <Text
-          className="font-body-medium text-base text-text"
-          numberOfLines={1}
-        >
-          {item.nome}
-        </Text>
-        <Label className="mt-1" numberOfLines={1}>
-          {subtitle}
-        </Label>
+      <Card className="flex-1 flex-row items-center justify-between">
+        <View className="flex-1 pr-2">
+          <Text
+            className="font-body-medium text-base text-text"
+            numberOfLines={1}
+          >
+            {item.nome}
+          </Text>
+          <Label className="mt-1" numberOfLines={1}>
+            {subtitle}
+          </Label>
+        </View>
+        {onPressInfo && (
+          <Pressable onPress={onPressInfo} hitSlop={8} className="p-1">
+            <Ionicons
+              name="information-circle-outline"
+              size={22}
+              color={colors.muted}
+            />
+          </Pressable>
+        )}
       </Card>
     </Pressable>
   );

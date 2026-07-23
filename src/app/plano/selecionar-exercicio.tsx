@@ -63,7 +63,12 @@ export default function SelecionarExercicioScreen() {
     <Screen showBack>
       <ScreenTitle title="Selecionar exercício" subtitle={dayLabel} />
 
-      <ExerciseCatalogList onSelectExercise={setSelected} />
+      <ExerciseCatalogList
+        onSelectExercise={setSelected}
+        onViewDetails={(exercise) =>
+          router.push({ pathname: '/exercicio/[id]', params: { id: String(exercise.id) } })
+        }
+      />
 
       <FormModal visible={!!selected} onRequestClose={() => setSelected(null)}>
         <Text className="mb-3 font-card-title text-lg text-text">{selected?.nome}</Text>
