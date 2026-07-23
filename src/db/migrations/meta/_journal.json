@@ -15,6 +15,34 @@
       "when": 1784642590516,
       "tag": "0001_safe_the_hunter",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1784815446479,
+      "tag": "0002_abandoned_oracle",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1784826659765,
+      "tag": "0003_harsh_xorn",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1784828186173,
+      "tag": "0004_lying_karnak",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1784842601091,
+      "tag": "0005_groovy_quicksilver",
+      "breakpoints": true
     }
   ]
 }

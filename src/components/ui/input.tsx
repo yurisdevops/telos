@@ -1,13 +1,17 @@
-import { useState } from 'react';
+import { forwardRef, useState } from 'react';
 import { TextInput, type TextInputProps } from 'react-native';
 
 import { colors } from '@/theme/tokens';
 
-export function Input({ className = '', onFocus, onBlur, ...props }: TextInputProps) {
+export const Input = forwardRef<TextInput, TextInputProps>(function Input(
+  { className = '', onFocus, onBlur, ...props },
+  ref
+) {
   const [focused, setFocused] = useState(false);
 
   return (
     <TextInput
+      ref={ref}
       placeholderTextColor={colors.muted}
       onFocus={(event) => {
         setFocused(true);
@@ -23,4 +27,4 @@ export function Input({ className = '', onFocus, onBlur, ...props }: TextInputPr
       {...props}
     />
   );
-}
+});

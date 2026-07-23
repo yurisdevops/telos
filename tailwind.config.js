@@ -15,6 +15,7 @@ module.exports = {
         muted: "#8A8A8A",
         accent: "#E8442A",
         success: "#4A7C59",
+        warning: "#C98A2C",
         green: "#7FFF00",
       },
       spacing: {

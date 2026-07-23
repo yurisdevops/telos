@@ -9,11 +9,16 @@ import { FormModal } from '@/components/form-modal';
 import { Screen } from '@/components/screen';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Chip } from '@/components/ui/chip';
 import { Label } from '@/components/ui/label';
 import { ScreenTitle } from '@/components/ui/screen-title';
 import { db } from '@/db';
 import { exercises, workoutDayExercises, workoutDays, workoutPlans } from '@/db/schema';
+import { duplicateDayTx, duplicatePlanTx } from '@/db/duplicate';
+import { buildPlanShareText, shareText } from '@/lib/share-text';
 import { colors } from '@/theme/tokens';
+
+const SUPERSET_GROUP_OPTIONS = ['Nenhuma', 'A', 'B', 'C', 'D'] as const;
 
 export default function PlanoDetailScreen() {
   const router = useRouter();
@@ -33,12 +38,24 @@ export default function PlanoDetailScreen() {
   const [editSeries, setEditSeries] = useState('');
   const [editReps, setEditReps] = useState('');
   const [editCarga, setEditCarga] = useState('');
+  const [editSupersetGroup, setEditSupersetGroup] = useState<string | null>(null);
+
+  const [duplicatePlanModalVisible, setDuplicatePlanModalVisible] = useState(false);
+  const [duplicatePlanName, setDuplicatePlanName] = useState('');
+
+  const [duplicateDayTarget, setDuplicateDayTarget] = useState<{ id: number; label: string } | null>(
+    null
+  );
+  const [duplicateDayName, setDuplicateDayName] = useState('');
+  const [duplicateDayTargetPlanId, setDuplicateDayTargetPlanId] = useState<number | null>(null);
 
   const { data: planRows } = useLiveQuery(
     db.select().from(workoutPlans).where(eq(workoutPlans.id, planId)),
     [planId]
   );
   const plan = planRows?.[0];
+
+  const { data: allPlans } = useLiveQuery(db.select().from(workoutPlans));
 
   const { data: days } = useLiveQuery(
     db.select().from(workoutDays).where(eq(workoutDays.planId, planId)),
@@ -54,10 +71,13 @@ export default function PlanoDetailScreen() {
         seriesAlvo: workoutDayExercises.seriesAlvo,
         repsAlvo: workoutDayExercises.repsAlvo,
         cargaAlvo: workoutDayExercises.cargaAlvo,
+        ordem: workoutDayExercises.ordem,
+        supersetGroup: workoutDayExercises.supersetGroup,
         exerciseNome: exercises.nome,
       })
       .from(workoutDayExercises)
       .innerJoin(exercises, eq(workoutDayExercises.exerciseId, exercises.id))
+      .orderBy(workoutDayExercises.ordem)
   );
 
   const exercisesByDay = useMemo(() => {
@@ -120,11 +140,13 @@ export default function PlanoDetailScreen() {
     seriesAlvo: number;
     repsAlvo: number;
     cargaAlvo: number | null;
+    supersetGroup: string | null;
   }) => {
     setEditingExercise({ id: row.id, nome: row.exerciseNome });
     setEditSeries(String(row.seriesAlvo));
     setEditReps(String(row.repsAlvo));
     setEditCarga(row.cargaAlvo != null ? String(row.cargaAlvo) : '');
+    setEditSupersetGroup(row.supersetGroup);
   };
 
   const handleEditExerciseConfirm = async () => {
@@ -136,7 +158,12 @@ export default function PlanoDetailScreen() {
     try {
       await db
         .update(workoutDayExercises)
-        .set({ seriesAlvo: seriesNum, repsAlvo: repsNum, cargaAlvo: cargaNum })
+        .set({
+          seriesAlvo: seriesNum,
+          repsAlvo: repsNum,
+          cargaAlvo: cargaNum,
+          supersetGroup: editSupersetGroup,
+        })
         .where(eq(workoutDayExercises.id, editingExercise.id));
       setEditingExercise(null);
     } catch (err) {
@@ -161,6 +188,32 @@ export default function PlanoDetailScreen() {
         },
       },
     ]);
+  };
+
+  const handleMoveExercise = (dayId: number, exerciseRowId: number, direction: 'up' | 'down') => {
+    const list = exercisesByDay.get(dayId) ?? [];
+    const index = list.findIndex((row) => row.id === exerciseRowId);
+    if (index === -1) return;
+    const neighborIndex = direction === 'up' ? index - 1 : index + 1;
+    if (neighborIndex < 0 || neighborIndex >= list.length) return;
+
+    const current = list[index];
+    const neighbor = list[neighborIndex];
+    try {
+      db.transaction((tx) => {
+        tx.update(workoutDayExercises)
+          .set({ ordem: neighbor.ordem })
+          .where(eq(workoutDayExercises.id, current.id))
+          .run();
+        tx.update(workoutDayExercises)
+          .set({ ordem: current.ordem })
+          .where(eq(workoutDayExercises.id, neighbor.id))
+          .run();
+      });
+    } catch (err) {
+      console.error('Falha ao mover exercício:', err);
+      Alert.alert('Erro ao mover exercício', String(err instanceof Error ? err.message : err));
+    }
   };
 
   const handleRemoveDay = (dayId: number) => {
@@ -213,15 +266,78 @@ export default function PlanoDetailScreen() {
     );
   };
 
+  const handleSharePlan = async () => {
+    await shareText(
+      buildPlanShareText({
+        planNome: plan?.nome ?? 'Plano',
+        days: sortedDays.map((day) => ({
+          label: day.label,
+          exercises: (exercisesByDay.get(day.id) ?? []).map((ex) => ({
+            nome: ex.exerciseNome,
+            seriesAlvo: ex.seriesAlvo,
+            repsAlvo: ex.repsAlvo,
+            cargaAlvo: ex.cargaAlvo,
+            supersetGroup: ex.supersetGroup,
+          })),
+        })),
+      })
+    );
+  };
+
+  const openDuplicatePlan = () => {
+    setDuplicatePlanName(`${plan?.nome ?? ''} (cópia)`);
+    setDuplicatePlanModalVisible(true);
+  };
+
+  const handleDuplicatePlanConfirm = () => {
+    const trimmed = duplicatePlanName.trim();
+    if (!trimmed) return;
+    try {
+      const newPlanId = duplicatePlanTx(planId, trimmed);
+      setDuplicatePlanModalVisible(false);
+      router.push({ pathname: '/plano/[id]', params: { id: String(newPlanId) } });
+    } catch (err) {
+      console.error('Falha ao duplicar plano:', err);
+      Alert.alert('Erro ao duplicar plano', String(err instanceof Error ? err.message : err));
+    }
+  };
+
+  const openDuplicateDay = (day: { id: number; label: string }) => {
+    setDuplicateDayTarget(day);
+    setDuplicateDayName(`${day.label} (cópia)`);
+    setDuplicateDayTargetPlanId(planId);
+  };
+
+  const handleDuplicateDayConfirm = () => {
+    if (!duplicateDayTarget || duplicateDayTargetPlanId == null) return;
+    const trimmed = duplicateDayName.trim();
+    if (!trimmed) return;
+    try {
+      duplicateDayTx(duplicateDayTarget.id, duplicateDayTargetPlanId, trimmed);
+      setDuplicateDayTarget(null);
+    } catch (err) {
+      console.error('Falha ao duplicar dia:', err);
+      Alert.alert('Erro ao duplicar dia', String(err instanceof Error ? err.message : err));
+    }
+  };
+
   return (
     <Screen showBack scrollable>
       <ScreenTitle
         title={plan?.nome ?? 'Plano'}
         subtitle={`${sortedDays.length} ${sortedDays.length === 1 ? 'dia' : 'dias'}`}
         action={
-          <Pressable onPress={openRenamePlan} hitSlop={8} className="p-1">
-            <Ionicons name="pencil-outline" size={22} color={colors.muted} />
-          </Pressable>
+          <View className="flex-row items-center gap-3">
+            <Pressable onPress={handleSharePlan} hitSlop={8} className="p-1">
+              <Ionicons name="share-outline" size={22} color={colors.muted} />
+            </Pressable>
+            <Pressable onPress={openDuplicatePlan} hitSlop={8} className="p-1">
+              <Ionicons name="copy-outline" size={22} color={colors.muted} />
+            </Pressable>
+            <Pressable onPress={openRenamePlan} hitSlop={8} className="p-1">
+              <Ionicons name="pencil-outline" size={22} color={colors.muted} />
+            </Pressable>
+          </View>
         }
       />
 
@@ -239,24 +355,34 @@ export default function PlanoDetailScreen() {
                   </Text>
                   <Ionicons name="pencil-outline" size={16} color={colors.muted} />
                 </Pressable>
-                <Button variant="destructive" onPress={() => handleRemoveDay(day.id)}>
-                  Remover
-                </Button>
+                <View className="flex-row items-center gap-2">
+                  <Button variant="secondary" onPress={() => openDuplicateDay(day)}>
+                    Duplicar
+                  </Button>
+                  <Button variant="destructive" onPress={() => handleRemoveDay(day.id)}>
+                    Remover
+                  </Button>
+                </View>
               </View>
               <Label className="mb-3">
                 {`${dayExerciseList.length} ${dayExerciseList.length === 1 ? 'exercício' : 'exercícios'}`}
               </Label>
 
-              {dayExerciseList.map((row) => (
+              {dayExerciseList.map((row, index) => (
                 <View
                   key={row.id}
                   className="mb-2 flex-row items-center justify-between rounded border border-border bg-bg px-3 py-2">
                   <Pressable
                     className="flex-1 flex-row items-center justify-between pr-2"
                     onPress={() => openEditExercise(row)}>
-                    <Text className="flex-1 pr-2 font-body-medium text-base text-text" numberOfLines={1}>
-                      {row.exerciseNome}
-                    </Text>
+                    <View className="flex-1 pr-2">
+                      <Text className="font-body-medium text-base text-text" numberOfLines={1}>
+                        {row.exerciseNome}
+                      </Text>
+                      {row.supersetGroup != null && (
+                        <Label className="mt-0.5 text-accent">{`Supersérie ${row.supersetGroup}`}</Label>
+                      )}
+                    </View>
                     <Text className="font-display text-lg text-text" numberOfLines={1}>
                       {`${row.seriesAlvo}x${row.repsAlvo}`}
                       {row.cargaAlvo != null && (
@@ -264,9 +390,33 @@ export default function PlanoDetailScreen() {
                       )}
                     </Text>
                   </Pressable>
-                  <Button variant="ghost" onPress={() => handleRemoveExercise(row.id)}>
-                    <Ionicons name="close" size={18} color={colors.muted} />
-                  </Button>
+                  <View className="flex-row items-center">
+                    <Pressable
+                      onPress={() => handleMoveExercise(day.id, row.id, 'up')}
+                      disabled={index === 0}
+                      hitSlop={6}
+                      className="p-1">
+                      <Ionicons
+                        name="chevron-up"
+                        size={18}
+                        color={index === 0 ? colors.border : colors.muted}
+                      />
+                    </Pressable>
+                    <Pressable
+                      onPress={() => handleMoveExercise(day.id, row.id, 'down')}
+                      disabled={index === dayExerciseList.length - 1}
+                      hitSlop={6}
+                      className="p-1">
+                      <Ionicons
+                        name="chevron-down"
+                        size={18}
+                        color={index === dayExerciseList.length - 1 ? colors.border : colors.muted}
+                      />
+                    </Pressable>
+                    <Button variant="ghost" onPress={() => handleRemoveExercise(row.id)}>
+                      <Ionicons name="close" size={18} color={colors.muted} />
+                    </Button>
+                  </View>
                 </View>
               ))}
 
@@ -366,6 +516,21 @@ export default function PlanoDetailScreen() {
           className="mb-4 rounded border border-border bg-surface px-4 py-3 font-body text-base text-text"
         />
 
+        <Label className="mb-1">Supersérie</Label>
+        <View className="mb-4 flex-row flex-wrap gap-2">
+          {SUPERSET_GROUP_OPTIONS.map((option) => {
+            const value = option === 'Nenhuma' ? null : option;
+            return (
+              <Chip
+                key={option}
+                label={option}
+                selected={editSupersetGroup === value}
+                onPress={() => setEditSupersetGroup(value)}
+              />
+            );
+          })}
+        </View>
+
         <View className="flex-row gap-2">
           <Button variant="secondary" className="flex-1" onPress={() => setEditingExercise(null)}>
             Cancelar
@@ -385,6 +550,61 @@ export default function PlanoDetailScreen() {
           }}>
           Remover exercício do dia
         </Button>
+      </FormModal>
+
+      <FormModal
+        visible={duplicatePlanModalVisible}
+        onRequestClose={() => setDuplicatePlanModalVisible(false)}>
+        <Text className="mb-3 font-card-title text-lg text-text">Duplicar plano</Text>
+        <Label className="mb-1">Nome da cópia</Label>
+        <TextInput
+          value={duplicatePlanName}
+          onChangeText={setDuplicatePlanName}
+          autoFocus
+          className="mb-4 rounded border border-border bg-surface px-4 py-3 font-body text-base text-text"
+        />
+        <Label className="mb-4">Cria uma cópia com todos os dias e exercícios. Sessões e histórico não são copiados.</Label>
+        <View className="flex-row gap-2">
+          <Button
+            variant="secondary"
+            className="flex-1"
+            onPress={() => setDuplicatePlanModalVisible(false)}>
+            Cancelar
+          </Button>
+          <Button className="flex-1" onPress={handleDuplicatePlanConfirm}>
+            Duplicar
+          </Button>
+        </View>
+      </FormModal>
+
+      <FormModal visible={!!duplicateDayTarget} onRequestClose={() => setDuplicateDayTarget(null)}>
+        <Text className="mb-3 font-card-title text-lg text-text">Duplicar dia</Text>
+        <Label className="mb-1">Nome da cópia</Label>
+        <TextInput
+          value={duplicateDayName}
+          onChangeText={setDuplicateDayName}
+          autoFocus
+          className="mb-4 rounded border border-border bg-surface px-4 py-3 font-body text-base text-text"
+        />
+        <Label className="mb-2">Para qual plano?</Label>
+        <View className="mb-4 flex-row flex-wrap gap-2">
+          {(allPlans ?? []).map((p) => (
+            <Chip
+              key={p.id}
+              label={p.id === planId ? 'Este plano' : p.nome}
+              selected={duplicateDayTargetPlanId === p.id}
+              onPress={() => setDuplicateDayTargetPlanId(p.id)}
+            />
+          ))}
+        </View>
+        <View className="flex-row gap-2">
+          <Button variant="secondary" className="flex-1" onPress={() => setDuplicateDayTarget(null)}>
+            Cancelar
+          </Button>
+          <Button className="flex-1" onPress={handleDuplicateDayConfirm}>
+            Duplicar
+          </Button>
+        </View>
       </FormModal>
     </Screen>
   );

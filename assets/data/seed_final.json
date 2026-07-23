@@ -647,24 +647,6 @@
     "dica": "Desça em 2–3 segundos até esticar tudo: a excêntrica completa constrói dorsal e bíceps mesmo quando você ainda faz poucas repetições."
   },
   {
-    "wgerId": 154,
-    "nome": "Barra fixa supinada",
-    "nome_en": "Chin-ups",
-    "categoria": "Costas",
-    "equipamento": [
-      "Barra fixa"
-    ],
-    "musculos": [
-      "Dorsais"
-    ],
-    "musculos_secundarios": [
-      "Bíceps",
-      "Trapézio"
-    ],
-    "descricao": "Na barra fixa com pegada supinada, puxe o peito em direção à barra e desça de forma controlada até os braços estendidos.",
-    "dica": "Pense em levar os cotovelos aos bolsos: isso ativa o dorsal em vez de transformar tudo em rosca de bíceps."
-  },
-  {
     "wgerId": 158,
     "nome": "Puxada alta pegada fechada",
     "nome_en": "Close-grip Lat Pull Down",
@@ -893,23 +875,6 @@
     ],
     "descricao": "No banco declinado com um halter em cada mão, desça-os até a linha do peito alongando o peitoral e empurre de volta juntando levemente os halteres no topo.",
     "dica": "Aproxime os halteres no topo sem bater um no outro: essa adução final é onde o peitoral atinge o pico de contração."
-  },
-  {
-    "wgerId": 188,
-    "nome": "Flexão declinada",
-    "nome_en": "Decline Pushups",
-    "categoria": "Peito",
-    "equipamento": [
-      "Peso corporal"
-    ],
-    "musculos": [
-      "Peito"
-    ],
-    "musculos_secundarios": [
-      "Ombros"
-    ],
-    "descricao": "Em posição de flexão com os pés elevados num banco, desça o peito ao chão e empurre de volta mantendo o corpo alinhado.",
-    "dica": "Os pés elevados deslocam a carga para o peitoral superior e ombros; desça em 2 segundos até o peito quase tocar o chão."
   },
   {
     "wgerId": 189,
@@ -1419,21 +1384,6 @@
     "dica": "Feche até o fim e segure 1–2 segundos: a contração máxima completa é o que desenvolve a força de preensão."
   },
   {
-    "wgerId": 282,
-    "nome": "Flexão parada de mão",
-    "nome_en": "Handstand Pushup",
-    "categoria": "Ombros",
-    "equipamento": [
-      "Peso corporal"
-    ],
-    "musculos": [
-      "Tríceps"
-    ],
-    "musculos_secundarios": [],
-    "descricao": "Em parada de mão contra a parede, flexione os cotovelos descendo a cabeça em direção ao chão e empurre de volta até a extensão.",
-    "dica": "Progrida com amplitude parcial ou apoios elevados antes da amplitude completa: é um desenvolvimento com o peso do corpo inteiro."
-  },
-  {
     "wgerId": 283,
     "nome": "Elevação de pernas suspenso",
     "nome_en": "Hanging Leg Raises",
@@ -1484,23 +1434,6 @@
     ],
     "descricao": "Salte no lugar elevando os joelhos à altura do quadril alternadamente em ritmo acelerado.",
     "dica": "Aterrisse na ponta dos pés com joelhos macios: o objetivo é elevação rápida de frequência cardíaca com impacto controlado."
-  },
-  {
-    "wgerId": 289,
-    "nome": "Puxada alta (high pull)",
-    "nome_en": "High Pull",
-    "categoria": "Ombros",
-    "equipamento": [
-      "Polia"
-    ],
-    "musculos": [
-      "Ombros"
-    ],
-    "musculos_secundarios": [
-      "Glúteos"
-    ],
-    "descricao": "Em pé com a barra à frente das coxas, puxe-a verticalmente até a altura do peito elevando os cotovelos acima das mãos, e desça controlado.",
-    "dica": "Cotovelos sempre acima das mãos na subida; é um movimento explosivo de trapézio e deltoides — não transforme em rosca."
   },
   {
     "wgerId": 291,
@@ -1638,23 +1571,6 @@
     "dica": "O quadril não pode girar quando a mão sai do apoio: é anti-rotação de core disfarçada de exercício de braço."
   },
   {
-    "wgerId": 313,
-    "nome": "Flexão inclinada",
-    "nome_en": "Incline Push up",
-    "categoria": "Peito",
-    "equipamento": [
-      "Peso corporal"
-    ],
-    "musculos": [
-      "Peito"
-    ],
-    "musculos_secundarios": [
-      "Posterior de coxa"
-    ],
-    "descricao": "Com as mãos apoiadas num banco ou barra elevada, desça o peito em direção ao apoio e empurre de volta com o corpo alinhado.",
-    "dica": "Versão regredida da flexão: quanto mais alto o apoio, mais fácil — perfeita para progredir volume com técnica perfeita."
-  },
-  {
     "wgerId": 314,
     "nome": "Limpadores isométricos",
     "nome_en": "Isometric Wipers",
@@ -1685,21 +1601,6 @@
     "musculos_secundarios": [],
     "descricao": "Corra em ritmo confortável e constante, mantendo passada natural e respiração controlada.",
     "dica": "Ritmo de conversa: se não consegue falar frases completas correndo, desacelere — consistência vale mais que velocidade."
-  },
-  {
-    "wgerId": 320,
-    "nome": "Polichinelos",
-    "nome_en": "Jumping Jacks",
-    "categoria": "Pernas",
-    "equipamento": [
-      "Peso corporal"
-    ],
-    "musculos": [
-      "Quadríceps"
-    ],
-    "musculos_secundarios": [],
-    "descricao": "• Fique com seus pés juntos e os braços em repouso de cada lado • Pule para uma posição em que suas pernas fiquem abertas e as mãos toquem sob sua cabeça • Repita",
-    "dica": "Aterrisse macio na ponta dos pés e mantenha o ritmo: 30 segundos já elevam a frequência para o treino começar."
   },
   {
     "wgerId": 323,
@@ -2142,7 +2043,7 @@
     "nome_en": "Long-Pulley (low Row)",
     "categoria": "Costas",
     "equipamento": [
-      "Peso corporal"
+      "Polia"
     ],
     "musculos": [
       "Dorsais"
@@ -2159,7 +2060,7 @@
     "nome_en": "Long-Pulley, Narrow",
     "categoria": "Costas",
     "equipamento": [
-      "Peso corporal"
+      "Polia"
     ],
     "musculos": [
       "Dorsais"
@@ -2692,24 +2593,6 @@
     "dica": "Tronco oscila no máximo 10°: puxe até o triângulo tocar o abdômen, aperte 1 segundo e devolva em 3."
   },
   {
-    "wgerId": 513,
-    "nome": "Remada cavalinho (T-bar)",
-    "nome_en": "Rowing, T-bar",
-    "categoria": "Costas",
-    "equipamento": [
-      "Peso corporal"
-    ],
-    "musculos": [
-      "Dorsais"
-    ],
-    "musculos_secundarios": [
-      "Ombros",
-      "Bíceps"
-    ],
-    "descricao": "Com o peito apoiado ou montado sobre a barra T, puxe-a em direção ao tronco elevando os cotovelos e desça controlado.",
-    "dica": "Pegada fechada pega mais dorsal; aberta, mais trapézio e posterior de ombro: alterne conforme o objetivo do dia."
-  },
-  {
     "wgerId": 516,
     "nome": "Lenhador frontal",
     "nome_en": "Front Wood Chop",
@@ -2725,24 +2608,6 @@
     ],
     "descricao": "De frente para a polia baixa, puxe a manopla diagonalmente de baixo para cima cruzando o corpo até acima do ombro oposto, girando o tronco.",
     "dica": "É o lenhador invertido: potência rotacional de baixo para cima — gire com o quadril e o tronco, os braços só conduzem."
-  },
-  {
-    "wgerId": 525,
-    "nome": "Remada curvada invertida",
-    "nome_en": "Bent Over Rowing Reverse",
-    "categoria": "Costas",
-    "equipamento": [
-      "Barra"
-    ],
-    "musculos": [
-      "Dorsais"
-    ],
-    "musculos_secundarios": [
-      "Ombros",
-      "Bíceps"
-    ],
-    "descricao": "Com o tronco inclinado e pegada supinada, puxe a barra ao abdômen mantendo os cotovelos junto ao corpo e desça devagar.",
-    "dica": "A pegada supinada deixa o bíceps ajudar e pega o dorsal baixo: barra até o umbigo, aperto de escápulas, volta lenta."
   },
   {
     "wgerId": 527,
@@ -3013,21 +2878,6 @@
     "musculos_secundarios": [],
     "descricao": "Em pé segurando a barra à frente das coxas, eleve os ombros em direção às orelhas o mais alto possível e desça devagar.",
     "dica": "Só sobe e desce, sem girar os ombros: pico de 1–2 segundos no topo — encolhimento é pico de contração ou não é nada."
-  },
-  {
-    "wgerId": 572,
-    "nome": "Encolhimento com halteres",
-    "nome_en": "Shrugs, Dumbbells",
-    "categoria": "Ombros",
-    "equipamento": [
-      "Halteres"
-    ],
-    "musculos": [
-      "Ombros"
-    ],
-    "musculos_secundarios": [],
-    "descricao": "Em pé com um halter em cada mão ao lado do corpo, eleve os ombros verticalmente e desça de forma controlada.",
-    "dica": "Halteres ao lado permitem amplitude maior que a barra: suba até 'encostar' nas orelhas e segure o topo."
   },
   {
     "wgerId": 575,
@@ -3714,23 +3564,6 @@
     "dica": "A pegada da W reduz o estresse nos punhos da remada alta: suba até o peito, pause e desça em 2–3 segundos."
   },
   {
-    "wgerId": 694,
-    "nome": "Remada alta com halteres",
-    "nome_en": "Upright Row w/ Dumbbells",
-    "categoria": "Ombros",
-    "equipamento": [
-      "Halteres"
-    ],
-    "musculos": [
-      "Ombros"
-    ],
-    "musculos_secundarios": [
-      "Bíceps"
-    ],
-    "descricao": "Em pé com halteres à frente das coxas, puxe-os verticalmente até a linha do peito com os cotovelos apontando para cima, e desça devagar.",
-    "dica": "Halteres permitem trajetória individual e mais confortável para os ombros que a barra: cotovelos sempre acima das mãos."
-  },
-  {
     "wgerId": 695,
     "nome": "Puxada com barra V",
     "nome_en": "V-Bar Pulldown",
@@ -4039,40 +3872,6 @@
     "dica": "O apoio do peito isola o deltoide posterior por completo: carga leve, cotovelos quase retos e pausa de 1 segundo atrás."
   },
   {
-    "wgerId": 829,
-    "nome": "Elevação posterior (deltoide posterior)",
-    "nome_en": "Rear Delt Raise",
-    "categoria": "Ombros",
-    "equipamento": [
-      "Halteres"
-    ],
-    "musculos": [
-      "Ombros"
-    ],
-    "musculos_secundarios": [
-      "Dorsais"
-    ],
-    "descricao": "Com o tronco inclinado ou apoiado, eleve os halteres para trás e para os lados com os cotovelos levemente flexionados, focando o posterior do ombro.",
-    "dica": "Pense em 'abrir as asas' e não em levantar peso: o posterior de ombro responde a volume e execução limpa."
-  },
-  {
-    "wgerId": 851,
-    "nome": "Cadeira extensora",
-    "nome_en": "Leg Extension",
-    "categoria": "Pernas",
-    "equipamento": [
-      "Máquina"
-    ],
-    "musculos": [
-      "Quadríceps"
-    ],
-    "musculos_secundarios": [
-      "Posterior de coxa"
-    ],
-    "descricao": "Sentado na cadeira extensora com o encosto ajustado, estenda os joelhos até a extensão completa e desça de forma controlada.",
-    "dica": "Ajuste o eixo da máquina na linha do seu joelho: pico de 1–2 segundos em cima e descida em 3 — isolamento puro de quadríceps."
-  },
-  {
     "wgerId": 901,
     "nome": "Elevação pélvica com barra",
     "nome_en": "Barbell Hip Thrust",
@@ -4248,6 +4047,7 @@
     "nome_en": "Smith Press",
     "categoria": "Ombros",
     "equipamento": [
+      "Máquina Smith",
       "Banco inclinado"
     ],
     "musculos": [
@@ -4368,24 +4168,6 @@
     "dica": "Superset de trapézio: a remada pega o médio, o encolhimento o superior — pico de contração de 1 segundo em cada."
   },
   {
-    "wgerId": 924,
-    "nome": "Crucifixo na polia",
-    "nome_en": "Cable Fly",
-    "categoria": "Peito",
-    "equipamento": [
-      "Polia"
-    ],
-    "musculos": [
-      "Peito"
-    ],
-    "musculos_secundarios": [
-      "Tríceps",
-      "Ombros"
-    ],
-    "descricao": "Entre as polias na altura dos ombros, feche os braços em arco à frente do peito e retorne até o alongamento.",
-    "dica": "Tensão do início ao fim (vantagem sobre o halter): feche apertando o peito e volte em 3 segundos até alongar."
-  },
-  {
     "wgerId": 925,
     "nome": "Supino levemente inclinado no smith",
     "nome_en": "SMITH MACHINE SLIGHT INCLINE PRESS",
@@ -4489,25 +4271,6 @@
     ],
     "descricao": "Segurando o TRX inclinado para trás, puxe o peito em direção às mãos com o corpo reto e desça devagar.",
     "dica": "Corpo rígido como prancha da cabeça aos pés: ajuste a dificuldade pela inclinação, não pela postura."
-  },
-  {
-    "wgerId": 960,
-    "nome": "Kettlebell swing",
-    "nome_en": "Kettlebell Swing",
-    "categoria": "Abdômen",
-    "equipamento": [
-      "Kettlebell"
-    ],
-    "musculos": [
-      "Ombros",
-      "Glúteos"
-    ],
-    "musculos_secundarios": [
-      "Quadríceps",
-      "Abdômen"
-    ],
-    "descricao": "Balance o kettlebell do meio das pernas até a altura do peito usando a extensão explosiva do quadril, braços relaxados.",
-    "dica": "Dobradiça de quadril, não agachamento: o peso desce entre as pernas pelo quadril indo atrás — glúteo estala no topo."
   },
   {
     "wgerId": 961,
@@ -4901,21 +4664,6 @@
     "musculos_secundarios": [],
     "descricao": "Posição inicial: Fique de pé reto, com os pés afastados alinhados ao quadris. Passos: • Se agache e se apoie com as mãos no chão entre os joelhos e a frente de seus pés, mantendo as costas retas. • Mantendo as mãos no chão, pule jogando as pernas para trás para a posição de prancha altas • Pule os pés para frente para voltar à posição de agachamento. • Repita.",
     "dica": "Sem a flexão, o foco é o ritmo contínuo: suba e desça mantendo a cadência — cardio puro sem descanso."
-  },
-  {
-    "wgerId": 998,
-    "nome": "Burpee sem flexão",
-    "nome_en": "No push-up burpees",
-    "categoria": "Peito",
-    "equipamento": [
-      "Peso corporal"
-    ],
-    "musculos": [
-      "Peito"
-    ],
-    "musculos_secundarios": [],
-    "descricao": "Posição inicial: Fique de pé reto, com os pés afastados alinhados ao quadris. Passos: • Se agache e se apoie com as mãos no chão entre os joelhos e a frente de seus pés, mantendo as costas retas. • Mantendo as mãos no chão, pule jogando as pernas para trás para a posição de prancha altas. • Pule os pés para frente para voltar à posição de agachamento. • Salte. • Repita.",
-    "dica": "Mantenha o peito aberto e o ritmo constante: a versão sem flexão permite mais repetições com técnica limpa."
   },
   {
     "wgerId": 999,
@@ -5449,26 +5197,6 @@
     "dica": "O chão limita a amplitude e protege os ombros: pause 1 segundo com o cotovelo no chão e exploda — ótimo para força de tríceps e travamento."
   },
   {
-    "wgerId": 1085,
-    "nome": "Remada curvada com halteres",
-    "nome_en": "Dumbbell Bent Over Row",
-    "categoria": "Ombros",
-    "equipamento": [
-      "Halteres"
-    ],
-    "musculos": [
-      "Ombros",
-      "Bíceps",
-      "Dorsais",
-      "Tríceps"
-    ],
-    "musculos_secundarios": [
-      "Trapézio"
-    ],
-    "descricao": "Com o tronco inclinado e coluna neutra, puxe os halteres em direção à cintura apertando as escápulas e desça alongando por completo.",
-    "dica": "Cotovelos rasgando o bolso de trás: aperto de 1 segundo em cima, alongamento total embaixo — a remada vive dessa oscilação."
-  },
-  {
     "wgerId": 1086,
     "nome": "Flexão pegada fechada",
     "nome_en": "Close-grip Press-ups",
@@ -5643,7 +5371,7 @@
     "nome_en": "Abduction while standing",
     "categoria": "Pernas",
     "equipamento": [
-      "Peso corporal"
+      "Máquina"
     ],
     "musculos": [
       "Glúteo médio (abdutores)"
@@ -5800,21 +5528,6 @@
     "dica": "Aproxime costelas e joelhos ao mesmo tempo: o abdômen fecha dos dois lados — estenda devagar mantendo os pés no ar."
   },
   {
-    "wgerId": 1106,
-    "nome": "Recolhimento de joelhos sentado",
-    "nome_en": "Seated Knee Tuck",
-    "categoria": "Abdômen",
-    "equipamento": [
-      "Peso corporal"
-    ],
-    "musculos": [
-      "Abdômen"
-    ],
-    "musculos_secundarios": [],
-    "descricao": "Sentado com as mãos apoiadas atrás, recolha os joelhos em direção ao peito e estenda as pernas à frente sem apoiá-las.",
-    "dica": "Tronco levemente para trás e pernas longe: quanto mais estendido o corpo na volta, mais o abdômen trabalha."
-  },
-  {
     "wgerId": 1109,
     "nome": "Rosca concentrada na polia",
     "nome_en": "Cable Concentration Curl",
@@ -5933,24 +5646,6 @@
     "musculos_secundarios": [],
     "descricao": "Segure um halter pesado em cada mão ao lado do corpo e caminhe em linha reta com postura ereta e passos firmes.",
     "dica": "Ombros para trás e core travado: a caminhada do fazendeiro constrói pegada, trapézio e postura — pese de verdade a mão."
-  },
-  {
-    "wgerId": 1117,
-    "nome": "Remada baixa sentada na polia",
-    "nome_en": "Seated Cable Row",
-    "categoria": "Costas",
-    "equipamento": [
-      "Polia"
-    ],
-    "musculos": [
-      "Dorsais"
-    ],
-    "musculos_secundarios": [
-      "Bíceps",
-      "Trapézio"
-    ],
-    "descricao": "Sentado na polia baixa com os pés apoiados, puxe a manopla ao abdômen com o tronco firme e retorne alongando o dorsal.",
-    "dica": "Puxe até tocar o abdômen, aperte 1 segundo, e devolva em 3 deixando as escápulas irem à frente no final."
   },
   {
     "wgerId": 1119,
@@ -6166,23 +5861,6 @@
     "dica": "Braços abertos ajudam o equilíbrio: quadril nivelado (não deixe girar) e volta puxada pelo glúteo da perna de apoio."
   },
   {
-    "wgerId": 1143,
-    "nome": "Extensão lombar",
-    "nome_en": "Back extensión",
-    "categoria": "Costas",
-    "equipamento": [
-      "Peso corporal"
-    ],
-    "musculos": [
-      "Dorsais"
-    ],
-    "musculos_secundarios": [
-      "Glúteos"
-    ],
-    "descricao": "No banco romano ou no chão, estenda o tronco a partir da posição flexionada até o alinhamento neutro, contraindo a lombar.",
-    "dica": "Suba até a linha reta e pause 1 segundo — hiperestender não fortalece mais, só comprime: lombar gosta de amplitude honesta."
-  },
-  {
     "wgerId": 1185,
     "nome": "Tríceps pulley",
     "nome_en": "Triceps Pushdown",
@@ -6205,7 +5883,7 @@
     "nome_en": "One Arm Bent Row",
     "categoria": "Costas",
     "equipamento": [
-      "Peso corporal"
+      "Halteres"
     ],
     "musculos": [
       "Dorsais"
@@ -7187,40 +6865,6 @@
     "dica": "De baixo para cima o vetor pega o peitoral superior: termine com as mãos na altura dos olhos e aperte."
   },
   {
-    "wgerId": 1271,
-    "nome": "Crucifixo na polia baixa",
-    "nome_en": "Low Pulley Cable fFly",
-    "categoria": "Peito",
-    "equipamento": [
-      "Polia"
-    ],
-    "musculos": [
-      "Peito"
-    ],
-    "musculos_secundarios": [
-      "Ombros"
-    ],
-    "descricao": "Entre polias baixas, execute o crucifixo em arco ascendente com os cotovelos semiflexionados, retornando devagar.",
-    "dica": "Incline levemente o tronco à frente e feche em diagonal: peito superior com tensão contínua do cabo."
-  },
-  {
-    "wgerId": 1272,
-    "nome": "Crucifixo na polia baixa",
-    "nome_en": "Low Pulley Cable fFly",
-    "categoria": "Peito",
-    "equipamento": [
-      "Polia"
-    ],
-    "musculos": [
-      "Peito"
-    ],
-    "musculos_secundarios": [
-      "Ombros"
-    ],
-    "descricao": "Nas polias baixas, feche os braços à frente do corpo em arco e retorne controladamente até alongar o peitoral.",
-    "dica": "Passo à frente da linha das polias garante tensão já na abertura: o cabo não deixa o peito descansar."
-  },
-  {
     "wgerId": 1273,
     "nome": "Pullover",
     "nome_en": "Pullover",
@@ -7266,59 +6910,6 @@
     "musculos_secundarios": [],
     "descricao": "Sentado com o elástico na sola do pé, deixe-o tracionar a ponta do pé em flexão plantar e sustente o alongamento da canela e do tibial.",
     "dica": "O alongamento aparece na frente da canela: suave e sustentado — região que ninguém alonga e todo corredor deveria."
-  },
-  {
-    "wgerId": 1276,
-    "nome": "Supino inclinado com halteres",
-    "nome_en": "Incline Dumbbell Bench Press",
-    "categoria": "Peito",
-    "equipamento": [
-      "Halteres"
-    ],
-    "musculos": [
-      "Peito"
-    ],
-    "musculos_secundarios": [
-      "Ombros"
-    ],
-    "descricao": "No banco inclinado (~30–45°) com um halter em cada mão na linha do peito, empurre-os para cima até quase se tocarem e desça alongando o peitoral superior.",
-    "dica": "Desça em 2–3 segundos até sentir o peitoral superior esticar e suba convergindo os halteres: amplitude que a barra não permite."
-  },
-  {
-    "wgerId": 1277,
-    "nome": "Supino inclinado com halteres",
-    "nome_en": "Incline Dumbbell Press",
-    "categoria": "Peito",
-    "equipamento": [
-      "Halteres"
-    ],
-    "musculos": [
-      "Peito"
-    ],
-    "musculos_secundarios": [
-      "Ombros",
-      "Tríceps"
-    ],
-    "descricao": "No banco inclinado, desça os halteres à linha do peito com os cotovelos a ~45–60° e empurre de volta até a extensão.",
-    "dica": "Punhos empilhados sobre os cotovelos durante toda a descida: estabilidade primeiro, carga depois."
-  },
-  {
-    "wgerId": 1278,
-    "nome": "Supino com halteres",
-    "nome_en": "Dumbbell Chest Press",
-    "categoria": "Peito",
-    "equipamento": [
-      "Halteres"
-    ],
-    "musculos": [
-      "Peito"
-    ],
-    "musculos_secundarios": [
-      "Ombros",
-      "Tríceps"
-    ],
-    "descricao": "Deitado no banco reto com halteres acima do peito, desça-os ao lado do peito alongando e empurre de volta convergindo no topo.",
-    "dica": "Halteres descem mais fundo que a barra: aproveite o alongamento extra do peitoral com controle absoluto."
   },
   {
     "wgerId": 1280,
@@ -7580,23 +7171,6 @@
     "dica": "Vetor de baixo para cima: o peitoral superior e a porção interna atingem pico quando as mãos cruzam na altura do rosto."
   },
   {
-    "wgerId": 1297,
-    "nome": "Tríceps testa com barra W",
-    "nome_en": "EZ-Bar Skullcrusher - NB",
-    "categoria": "Braços",
-    "equipamento": [
-      "Barra W"
-    ],
-    "musculos": [
-      "Tríceps"
-    ],
-    "musculos_secundarios": [
-      "Ombros"
-    ],
-    "descricao": "Deitado segurando a barra W acima do peito, flexione os cotovelos levando a barra à testa ou atrás da cabeça, e estenda.",
-    "dica": "Barra atrás da cabeça alonga mais a cabeça longa: cotovelos parados, descida de 2–3 segundos."
-  },
-  {
     "wgerId": 1298,
     "nome": "Tríceps cruzado na polia alta",
     "nome_en": "High-Cable Cross Tricep Extention - NB",
@@ -7686,58 +7260,6 @@
     "dica": "Glúteos e abdômen espremidos encurtam o tempo mas fazem a prancha valer: 20 segundos perfeitos > 2 minutos desabados."
   },
   {
-    "wgerId": 1312,
-    "nome": "Agachamento livre (peso corporal)",
-    "nome_en": "Bodyweight Squat HD",
-    "categoria": "Pernas",
-    "equipamento": [
-      "Peso corporal"
-    ],
-    "musculos": [
-      "Quadríceps"
-    ],
-    "musculos_secundarios": [
-      "Panturrilhas",
-      "Glúteos",
-      "Abdômen"
-    ],
-    "descricao": "Em pé com os pés na largura dos ombros, agache empurrando o quadril para trás e para baixo até a coxa paralela ou abaixo, e suba.",
-    "dica": "Calcanhares no chão, joelhos seguindo os pés e peito aberto: o agachamento livre é o alfabeto — domine antes das cargas."
-  },
-  {
-    "wgerId": 1313,
-    "nome": "Elevação de pernas deitado",
-    "nome_en": "Lying Leg Raise",
-    "categoria": "Abdômen",
-    "equipamento": [
-      "Peso corporal"
-    ],
-    "musculos": [
-      "Abdômen"
-    ],
-    "musculos_secundarios": [],
-    "descricao": "Deitado de costas, eleve as pernas estendidas até a vertical e desça devagar sem tocar o chão.",
-    "dica": "Lombar colada no chão define a amplitude: desça só até onde ela não arqueia — joelhos dobrados se precisar."
-  },
-  {
-    "wgerId": 1314,
-    "nome": "Polichinelo",
-    "nome_en": "Jumping Jack HD",
-    "categoria": "Cardio",
-    "equipamento": [
-      "Peso corporal"
-    ],
-    "musculos": [
-      "Quadríceps"
-    ],
-    "musculos_secundarios": [
-      "Glúteos",
-      "Abdômen"
-    ],
-    "descricao": "Salte abrindo pernas e braços simultaneamente (braços acima da cabeça) e retorne fechando, em ritmo contínuo.",
-    "dica": "Aterrisse macio na ponta dos pés e mantenha o ritmo constante: o clássico de aquecimento que eleva a frequência em 30 segundos."
-  },
-  {
     "wgerId": 1315,
     "nome": "Agachamento livre (peso corporal)",
     "nome_en": "Bodyweight Squat HD",
@@ -7815,21 +7337,6 @@
     ],
     "descricao": "Corra no lugar elevando os joelhos à altura do quadril em ritmo acelerado, com braços ativos.",
     "dica": "Contato mínimo com o solo e tronco levemente inclinado à frente: drill de potência e frequência de passada."
-  },
-  {
-    "wgerId": 1319,
-    "nome": "Abdominal",
-    "nome_en": "Crunches HD",
-    "categoria": "Abdômen",
-    "equipamento": [
-      "Peso corporal"
-    ],
-    "musculos": [
-      "Abdômen"
-    ],
-    "musculos_secundarios": [],
-    "descricao": "Deitado com os joelhos flexionados, eleve o tronco em direção aos joelhos contraindo o abdômen e desça controlado.",
-    "dica": "Suba enrolando vértebra por vértebra, expire no esforço: queixo longe do peito e mãos sem puxar a nuca."
   },
   {
     "wgerId": 1320,
@@ -7955,24 +7462,6 @@
     "dica": "Cotovelos apontando à frente e fechados: desça fundo — a cabeça longa do tríceps só cresce quando alonga de verdade."
   },
   {
-    "wgerId": 1337,
-    "nome": "Desenvolvimento com halteres",
-    "nome_en": "Shoulder Press (Dumbbell)",
-    "categoria": "Braços",
-    "equipamento": [
-      "Halteres"
-    ],
-    "musculos": [
-      "Ombros"
-    ],
-    "musculos_secundarios": [
-      "Tríceps",
-      "Trapézio"
-    ],
-    "descricao": "Sentado ou em pé com halteres na altura dos ombros, empurre-os acima da cabeça até quase se tocarem e desça controladamente.",
-    "dica": "Desça até a linha das orelhas e suba sem chocar os halteres: trajetória levemente convergente, core travado."
-  },
-  {
     "wgerId": 1338,
     "nome": "Elevação de ombro com halteres",
     "nome_en": "Schoulder Raise (Dumbbell)",
@@ -8094,24 +7583,6 @@
     "musculos_secundarios": [],
     "descricao": "Sentado na máquina com os joelhos sob as almofadas e a ponta dos pés na plataforma, eleve os calcanhares e desça até o alongamento.",
     "dica": "Joelho dobrado = sóleo: pausa de 2 segundos embaixo e repetições altas — o sóleo é resistente e pede volume."
-  },
-  {
-    "wgerId": 1366,
-    "nome": "Agachamento búlgaro com halteres",
-    "nome_en": "Dumbbell Split Squat",
-    "categoria": "Pernas",
-    "equipamento": [
-      "Halteres"
-    ],
-    "musculos": [
-      "Quadríceps"
-    ],
-    "musculos_secundarios": [
-      "Glúteos",
-      "Posterior de coxa"
-    ],
-    "descricao": "Com o peito do pé de trás apoiado num banco e um halter em cada mão, desça o joelho de trás ao chão e suba pela perna da frente.",
-    "dica": "90% do peso na perna da frente: tronco levemente inclinado pega mais glúteo, vertical pega mais quadríceps — escolha e mantenha."
   },
   {
     "wgerId": 1370,
@@ -8307,41 +7778,6 @@
     "dica": "Pico de 1 segundo na flexão máxima e volta em 3: o posterior trabalha dobrado na fase excêntrica."
   },
   {
-    "wgerId": 1388,
-    "nome": "Levantamento terra romeno unilateral",
-    "nome_en": "Single Leg RDL",
-    "categoria": "Pernas",
-    "equipamento": [
-      "Peso corporal"
-    ],
-    "musculos": [
-      "Posterior de coxa"
-    ],
-    "musculos_secundarios": [
-      "Glúteos"
-    ],
-    "descricao": "Em pé numa perna, incline o tronco à frente empurrando o quadril para trás com a coluna neutra, e retorne contraindo glúteo e posterior.",
-    "dica": "Quadril quadrado com o chão: o desafio é não girar — comece sem carga até o padrão ficar automático."
-  },
-  {
-    "wgerId": 1389,
-    "nome": "Levantamento terra romeno unilateral",
-    "nome_en": "Single Leg RDL",
-    "categoria": "Pernas",
-    "equipamento": [
-      "Peso corporal"
-    ],
-    "musculos": [
-      "Posterior de coxa",
-      "Glúteos"
-    ],
-    "musculos_secundarios": [
-      "Lombar"
-    ],
-    "descricao": "Numa perna só com o peso na mão oposta, desça o tronco à frente até o alongamento do posterior e suba apertando o glúteo.",
-    "dica": "Peso na mão contrária força o quadril a estabilizar: alongamento profundo atrás da coxa e subida sem pressa."
-  },
-  {
     "wgerId": 1390,
     "nome": "Toque na ponta dos pés",
     "nome_en": "Toe Touch",
@@ -8375,24 +7811,6 @@
     ],
     "descricao": "Em pé com as mãos no chão (joelhos dobrados se preciso), 'caminhe' estendendo uma perna de cada vez mantendo as mãos apoiadas.",
     "dica": "Alterna alongamento dinâmico de posteriores: empurre o calcanhar no chão a cada 'passo' e deixe a cabeça solta."
-  },
-  {
-    "wgerId": 1392,
-    "nome": "Bom dia (good morning)",
-    "nome_en": "Good Morning",
-    "categoria": "Pernas",
-    "equipamento": [
-      "Peso corporal"
-    ],
-    "musculos": [
-      "Posterior de coxa"
-    ],
-    "musculos_secundarios": [
-      "Glúteos",
-      "Lombar"
-    ],
-    "descricao": "Com a barra nas costas e joelhos semiflexionados, incline o tronco à frente pelo quadril até quase paralelo e retorne contraindo a cadeia posterior.",
-    "dica": "Quadril para trás como fechar uma porta com o bumbum: a barra leve e a técnica perfeita valem mais que qualquer carga aqui."
   },
   {
     "wgerId": 1393,
@@ -9270,24 +8688,6 @@
     "dica": "Braços perpendiculares ao chão = tensão máxima no pico: a spider é a rosca do pico de contração — aperte 2 segundos em cima."
   },
   {
-    "wgerId": 1466,
-    "nome": "Panturrilha na máquina hack",
-    "nome_en": "Calf Raise using Hack Squat Machine",
-    "categoria": "Pernas",
-    "equipamento": [
-      "Máquina"
-    ],
-    "musculos": [
-      "Panturrilhas"
-    ],
-    "musculos_secundarios": [
-      "Glúteos",
-      "Posterior de coxa"
-    ],
-    "descricao": "Na máquina hack de costas, apoie a ponta dos pés na plataforma e eleve os calcanhares, descendo até o alongamento completo.",
-    "dica": "Pausa de 2 segundos no alongamento e subida completa: a hack trava o corpo e sobra tudo para a panturrilha."
-  },
-  {
     "wgerId": 1467,
     "nome": "Supino inclinado pegada fechada com barra",
     "nome_en": "Incline Close Grip Barbell Bench Press",
@@ -9594,7 +8994,7 @@
     "nome_en": "Rocking Triceps Pushdown",
     "categoria": "Braços",
     "equipamento": [
-      "Barra W"
+      "Polia"
     ],
     "musculos": [
       "Tríceps"
@@ -9694,24 +9094,6 @@
     "dica": "Deitar elimina o balanço do tronco: o coice fica puro — pico de 1–2 segundos com o braço estendido."
   },
   {
-    "wgerId": 1491,
-    "nome": "Remada unilateral na polia",
-    "nome_en": "Remada unilateral no cabo",
-    "categoria": "Costas",
-    "equipamento": [
-      "Barra fixa"
-    ],
-    "musculos": [
-      "Dorsais"
-    ],
-    "musculos_secundarios": [
-      "Bíceps",
-      "Trapézio"
-    ],
-    "descricao": "Sentado ou em pé de frente para a polia, puxe a manopla ao tronco com um braço, mantendo o quadril e o tronco firmes.",
-    "dica": "Unilateral permite amplitude extra e rotação final da escápula: alongue mais na ida e aperte mais na volta que na versão bilateral."
-  },
-  {
     "wgerId": 1492,
     "nome": "Remada alta (high row)",
     "nome_en": "High Row",
@@ -9745,21 +9127,6 @@
     ],
     "descricao": "De costas para a polia baixa com o braço atrás do corpo, flexione o cotovelo trazendo a manopla à frente do ombro.",
     "dica": "A posição atrás do corpo coloca o bíceps em alongamento máximo sob tensão: a rosca mais 'científica' das polias — sinta esticar embaixo."
-  },
-  {
-    "wgerId": 1494,
-    "nome": "Panturrilha sentado",
-    "nome_en": "Sitting Calf Raises",
-    "categoria": "Pernas",
-    "equipamento": [
-      "Peso corporal"
-    ],
-    "musculos": [
-      "Panturrilhas"
-    ],
-    "musculos_secundarios": [],
-    "descricao": "Sentado com os joelhos sob o apoio e a ponta dos pés na plataforma, eleve os calcanhares e desça até o alongamento completo.",
-    "dica": "Sóleo puro: pausa longa embaixo (2–3s), pico em cima — repetições altas e paciência, é um músculo de resistência."
   },
   {
     "wgerId": 1496,
@@ -9813,40 +9180,6 @@
     ],
     "descricao": "Deitado com halteres e os cotovelos colados ao tronco, desça-os rente ao corpo e empurre de volta.",
     "dica": "Cotovelos grudados = tríceps e peito interno: os halteres sobem 'raspando' o corpo — pegada neutra ajuda."
-  },
-  {
-    "wgerId": 1499,
-    "nome": "Tríceps testa com halteres",
-    "nome_en": "DB Skull Crushers",
-    "categoria": "Braços",
-    "equipamento": [
-      "Halteres"
-    ],
-    "musculos": [
-      "Tríceps"
-    ],
-    "musculos_secundarios": [
-      "Ombros"
-    ],
-    "descricao": "Deitado com um halter em cada mão acima do peito, flexione os cotovelos descendo os halteres ao lado da cabeça e estenda.",
-    "dica": "Punho neutro e cotovelo parado: desça fundo em 2–3 segundos — o tríceps cresce na fase de alongamento."
-  },
-  {
-    "wgerId": 1500,
-    "nome": "Variação de peito superior com halteres",
-    "nome_en": "DB UCV",
-    "categoria": "Peito",
-    "equipamento": [
-      "Halteres"
-    ],
-    "musculos": [
-      "Peito"
-    ],
-    "musculos_secundarios": [
-      "Ombros"
-    ],
-    "descricao": "No banco inclinado, execute a variação com halteres para peitoral superior com amplitude completa.",
-    "dica": "Desça até o alongamento pleno e suba convergindo: inclinação de 30° já cumpre — mais que 45° vira ombro."
   },
   {
     "wgerId": 1501,
@@ -10033,24 +9366,6 @@
     "musculos_secundarios": [],
     "descricao": "Com um elástico nos tornozelos ou coxas em posição de meio agachamento, dê passos laterais mantendo a tensão constante.",
     "dica": "Nunca deixe os pés se juntarem por completo: a tensão contínua faz o glúteo médio queimar — passos curtos e firmes."
-  },
-  {
-    "wgerId": 1515,
-    "nome": "Panturrilha no leg press",
-    "nome_en": "Leg Press Toe Press",
-    "categoria": "Pernas",
-    "equipamento": [
-      "Máquina"
-    ],
-    "musculos": [
-      "Panturrilhas"
-    ],
-    "musculos_secundarios": [
-      "Glúteos",
-      "Posterior de coxa"
-    ],
-    "descricao": "No leg press, apoie apenas a ponta dos pés na borda inferior da plataforma e estenda os tornozelos, retornando ao alongamento.",
-    "dica": "Amplitude total com pausa embaixo: o leg press permite carga alta na panturrilha com segurança — sem pressa."
   },
   {
     "wgerId": 1516,
@@ -10258,23 +9573,6 @@
     "dica": "Os braços pendendo atrás da linha do corpo alongam o bíceps ao máximo: desça devagar e sinta esticar — é o oposto da spider."
   },
   {
-    "wgerId": 1531,
-    "nome": "Rosca direta na polia",
-    "nome_en": "Cable Curls",
-    "categoria": "Braços",
-    "equipamento": [
-      "Peso corporal"
-    ],
-    "musculos": [
-      "Bíceps"
-    ],
-    "musculos_secundarios": [
-      "Antebraços"
-    ],
-    "descricao": "Em pé de frente para a polia baixa com a barra ou manoplas, flexione os cotovelos até a contração e desça controlado.",
-    "dica": "Tensão contínua da polia: um passo atrás garante carga já na posição esticada — pico de 1 segundo em cima."
-  },
-  {
     "wgerId": 1535,
     "nome": "Rosca direta deitado",
     "nome_en": "lying bicep curl",
@@ -10394,24 +9692,6 @@
     "musculos_secundarios": [],
     "descricao": "Na escada rolante de exercício, suba degraus em ritmo constante e postura ereta.",
     "dica": "Solte os apoios e suba com as pernas: pendurar-se no corrimão rouba metade do exercício."
-  },
-  {
-    "wgerId": 1549,
-    "nome": "Escada (stair master)",
-    "nome_en": "Stair Master",
-    "categoria": "Cardio",
-    "equipamento": [
-      "Escada (máquina)"
-    ],
-    "musculos": [
-      "Posterior de coxa",
-      "Panturrilhas",
-      "Glúteos",
-      "Quadríceps"
-    ],
-    "musculos_secundarios": [],
-    "descricao": "Suba na máquina de escada mantendo passos completos e cadência constante pelo tempo determinado.",
-    "dica": "Passo completo (pé inteiro no degrau) ativa o glúteo: passinhos curtos só cansam a panturrilha."
   },
   {
     "wgerId": 1551,
@@ -10680,22 +9960,6 @@
     "dica": "Rotação interna de manguito: carga leve — equilibra o trabalho de rotação externa que todo ombro saudável precisa."
   },
   {
-    "wgerId": 1583,
-    "nome": "Supino pegada supinada",
-    "nome_en": "Supine press",
-    "categoria": "Costas",
-    "equipamento": [
-      "Barra",
-      "Banco"
-    ],
-    "musculos": [
-      "Dorsais"
-    ],
-    "musculos_secundarios": [],
-    "descricao": "Deitado no banco com pegada supinada na barra, desça-a ao peito baixo com os cotovelos fechados e empurre de volta.",
-    "dica": "A pegada invertida ativa mais o peitoral superior que o inclinado tradicional: punhos firmes e descida lenta."
-  },
-  {
     "wgerId": 1584,
     "nome": "Marcha ou trote no lugar",
     "nome_en": "March or jog in place",
@@ -10788,7 +10052,7 @@
     "nome_en": "Smith Machine Split Squat",
     "categoria": "Pernas",
     "equipamento": [
-      "Barra"
+      "Máquina Smith"
     ],
     "musculos": [
       "Posterior de coxa",
@@ -10799,24 +10063,6 @@
     ],
     "descricao": "No smith em posição de afundo com a barra nas costas, desça o joelho de trás ao chão e suba pela perna da frente.",
     "dica": "A trilha trava o equilíbrio: sobra 100% de foco na perna da frente — desça fundo e empurre pelo calcanhar."
-  },
-  {
-    "wgerId": 1594,
-    "nome": "Agachamento afundo no smith",
-    "nome_en": "Smith Machine Split Squat",
-    "categoria": "Pernas",
-    "equipamento": [
-      "Barra"
-    ],
-    "musculos": [
-      "Posterior de coxa",
-      "Quadríceps"
-    ],
-    "musculos_secundarios": [
-      "Glúteos"
-    ],
-    "descricao": "No smith, posicione-se em afundo e execute o movimento completo com a perna da frente fazendo o trabalho.",
-    "dica": "Pé da frente bem à frente da barra: o joelho agradece e o glúteo assume — série completa antes de trocar a perna."
   },
   {
     "wgerId": 1602,
@@ -10976,23 +10222,6 @@
     "dica": "Pico de 2 segundos com o glúteo espremido: a lombar não entra — se ela arquear, encurte a amplitude."
   },
   {
-    "wgerId": 1614,
-    "nome": "Elevação pélvica com halter",
-    "nome_en": "Dumbbell Hip Thrust",
-    "categoria": "Pernas",
-    "equipamento": [
-      "Banco"
-    ],
-    "musculos": [
-      "Glúteos"
-    ],
-    "musculos_secundarios": [
-      "Posterior de coxa"
-    ],
-    "descricao": "Com as costas no banco e um halter sobre o quadril, eleve-o até a extensão completa contraindo os glúteos ao máximo.",
-    "dica": "Queixo recolhido, costelas fechadas e 2 segundos de aperto no topo: a ponte com halter é o ensaio para a barra."
-  },
-  {
     "wgerId": 1615,
     "nome": "Cardio na esteira",
     "nome_en": "Treadmill Cardio",
@@ -11072,24 +10301,6 @@
     "dica": "Gire levemente o tronco na volta deixando a escápula protrair: amplitude que a versão bilateral não alcança."
   },
   {
-    "wgerId": 1627,
-    "nome": "Agachamento com barra",
-    "nome_en": "Barbell squat",
-    "categoria": "Pernas",
-    "equipamento": [
-      "Barra"
-    ],
-    "musculos": [
-      "Posterior de coxa",
-      "Glúteos"
-    ],
-    "musculos_secundarios": [
-      "Abdômen"
-    ],
-    "descricao": "Com a barra apoiada no trapézio, agache empurrando o quadril para trás e para baixo até a coxa paralela ou abaixo, e suba.",
-    "dica": "Pé cravado no chão (tripé), joelhos seguindo os pés e peito orgulhoso: desça em 2–3s — o rei dos exercícios exige técnica de rei."
-  },
-  {
     "wgerId": 1630,
     "nome": "Blaze (aula funcional)",
     "nome_en": "Blaze",
@@ -11152,30 +10363,13 @@
     "dica": "Ajuste um parâmetro por vez e mantenha o resto: variações servem para atacar pontos fracos, não para colecionar exercícios."
   },
   {
-    "wgerId": 1636,
-    "nome": "Remada unilateral na polia",
-    "nome_en": "Unilateral Cable row",
-    "categoria": "Costas",
-    "equipamento": [
-      "Banco inclinado"
-    ],
-    "musculos": [
-      "Dorsais"
-    ],
-    "musculos_secundarios": [
-      "Bíceps",
-      "Trapézio"
-    ],
-    "descricao": "Sentado de frente para a polia, reme com um braço de cada vez mantendo o tronco estável.",
-    "dica": "O tronco não gira junto: só a escápula acompanha — puxe até o cotovelo passar o corpo e alongue na volta."
-  },
-  {
     "wgerId": 1637,
     "nome": "Remada unilateral",
     "nome_en": "Single arm row",
     "categoria": "Costas",
     "equipamento": [
-      "Banco inclinado"
+      "Halteres",
+      "Banco"
     ],
     "musculos": [
       "Dorsais"
@@ -11276,25 +10470,6 @@
     ],
     "descricao": "Com as costas apoiadas no banco e o halter sobre o quadril, eleve-o contraindo os glúteos até a extensão completa.",
     "dica": "2 segundos de pico com costelas fechadas: se a lombar arquear no topo, o glúteo parou de trabalhar — corrija e repita."
-  },
-  {
-    "wgerId": 1643,
-    "nome": "Crucifixo inclinado com halteres",
-    "nome_en": "Dumbbell Incline Fly",
-    "categoria": "Peito",
-    "equipamento": [
-      "Halteres",
-      "Banco inclinado"
-    ],
-    "musculos": [
-      "Peito"
-    ],
-    "musculos_secundarios": [
-      "Tríceps",
-      "Ombros"
-    ],
-    "descricao": "No banco inclinado, abra os halteres em arco até o alongamento do peitoral superior e feche pela mesma trajetória.",
-    "dica": "Desça em 3 segundos até esticar de verdade: crucifixo é exercício de alongamento — a inclinação só muda o endereço."
   },
   {
     "wgerId": 1645,
@@ -11417,41 +10592,6 @@
     "dica": "Quadril para trás na descida lateral e o pé de apoio inteiro no chão: adutores e glúteos num plano que o treino comum ignora."
   },
   {
-    "wgerId": 1654,
-    "nome": "Elevação lateral na mãquina",
-    "nome_en": "Machine lateral wise",
-    "categoria": "Ombros",
-    "equipamento": [
-      "Colchonete"
-    ],
-    "musculos": [
-      "Ombros"
-    ],
-    "musculos_secundarios": [
-      "Tríceps",
-      "Trapézio"
-    ],
-    "descricao": "A elevação lateral na máquina é um exercício isolado que trabalha o músculo deltoide medial (lateral) para construir ombros mais largos e definidos. O caminho de movimento fixo da máquina proporciona maior estabilidade do que com halteres, tornando-a ideal para iniciantes ou para aqueles que desejam se concentrar apenas na ativação muscular.",
-    "dica": "A máquina fixa o ângulo e elimina o embalo: suba até a linha do ombro e desça em 3 segundos — deltoide isolado."
-  },
-  {
-    "wgerId": 1655,
-    "nome": "Supino na máquina",
-    "nome_en": "Machine Chest Press Exercise",
-    "categoria": "Peito",
-    "equipamento": [
-      "Colchonete"
-    ],
-    "musculos": [
-      "Peito"
-    ],
-    "musculos_secundarios": [
-      "Tríceps"
-    ],
-    "descricao": "Na máquina de supino, empurre as manoplas até a extensão e retorne devagar até o alongamento do peitoral.",
-    "dica": "Ajuste o banco para as manoplas na linha do peito médio: a máquina segura a trajetória — você entrega a intensidade."
-  },
-  {
     "wgerId": 1656,
     "nome": "Supino na polia (declinado)",
     "nome_en": "Cable Chest Press - Decline",
@@ -11538,23 +10678,6 @@
     "dica": "O vetor ascendente ataca o peitoral superior com a tensão contínua do cabo: convergir as mãos no topo fecha a conta."
   },
   {
-    "wgerId": 1661,
-    "nome": "Tríceps na polia",
-    "nome_en": "Cable Triceps Press",
-    "categoria": "Braços",
-    "equipamento": [
-      "Polia"
-    ],
-    "musculos": [
-      "Tríceps"
-    ],
-    "musculos_secundarios": [
-      "Ombros"
-    ],
-    "descricao": "De frente para a polia alta, empurre a barra ou corda para baixo até a extensão completa dos cotovelos.",
-    "dica": "Cotovelos fixos ao lado do corpo: só o antebraço se move — pico de 1 segundo embaixo."
-  },
-  {
     "wgerId": 1662,
     "nome": "Tríceps na polia rotação interna",
     "nome_en": "Cable Tri Extension - Internal Rotation",
@@ -11611,7 +10734,7 @@
     "nome_en": "One Arm Overhead Cable Tricep Extension",
     "categoria": "Braços",
     "equipamento": [
-      "Elástico"
+      "Polia"
     ],
     "musculos": [
       "Tríceps"
@@ -11665,7 +10788,7 @@
     "nome_en": "Seated Hip Abduction",
     "categoria": "Pernas",
     "equipamento": [
-      "Peso corporal"
+      "Máquina"
     ],
     "musculos": [
       "Glúteo médio (abdutores)"
@@ -11675,61 +10798,6 @@
     ],
     "descricao": "Sentado na máquina abdutora, abra as pernas contra as almofadas e retorne de forma controlada.",
     "dica": "Incline o tronco à frente para pegar mais glúteo máximo, ereto para o médio: pausa de 1 segundo na abertura máxima."
-  },
-  {
-    "wgerId": 1674,
-    "nome": "Supino no chão com halteres",
-    "nome_en": "Dumbbell Floor Press",
-    "categoria": "Peito",
-    "equipamento": [
-      "Halteres"
-    ],
-    "musculos": [
-      "Peito"
-    ],
-    "musculos_secundarios": [
-      "Ombros",
-      "Tríceps"
-    ],
-    "descricao": "Deitado no chão com halteres, desça os cotovelos até tocarem o chão e empurre de volta até a extensão.",
-    "dica": "O chão protege o ombro e cria pausa natural: 1 segundo com o cotovelo apoiado e explosão na subida."
-  },
-  {
-    "wgerId": 1675,
-    "nome": "Flexão de braço",
-    "nome_en": "Push-Ups",
-    "categoria": "Peito",
-    "equipamento": [
-      "Peso corporal"
-    ],
-    "musculos": [
-      "Peito"
-    ],
-    "musculos_secundarios": [
-      "Ombros",
-      "Abdômen",
-      "Tríceps"
-    ],
-    "descricao": "Em prancha alta, desça o peito ao chão flexionando os cotovelos e empurre de volta com o corpo rígido.",
-    "dica": "Corpo em tábua da cabeça ao calcanhar: quadril caído ou empinado anula o exercício — amplitude total sempre."
-  },
-  {
-    "wgerId": 1676,
-    "nome": "Supino com Halteres",
-    "nome_en": "Dumbbell Bench Press",
-    "categoria": "Peito",
-    "equipamento": [
-      "Halteres"
-    ],
-    "musculos": [
-      "Peito"
-    ],
-    "musculos_secundarios": [
-      "Ombros",
-      "Tríceps"
-    ],
-    "descricao": "Deite-se em um banco plano e empurre os halteres para cima até que os braços estejam totalmente estendidos, depois abaixe-os lentamente.",
-    "dica": "Desça os halteres ao lado do peito alongando bem e suba convergindo no topo: amplitude que a barra não permite."
   },
   {
     "wgerId": 1679,
@@ -11919,6 +10987,7 @@
     "nome_en": "Incline Smith Press",
     "categoria": "Peito",
     "equipamento": [
+      "Máquina Smith",
       "Banco inclinado"
     ],
     "musculos": [
@@ -11952,7 +11021,7 @@
     "nome_en": "Flat Machine Press",
     "categoria": "Peito",
     "equipamento": [
-      "Banco"
+      "Máquina"
     ],
     "musculos": [
       "Peito"
@@ -11963,24 +11032,6 @@
     ],
     "descricao": "Na máquina de supino reto, empurre as manoplas até a extensão e retorne até o alongamento do peitoral.",
     "dica": "Trajetória travada = intensidade liberada: vá perto da falha com segurança e volte sempre em 2–3 segundos."
-  },
-  {
-    "wgerId": 1695,
-    "nome": "Barra fixa (pegada aberta)",
-    "nome_en": "Pull-Ups (Wide Grip)",
-    "categoria": "Costas",
-    "equipamento": [
-      "Peso corporal"
-    ],
-    "musculos": [
-      "Dorsais"
-    ],
-    "musculos_secundarios": [
-      "Bíceps",
-      "Trapézio"
-    ],
-    "descricao": "Na barra fixa com as mãos bem além dos ombros, puxe o peito à barra e desça até a extensão completa.",
-    "dica": "Pegada aberta isola o dorsal encurtando a amplitude: peito buscando a barra e cotovelos fechando para baixo."
   },
   {
     "wgerId": 1696,
@@ -12574,7 +11625,7 @@
     "nome_en": "Single-leg side glute press",
     "categoria": "Pernas",
     "equipamento": [
-      "Banco inclinado"
+      "Máquina"
     ],
     "musculos": [
       "Panturrilhas",
@@ -12766,23 +11817,6 @@
     "dica": "Tensão constante do cabo no anterior: até a linha dos olhos, sem inclinar o tronco para trás."
   },
   {
-    "wgerId": 1746,
-    "nome": "Supino no chão com halteres",
-    "nome_en": "Floor dumbbell bench press",
-    "categoria": "Peito",
-    "equipamento": [
-      "Halteres"
-    ],
-    "musculos": [
-      "Peito"
-    ],
-    "musculos_secundarios": [
-      "Tríceps"
-    ],
-    "descricao": "Deitado no chão com halteres em pegada neutra, desça os cotovelos ao chão e empurre até a extensão.",
-    "dica": "O chão limita e protege: pausa de 1 segundo embaixo e força total na subida — tríceps e peito com ombro seguro."
-  },
-  {
     "wgerId": 1747,
     "nome": "Agachamento no smith",
     "nome_en": "Smith machine squat",
@@ -12816,40 +11850,6 @@
     ],
     "descricao": "Sentado na máquina abdutora, abra as pernas contra a resistência e retorne controladamente.",
     "dica": "Glúteo médio na função: pausa na abertura máxima — e sem pressa na volta, os abdutores freiam o retorno."
-  },
-  {
-    "wgerId": 1749,
-    "nome": "Tríceps francês sentado",
-    "nome_en": "Seated Triceps Press",
-    "categoria": "Braços",
-    "equipamento": [
-      "Peso corporal"
-    ],
-    "musculos": [
-      "Tríceps"
-    ],
-    "musculos_secundarios": [
-      "Ombros"
-    ],
-    "descricao": "Sentado com um halter seguro pelas duas mãos atrás da cabeça, estenda os cotovelos até em cima e desça devagar.",
-    "dica": "Cotovelos fechados apontando à frente: desça fundo — o alongamento da cabeça longa é o motivo deste exercício existir."
-  },
-  {
-    "wgerId": 1750,
-    "nome": "Levantamento terra romeno",
-    "nome_en": "Romanian Deadlift",
-    "categoria": "Pernas",
-    "equipamento": [
-      "Halteres"
-    ],
-    "musculos": [
-      "Glúteos"
-    ],
-    "musculos_secundarios": [
-      "Posterior de coxa"
-    ],
-    "descricao": "Em pé com a barra ou halteres, incline o tronco pelo quadril descendo o peso rente às pernas, e suba contraindo glúteos e posteriores.",
-    "dica": "Joelhos semiflexionados FIXOS: o que se move é o quadril indo atrás — alongue os posteriores e suba sem pressa."
   },
   {
     "wgerId": 1751,
@@ -12956,41 +11956,6 @@
     ],
     "descricao": "Deitado no banco, desça a barra ao peito com controle e empurre até a extensão completa.",
     "dica": "Escápulas retraídas, pés firmes e barra na linha dos mamilos: técnica sólida vale mais que qualquer quilo extra."
-  },
-  {
-    "wgerId": 1763,
-    "nome": "Supino",
-    "nome_en": "supino",
-    "categoria": "Peito",
-    "equipamento": [
-      "Peso corporal"
-    ],
-    "musculos": [
-      "Peito"
-    ],
-    "musculos_secundarios": [
-      "Tríceps",
-      "Ombros"
-    ],
-    "descricao": "Execute o supino no equipamento disponível com amplitude completa e descida controlada.",
-    "dica": "O padrão não muda: desça em 2–3 segundos, toque sem quicar e empurre com o corpo inteiro conectado."
-  },
-  {
-    "wgerId": 1765,
-    "nome": "Barra fixa (pegada aberta)",
-    "nome_en": "Pull-Ups (Wide Grip)",
-    "categoria": "Costas",
-    "equipamento": [
-      "Barra fixa"
-    ],
-    "musculos": [
-      "Dorsais"
-    ],
-    "musculos_secundarios": [
-      "Bíceps"
-    ],
-    "descricao": "Na barra fixa com pegada bem aberta, puxe o peito em direção à barra e desça até a extensão completa.",
-    "dica": "Cada descida completa até os braços esticados: meia amplitude constrói meio dorsal."
   },
   {
     "wgerId": 1766,
@@ -13208,24 +12173,6 @@
     "dica": "A rotação vem do tronco e quadril — os braços só seguram: potência rotacional com a lombar protegida."
   },
   {
-    "wgerId": 1793,
-    "nome": "Supino inclinado",
-    "nome_en": "Supino Inclinado",
-    "categoria": "Peito",
-    "equipamento": [
-      "Peso corporal"
-    ],
-    "musculos": [
-      "Peito"
-    ],
-    "musculos_secundarios": [
-      "Tríceps",
-      "Ombros"
-    ],
-    "descricao": "Execute o supino inclinado no equipamento disponível com descida controlada à parte alta do peito.",
-    "dica": "O superior responde ao ângulo + amplitude: toque na clavícula e suba sem pressa."
-  },
-  {
     "wgerId": 1795,
     "nome": "Puxada unilateral cruzada na polia",
     "nome_en": "unilateral cross body cable pull down",
@@ -13242,36 +12189,6 @@
     ],
     "descricao": "Na polia alta de lado ou ajoelhado, puxe a manopla cruzando em diagonal até o quadril oposto com o braço quase reto.",
     "dica": "Adução cruzada de dorsal: o cotovelo 'varre' o corpo — unilateral que esculpe a lateral das costas."
-  },
-  {
-    "wgerId": 1798,
-    "nome": "Supino",
-    "nome_en": "Supino",
-    "categoria": "Braços",
-    "equipamento": [
-      "Peso corporal"
-    ],
-    "musculos": [
-      "Bíceps"
-    ],
-    "musculos_secundarios": [],
-    "descricao": "Execute o supino com barra, halteres ou máquina, mantendo amplitude completa e controle.",
-    "dica": "Independente do implemento: escápulas firmes, descida controlada e amplitude total — o resto é detalhe."
-  },
-  {
-    "wgerId": 1800,
-    "nome": "Supino inclinado",
-    "nome_en": "Supino Inclinado",
-    "categoria": "Braços",
-    "equipamento": [
-      "Peso corporal"
-    ],
-    "musculos": [
-      "Bíceps"
-    ],
-    "musculos_secundarios": [],
-    "descricao": "Execute o supino inclinado com o implemento disponível, descendo à parte alta do peito.",
-    "dica": "Punhos empilhados sobre cotovelos na descida: a linha de força reta protege e potencializa."
   },
   {
     "wgerId": 1801,
@@ -13342,23 +12259,6 @@
     ],
     "descricao": "Com a barra apoiada no trapézio, agache até a coxa paralela ou abaixo e suba empurrando o chão.",
     "dica": "Big three nº1: pé em tripé, joelho seguindo o pé, peito aberto — desça em 2–3 segundos e suba com tudo."
-  },
-  {
-    "wgerId": 1806,
-    "nome": "Puxada alta",
-    "nome_en": "Lat Pull Down",
-    "categoria": "Costas",
-    "equipamento": [
-      "Polia"
-    ],
-    "musculos": [
-      "Dorsais"
-    ],
-    "musculos_secundarios": [
-      "Ombros"
-    ],
-    "descricao": "Na polia alta, puxe a barra ao peito com o tronco levemente inclinado para trás e retorne alongando o dorsal.",
-    "dica": "A puxada universal: peito ao encontro da barra e cotovelos 'para os bolsos' — amplitude completa nas duas pontas."
   },
   {
     "wgerId": 1807,
@@ -13622,7 +12522,7 @@
     "nome_en": "Floor Glider Hamstring Curls",
     "categoria": "Ombros",
     "equipamento": [
-      "Máquina"
+      "Peso corporal"
     ],
     "musculos": [
       "Posterior de coxa"
@@ -14247,24 +13147,6 @@
     "dica": "O Y inclinado pega o trapézio inferior: carga leve e subida até o alinhamento — postura se constrói assim."
   },
   {
-    "wgerId": 1880,
-    "nome": "Barra fixa pegada aberta",
-    "nome_en": "Wide Grip Pull Up",
-    "categoria": "Costas",
-    "equipamento": [
-      "Peso corporal"
-    ],
-    "musculos": [
-      "Dorsais"
-    ],
-    "musculos_secundarios": [
-      "Ombros",
-      "Bíceps"
-    ],
-    "descricao": "Na barra fixa com pegada bem aberta e pronada, puxe o peito à barra e desça controladamente até a extensão.",
-    "dica": "Pegada aberta = dorsal em largura: cotovelos para baixo e peito subindo ao encontro da barra."
-  },
-  {
     "wgerId": 1881,
     "nome": "Extensão de punho com halter",
     "nome_en": "DB Wrist Extension",
@@ -14302,14 +13184,13 @@
     "nome_en": "Machine Chest Press",
     "categoria": "Peito",
     "equipamento": [
-      "Banco"
+      "Máquina"
     ],
     "musculos": [
       "Peito"
     ],
     "musculos_secundarios": [
       "Ombros",
-      "Bíceps",
       "Tríceps"
     ],
     "descricao": "Na máquina de supino, empurre as manoplas até a extensão e retorne até o alongamento com controle.",
@@ -14863,7 +13744,7 @@
     "nome_en": "Assisted Pull-Up",
     "categoria": "Costas",
     "equipamento": [
-      "Elástico"
+      "Máquina"
     ],
     "musculos": [
       "Dorsais"
@@ -14913,21 +13794,6 @@
     "dica": "O martelo constrói a espessura do braço via braquial: pegada firme e zero balanço."
   },
   {
-    "wgerId": 1933,
-    "nome": "Abdominal na máquina",
-    "nome_en": "Abdominal Crunch",
-    "categoria": "Abdômen",
-    "equipamento": [
-      "Colchonete"
-    ],
-    "musculos": [
-      "Abdômen"
-    ],
-    "musculos_secundarios": [],
-    "descricao": "Na máquina de abdominal, execute a flexão de tronco completa contra a resistência com retorno controlado.",
-    "dica": "Costelas ao quadril, não pescoço à frente: o abdômen flexiona — o pescoço só acompanha relaxado."
-  },
-  {
     "wgerId": 1935,
     "nome": "Agachamento com cinturão (belt squat)",
     "nome_en": "Belt Squat",
@@ -14959,5 +13825,564 @@
     "musculos_secundarios": [],
     "descricao": "De frente para a polia, puxe a manopla para trás em arco com um braço na altura do ombro, apertando o posterior.",
     "dica": "Unilateral com tensão contínua: o posterior de ombro trabalha sozinho — pico de 1 segundo e volta lenta."
+  },
+  {
+    "wgerId": 1937,
+    "nome": "Cadeira adutora",
+    "nome_en": "Hip Adduction Machine",
+    "categoria": "Pernas",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Adutores"
+    ],
+    "musculos_secundarios": [
+      "Glúteos"
+    ],
+    "descricao": "Sentado na máquina com as almofadas na parte interna das coxas e as pernas abertas, feche as pernas contra a resistência e retorne controlado até o alongamento.",
+    "dica": "Aperte 1 segundo com as pernas fechadas e abra em 2–3 segundos: a fase excêntrica no alongamento dos adutores é onde está o ganho."
+  },
+  {
+    "wgerId": 1938,
+    "nome": "Tríceps testa na polia",
+    "nome_en": "Cable Lying Triceps Extension",
+    "categoria": "Braços",
+    "equipamento": [
+      "Polia"
+    ],
+    "musculos": [
+      "Tríceps"
+    ],
+    "musculos_secundarios": [
+      "Ombros"
+    ],
+    "descricao": "Deitado num banco de frente para a polia baixa, segure a barra ou corda acima do peito e flexione os cotovelos levando o peso em direção à testa, estendendo de volta.",
+    "dica": "O cabo mantém tensão constante mesmo no topo, onde a barra alivia: cotovelos parados apontando ao teto."
+  },
+  {
+    "wgerId": 1939,
+    "nome": "Tríceps francês na polia",
+    "nome_en": "Cable Overhead Triceps Extension",
+    "categoria": "Braços",
+    "equipamento": [
+      "Polia"
+    ],
+    "musculos": [
+      "Tríceps"
+    ],
+    "musculos_secundarios": [],
+    "descricao": "De costas para a polia com a corda atrás da cabeça, estenda os cotovelos acima e à frente até a extensão completa, retornando devagar ao alongamento.",
+    "dica": "A posição overhead alonga a cabeça longa ao máximo: desça em 3 segundos e abra a corda no final do movimento."
+  },
+  {
+    "wgerId": 1940,
+    "nome": "Encolhimento na máquina",
+    "nome_en": "Machine Shrug",
+    "categoria": "Costas",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Trapézio"
+    ],
+    "musculos_secundarios": [
+      "Ombros"
+    ],
+    "descricao": "Na máquina de encolhimento com as manoplas ao lado do corpo, eleve os ombros verticalmente em direção às orelhas e desça controladamente.",
+    "dica": "Pico de 2 segundos no topo: a máquina elimina o balanço e sobra só trapézio — não gire os ombros."
+  },
+  {
+    "wgerId": 1941,
+    "nome": "Remada serrote",
+    "nome_en": "One-Arm Dumbbell Row",
+    "categoria": "Costas",
+    "equipamento": [
+      "Halteres",
+      "Banco"
+    ],
+    "musculos": [
+      "Dorsais"
+    ],
+    "musculos_secundarios": [
+      "Bíceps",
+      "Trapézio"
+    ],
+    "descricao": "Com um joelho e uma mão apoiados no banco e o tronco paralelo ao chão, puxe o halter em direção ao quadril com o cotovelo rente ao corpo, e desça alongando o dorsal.",
+    "dica": "Puxe com o cotovelo, não com a mão: alongue por completo embaixo deixando a escápula descer, e aperte 1 segundo em cima."
+  },
+  {
+    "wgerId": 1942,
+    "nome": "Panturrilha burrinho",
+    "nome_en": "Donkey Calf Raise",
+    "categoria": "Panturrilhas",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Panturrilhas"
+    ],
+    "musculos_secundarios": [],
+    "descricao": "Com o tronco inclinado à frente apoiado e a carga sobre o quadril, eleve os calcanhares ao máximo e desça até o alongamento completo da panturrilha.",
+    "dica": "A inclinação do tronco alonga o gastrocnêmio e é o que diferencia o burrinho: pausa de 2 segundos embaixo."
+  },
+  {
+    "wgerId": 1943,
+    "nome": "Rosca inversa",
+    "nome_en": "Reverse Barbell Curl",
+    "categoria": "Braços",
+    "equipamento": [
+      "Barra W"
+    ],
+    "musculos": [
+      "Antebraços"
+    ],
+    "musculos_secundarios": [
+      "Bíceps"
+    ],
+    "descricao": "Em pé segurando a barra com as palmas voltadas para baixo (pegada pronada), flexione os cotovelos elevando a barra e desça controlado.",
+    "dica": "Punho firme e reto: o braquiorradial comanda — espere usar bem menos carga que na rosca direta, e está certo."
+  },
+  {
+    "wgerId": 1944,
+    "nome": "Puxada com triângulo",
+    "nome_en": "Close-Grip Lat Pulldown",
+    "categoria": "Costas",
+    "equipamento": [
+      "Polia"
+    ],
+    "musculos": [
+      "Dorsais"
+    ],
+    "musculos_secundarios": [
+      "Bíceps",
+      "Trapézio"
+    ],
+    "descricao": "Sentado na polia alta segurando o triângulo com as palmas se olhando, puxe-o em direção ao peito inclinando levemente o tronco, e retorne até a extensão completa.",
+    "dica": "A pegada neutra é a mais forte: cotovelos fecham nas costelas e o dorsal alonga por inteiro na volta."
+  },
+  {
+    "wgerId": 1945,
+    "nome": "Air bike",
+    "nome_en": "Air Bike",
+    "categoria": "Cardio",
+    "equipamento": [
+      "Bicicleta/Elíptico"
+    ],
+    "musculos": [
+      "Corpo inteiro"
+    ],
+    "musculos_secundarios": [],
+    "descricao": "Pedale na bicicleta de resistência a ar movimentando simultaneamente os braços nas alavancas, no ritmo e duração definidos pelo treino.",
+    "dica": "A resistência cresce com a intensidade: 20–30 segundos máximos já bastam — é o cardio mais brutal da academia."
+  },
+  {
+    "wgerId": 1946,
+    "nome": "Chest press na máquina",
+    "nome_en": "Chest Press Machine",
+    "categoria": "Peito",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Peito"
+    ],
+    "musculos_secundarios": [
+      "Tríceps",
+      "Ombros"
+    ],
+    "descricao": "Sentado na máquina com as manoplas na linha do peito, empurre-as à frente até a extensão dos cotovelos e retorne controlado até o alongamento do peitoral.",
+    "dica": "Ajuste o banco para as manoplas ficarem na linha do mamilo: desça em 2–3 segundos e não trave os cotovelos no final."
+  },
+  {
+    "wgerId": 1947,
+    "nome": "Chest press inclinado na máquina",
+    "nome_en": "Incline Chest Press Machine",
+    "categoria": "Peito",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Peito"
+    ],
+    "musculos_secundarios": [
+      "Ombros",
+      "Tríceps"
+    ],
+    "descricao": "Na máquina inclinada, empurre as manoplas para cima e à frente até a extensão, retornando até sentir o alongamento do peitoral superior.",
+    "dica": "O ângulo inclinado desloca o estímulo para o peitoral superior: amplitude completa com pausa de 1 segundo no alongamento."
+  },
+  {
+    "wgerId": 1948,
+    "nome": "Desenvolvimento na máquina (ombros)",
+    "nome_en": "Shoulder Press Machine",
+    "categoria": "Ombros",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Ombros"
+    ],
+    "musculos_secundarios": [
+      "Tríceps"
+    ],
+    "descricao": "Sentado na máquina com as manoplas na altura dos ombros, empurre-as acima da cabeça até a extensão e desça controlado até a linha das orelhas.",
+    "dica": "Costelas fechadas e lombar apoiada: a máquina permite chegar perto da falha com segurança — desça em 3 segundos."
+  },
+  {
+    "wgerId": 1949,
+    "nome": "Remada cavalinho na máquina",
+    "nome_en": "T-Bar Row Machine",
+    "categoria": "Costas",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Dorsais"
+    ],
+    "musculos_secundarios": [
+      "Bíceps",
+      "Trapézio"
+    ],
+    "descricao": "Com o peito apoiado no suporte inclinado, puxe as manoplas em direção ao tronco apertando as escápulas, e desça até o alongamento completo.",
+    "dica": "O apoio de peito elimina o embalo e poupa a lombar: se a carga subir sozinha, você está usando impulso."
+  },
+  {
+    "wgerId": 1950,
+    "nome": "Panturrilha em pé na máquina",
+    "nome_en": "Standing Calf Raise Machine",
+    "categoria": "Panturrilhas",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Panturrilhas"
+    ],
+    "musculos_secundarios": [],
+    "descricao": "Em pé na máquina com os ombros sob as almofadas e a ponta dos pés na plataforma, eleve os calcanhares ao máximo e desça até o alongamento.",
+    "dica": "Joelho estendido = gastrocnêmio: pausa de 2 segundos embaixo e pico completo em cima — amplitude é tudo aqui."
+  },
+  {
+    "wgerId": 1951,
+    "nome": "Tríceps na polia com barra reta",
+    "nome_en": "Cable Triceps Pushdown (Straight Bar)",
+    "categoria": "Braços",
+    "equipamento": [
+      "Polia"
+    ],
+    "musculos": [
+      "Tríceps"
+    ],
+    "musculos_secundarios": [],
+    "descricao": "Em pé de frente para a polia alta segurando a barra reta com pegada pronada, empurre-a para baixo até a extensão completa dos cotovelos e retorne controlado.",
+    "dica": "Cotovelos soldados ao tronco: se eles abrirem, virou supino — pico de 1 segundo com os braços estendidos."
+  },
+  {
+    "wgerId": 1952,
+    "nome": "Rosca martelo na polia com corda",
+    "nome_en": "Cable Hammer Curl",
+    "categoria": "Braços",
+    "equipamento": [
+      "Polia"
+    ],
+    "musculos": [
+      "Bíceps"
+    ],
+    "musculos_secundarios": [
+      "Antebraços"
+    ],
+    "descricao": "De frente para a polia baixa com a corda, flexione os cotovelos mantendo as palmas se olhando, até a contração máxima, e desça devagar.",
+    "dica": "A pegada neutra recruta o braquial: tensão contínua do cabo do início ao fim, sem ponto de descanso."
+  },
+  {
+    "wgerId": 1953,
+    "nome": "Abdução de quadril na polia",
+    "nome_en": "Cable Hip Abduction",
+    "categoria": "Pernas",
+    "equipamento": [
+      "Polia"
+    ],
+    "musculos": [
+      "Glúteo médio (abdutores)"
+    ],
+    "musculos_secundarios": [
+      "Glúteos"
+    ],
+    "descricao": "De lado para a polia baixa com a caneleira no tornozelo, eleve a perna lateralmente contra a resistência e retorne controlado.",
+    "dica": "Tronco firme sem inclinar para o lado oposto: amplitude curta e pico de 1 segundo — o glúteo médio é pequeno e responde a controle."
+  },
+  {
+    "wgerId": 1954,
+    "nome": "Extensão de quadril na polia",
+    "nome_en": "Cable Hip Extension",
+    "categoria": "Pernas",
+    "equipamento": [
+      "Polia"
+    ],
+    "musculos": [
+      "Glúteos"
+    ],
+    "musculos_secundarios": [
+      "Posterior de coxa"
+    ],
+    "descricao": "De frente para a polia baixa com a caneleira no tornozelo, estenda a perna para trás contraindo o glúteo, e retorne devagar.",
+    "dica": "Pico de 2 segundos com o glúteo espremido: se a lombar arquear para ganhar amplitude, encurte o movimento."
+  },
+  {
+    "wgerId": 1955,
+    "nome": "Supino reto com barra no Smith",
+    "nome_en": "Smith Machine Bench Press",
+    "categoria": "Peito",
+    "equipamento": [
+      "Máquina Smith"
+    ],
+    "musculos": [
+      "Peito"
+    ],
+    "musculos_secundarios": [
+      "Tríceps",
+      "Ombros"
+    ],
+    "descricao": "Deitado no banco sob a barra guiada, desça-a até o peito médio com os cotovelos a ~45° e empurre de volta pela trilha até a extensão.",
+    "dica": "A trilha elimina a estabilização: aproveite para focar 100% na descida lenta e no toque controlado no peito."
+  },
+  {
+    "wgerId": 1956,
+    "nome": "Cadeira extensora unilateral (isolada)",
+    "nome_en": "Single-Leg Leg Extension",
+    "categoria": "Pernas",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Quadríceps"
+    ],
+    "musculos_secundarios": [],
+    "descricao": "Sentado na máquina com apenas uma perna sob a almofada, estenda o joelho até a contração máxima e desça controlado até o alongamento.",
+    "dica": "Trabalhe primeiro o lado mais fraco e iguale as repetições: unilateral é o caminho honesto para corrigir assimetrias."
+  },
+  {
+    "wgerId": 1957,
+    "nome": "Supino articulado (máquina)",
+    "nome_en": "Iso-Lateral Chest Press",
+    "categoria": "Peito",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Peito"
+    ],
+    "musculos_secundarios": [
+      "Tríceps",
+      "Ombros"
+    ],
+    "descricao": "Sentado na máquina articulada com as manoplas na linha do peito, empurre os braços à frente de forma independente até a extensão, retornando até o alongamento do peitoral.",
+    "dica": "Braços independentes revelam assimetria: se um lado sobe antes, reduza a carga e iguale — a máquina não deixa o lado forte compensar."
+  },
+  {
+    "wgerId": 1958,
+    "nome": "Supino inclinado articulado (máquina)",
+    "nome_en": "Iso-Lateral Incline Press",
+    "categoria": "Peito",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Peito"
+    ],
+    "musculos_secundarios": [
+      "Ombros",
+      "Tríceps"
+    ],
+    "descricao": "Na máquina articulada inclinada, empurre as manoplas para cima e à frente de forma independente, descendo até o alongamento do peitoral superior.",
+    "dica": "O trajeto convergente da máquina imita o arco natural do peito: aperte 1 segundo no topo com as mãos aproximadas."
+  },
+  {
+    "wgerId": 1959,
+    "nome": "Remada articulada (máquina)",
+    "nome_en": "Iso-Lateral Row",
+    "categoria": "Costas",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Dorsais"
+    ],
+    "musculos_secundarios": [
+      "Bíceps",
+      "Trapézio"
+    ],
+    "descricao": "Com o peito apoiado no suporte, puxe as manoplas em direção ao tronco de forma independente, apertando as escápulas, e retorne até o alongamento completo.",
+    "dica": "O apoio de peito zera o impulso: puxe com o cotovelo e deixe a escápula viajar na volta — dorsal puro."
+  },
+  {
+    "wgerId": 1960,
+    "nome": "Remada baixa na máquina",
+    "nome_en": "Seated Low Row Machine",
+    "categoria": "Costas",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Dorsais"
+    ],
+    "musculos_secundarios": [
+      "Bíceps",
+      "Trapézio"
+    ],
+    "descricao": "Sentado na máquina com os pés apoiados, puxe as manoplas em direção ao abdômen mantendo o tronco ereto, e retorne controlado até o alongamento.",
+    "dica": "Tronco parado e cotovelos rentes ao corpo: a máquina isola as costas sem cobrar da lombar."
+  },
+  {
+    "wgerId": 1961,
+    "nome": "Elevação pélvica na máquina",
+    "nome_en": "Hip Thrust Machine",
+    "categoria": "Pernas",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Glúteos"
+    ],
+    "musculos_secundarios": [
+      "Posterior de coxa"
+    ],
+    "descricao": "Sentado na máquina com o apoio sobre o quadril e as costas firmes, estenda o quadril contraindo os glúteos até a extensão completa, e retorne controlado.",
+    "dica": "Pico de 2 segundos espremendo o glúteo no topo: a máquina existe justamente para essa contração — queixo recolhido."
+  },
+  {
+    "wgerId": 1962,
+    "nome": "Abdominal na máquina (Ab Coaster)",
+    "nome_en": "Ab Coaster",
+    "categoria": "Abdômen",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Abdômen"
+    ],
+    "musculos_secundarios": [],
+    "descricao": "Ajoelhado no apoio móvel com as mãos nas manoplas, eleve os joelhos em direção ao peito pela contração do abdômen inferior, e retorne controlado.",
+    "dica": "O movimento vem do enrolar do quadril, não do balanço: desça em 3 segundos resistindo à volta."
+  },
+  {
+    "wgerId": 1963,
+    "nome": "Rosca scott na máquina",
+    "nome_en": "Preacher Curl Machine",
+    "categoria": "Braços",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Bíceps"
+    ],
+    "musculos_secundarios": [
+      "Antebraços"
+    ],
+    "descricao": "Sentado com os braços apoiados no suporte inclinado, flexione os cotovelos até a contração máxima e desça controlado até a extensão quase completa.",
+    "dica": "O apoio trava o ombro e elimina o embalo: desça em 3 segundos até quase esticar — é onde o bíceps mais cresce."
+  },
+  {
+    "wgerId": 1964,
+    "nome": "Barra fixa e paralela assistida (graviton)",
+    "nome_en": "Assisted Chin/Dip Machine",
+    "categoria": "Costas",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Dorsais"
+    ],
+    "musculos_secundarios": [
+      "Bíceps",
+      "Tríceps"
+    ],
+    "descricao": "Ajoelhado ou em pé na plataforma assistida, execute a barra fixa ou o mergulho com parte do peso corporal compensado pela máquina.",
+    "dica": "Reduza a assistência a cada semana: a máquina é ponte para a barra livre, não destino final."
+  },
+  {
+    "wgerId": 1965,
+    "nome": "Voador e crucifixo inverso (máquina combinada)",
+    "nome_en": "Pec Fly / Rear Delt Machine",
+    "categoria": "Peito",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Peito"
+    ],
+    "musculos_secundarios": [
+      "Ombros"
+    ],
+    "descricao": "Sentado na máquina, feche os braços à frente do peito em arco (voador) ou inverta o assento e abra os braços para trás (crucifixo inverso), conforme a configuração.",
+    "dica": "A mesma máquina serve peito e posterior de ombro: inverta o banco e você tem dois exercícios em um aparelho."
+  },
+  {
+    "wgerId": 1966,
+    "nome": "Leg press horizontal (sentado)",
+    "nome_en": "Seated Leg Press",
+    "categoria": "Pernas",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Quadríceps"
+    ],
+    "musculos_secundarios": [
+      "Glúteos",
+      "Posterior de coxa"
+    ],
+    "descricao": "Sentado na máquina com as costas apoiadas e os pés na plataforma à frente, empurre-a até a extensão quase completa dos joelhos e retorne controlado.",
+    "dica": "Não trave os joelhos no fim: pare pouco antes da extensão total e desça em 3 segundos até 90°."
+  },
+  {
+    "wgerId": 1967,
+    "nome": "Leg press 45 graus",
+    "nome_en": "45-Degree Leg Press",
+    "categoria": "Pernas",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Quadríceps"
+    ],
+    "musculos_secundarios": [
+      "Glúteos",
+      "Posterior de coxa"
+    ],
+    "descricao": "Deitado no ângulo de 45° com os pés na plataforma na largura dos ombros, desça flexionando os joelhos até ~90° e empurre de volta sem travar a extensão.",
+    "dica": "Lombar colada no encosto: se o quadril descolar no fundo, você desceu demais — amplitude é onde a coluna aguenta."
+  },
+  {
+    "wgerId": 1968,
+    "nome": "Panturrilha vertical na máquina",
+    "nome_en": "Vertical Calf Raise Machine",
+    "categoria": "Panturrilhas",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Panturrilhas"
+    ],
+    "musculos_secundarios": [],
+    "descricao": "Em pé na máquina vertical com os ombros sob as almofadas e a ponta dos pés na plataforma, eleve os calcanhares e desça até o alongamento completo.",
+    "dica": "Joelho estendido para pegar o gastrocnêmio: pausa de 2 segundos embaixo — a panturrilha só responde a amplitude total."
+  },
+  {
+    "wgerId": 1969,
+    "nome": "Extensão lombar na máquina",
+    "nome_en": "Back Extension Machine",
+    "categoria": "Costas",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Lombar"
+    ],
+    "musculos_secundarios": [
+      "Glúteos"
+    ],
+    "descricao": "Sentado na máquina com as costas no apoio móvel, estenda o tronco para trás contraindo a lombar e retorne controlado à posição inicial.",
+    "dica": "Vá até o alinhamento neutro e pause: hiperextensão não traz ganho, só risco — contração consciente é o objetivo."
   }
 ]
