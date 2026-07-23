@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Alert, Text, TextInput, View } from 'react-native';
+import { Alert, Pressable, Text, TextInput, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { eq } from 'drizzle-orm';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
@@ -21,6 +21,18 @@ export default function PlanoDetailScreen() {
   const planId = Number(id);
   const [isAddDayModalVisible, setIsAddDayModalVisible] = useState(false);
   const [dayLabel, setDayLabel] = useState('');
+
+  const [renameTarget, setRenameTarget] = useState<{ type: 'plan' | 'day'; id: number } | null>(
+    null
+  );
+  const [renameValue, setRenameValue] = useState('');
+
+  const [editingExercise, setEditingExercise] = useState<{ id: number; nome: string } | null>(
+    null
+  );
+  const [editSeries, setEditSeries] = useState('');
+  const [editReps, setEditReps] = useState('');
+  const [editCarga, setEditCarga] = useState('');
 
   const { data: planRows } = useLiveQuery(
     db.select().from(workoutPlans).where(eq(workoutPlans.id, planId)),
@@ -72,6 +84,64 @@ export default function PlanoDetailScreen() {
     } catch (err) {
       console.error('Falha ao adicionar dia:', err);
       Alert.alert('Erro ao adicionar dia', String(err instanceof Error ? err.message : err));
+    }
+  };
+
+  const openRenamePlan = () => {
+    setRenameTarget({ type: 'plan', id: planId });
+    setRenameValue(plan?.nome ?? '');
+  };
+
+  const openRenameDay = (day: { id: number; label: string }) => {
+    setRenameTarget({ type: 'day', id: day.id });
+    setRenameValue(day.label);
+  };
+
+  const handleRenameConfirm = async () => {
+    if (!renameTarget) return;
+    const trimmed = renameValue.trim();
+    if (!trimmed) return;
+    try {
+      if (renameTarget.type === 'plan') {
+        await db.update(workoutPlans).set({ nome: trimmed }).where(eq(workoutPlans.id, renameTarget.id));
+      } else {
+        await db.update(workoutDays).set({ label: trimmed }).where(eq(workoutDays.id, renameTarget.id));
+      }
+      setRenameTarget(null);
+    } catch (err) {
+      console.error('Falha ao renomear:', err);
+      Alert.alert('Erro ao renomear', String(err instanceof Error ? err.message : err));
+    }
+  };
+
+  const openEditExercise = (row: {
+    id: number;
+    exerciseNome: string;
+    seriesAlvo: number;
+    repsAlvo: number;
+    cargaAlvo: number | null;
+  }) => {
+    setEditingExercise({ id: row.id, nome: row.exerciseNome });
+    setEditSeries(String(row.seriesAlvo));
+    setEditReps(String(row.repsAlvo));
+    setEditCarga(row.cargaAlvo != null ? String(row.cargaAlvo) : '');
+  };
+
+  const handleEditExerciseConfirm = async () => {
+    if (!editingExercise) return;
+    const seriesNum = Number(editSeries);
+    const repsNum = Number(editReps);
+    const cargaNum = editCarga.trim() ? Number(editCarga) : null;
+    if (!seriesNum || !repsNum) return;
+    try {
+      await db
+        .update(workoutDayExercises)
+        .set({ seriesAlvo: seriesNum, repsAlvo: repsNum, cargaAlvo: cargaNum })
+        .where(eq(workoutDayExercises.id, editingExercise.id));
+      setEditingExercise(null);
+    } catch (err) {
+      console.error('Falha ao editar exercício:', err);
+      Alert.alert('Erro ao editar exercício', String(err instanceof Error ? err.message : err));
     }
   };
 
@@ -148,6 +218,11 @@ export default function PlanoDetailScreen() {
       <ScreenTitle
         title={plan?.nome ?? 'Plano'}
         subtitle={`${sortedDays.length} ${sortedDays.length === 1 ? 'dia' : 'dias'}`}
+        action={
+          <Pressable onPress={openRenamePlan} hitSlop={8} className="p-1">
+            <Ionicons name="pencil-outline" size={22} color={colors.muted} />
+          </Pressable>
+        }
       />
 
       <View>
@@ -156,9 +231,14 @@ export default function PlanoDetailScreen() {
           return (
             <Card key={day.id} className="mb-4">
               <View className="mb-1 flex-row items-center justify-between">
-                <Text className="font-display text-2xl uppercase text-text" numberOfLines={1}>
-                  {day.label}
-                </Text>
+                <Pressable
+                  className="mr-2 flex-1 flex-row items-center gap-2"
+                  onPress={() => openRenameDay(day)}>
+                  <Text className="flex-1 font-display text-2xl uppercase text-text" numberOfLines={1}>
+                    {day.label}
+                  </Text>
+                  <Ionicons name="pencil-outline" size={16} color={colors.muted} />
+                </Pressable>
                 <Button variant="destructive" onPress={() => handleRemoveDay(day.id)}>
                   Remover
                 </Button>
@@ -171,15 +251,19 @@ export default function PlanoDetailScreen() {
                 <View
                   key={row.id}
                   className="mb-2 flex-row items-center justify-between rounded border border-border bg-bg px-3 py-2">
-                  <Text className="flex-1 pr-2 font-body-medium text-base text-text" numberOfLines={1}>
-                    {row.exerciseNome}
-                  </Text>
-                  <Text className="font-display text-lg text-text" numberOfLines={1}>
-                    {`${row.seriesAlvo}x${row.repsAlvo}`}
-                    {row.cargaAlvo != null && (
-                      <Text className="font-display text-lg text-muted">{` · ${row.cargaAlvo}kg`}</Text>
-                    )}
-                  </Text>
+                  <Pressable
+                    className="flex-1 flex-row items-center justify-between pr-2"
+                    onPress={() => openEditExercise(row)}>
+                    <Text className="flex-1 pr-2 font-body-medium text-base text-text" numberOfLines={1}>
+                      {row.exerciseNome}
+                    </Text>
+                    <Text className="font-display text-lg text-text" numberOfLines={1}>
+                      {`${row.seriesAlvo}x${row.repsAlvo}`}
+                      {row.cargaAlvo != null && (
+                        <Text className="font-display text-lg text-muted">{` · ${row.cargaAlvo}kg`}</Text>
+                      )}
+                    </Text>
+                  </Pressable>
                   <Button variant="ghost" onPress={() => handleRemoveExercise(row.id)}>
                     <Ionicons name="close" size={18} color={colors.muted} />
                   </Button>
@@ -230,6 +314,77 @@ export default function PlanoDetailScreen() {
             Adicionar
           </Button>
         </View>
+      </FormModal>
+
+      <FormModal visible={!!renameTarget} onRequestClose={() => setRenameTarget(null)}>
+        <Text className="mb-3 font-card-title text-lg text-text">
+          {renameTarget?.type === 'plan' ? 'Nome do plano' : 'Nome do dia'}
+        </Text>
+        <TextInput
+          value={renameValue}
+          onChangeText={setRenameValue}
+          placeholderTextColor={colors.muted}
+          autoFocus
+          className="rounded border border-border bg-surface px-4 py-3 font-body text-base text-text"
+        />
+        <View className="mt-4 flex-row gap-2">
+          <Button variant="secondary" className="flex-1" onPress={() => setRenameTarget(null)}>
+            Cancelar
+          </Button>
+          <Button className="flex-1" onPress={handleRenameConfirm}>
+            Salvar
+          </Button>
+        </View>
+      </FormModal>
+
+      <FormModal visible={!!editingExercise} onRequestClose={() => setEditingExercise(null)}>
+        <Text className="mb-3 font-card-title text-lg text-text">{editingExercise?.nome}</Text>
+
+        <Label className="mb-1">Séries</Label>
+        <TextInput
+          value={editSeries}
+          onChangeText={setEditSeries}
+          keyboardType="number-pad"
+          className="mb-3 rounded border border-border bg-surface px-4 py-3 font-body text-base text-text"
+        />
+
+        <Label className="mb-1">Repetições</Label>
+        <TextInput
+          value={editReps}
+          onChangeText={setEditReps}
+          keyboardType="number-pad"
+          className="mb-3 rounded border border-border bg-surface px-4 py-3 font-body text-base text-text"
+        />
+
+        <Label className="mb-1">Carga alvo (kg, opcional)</Label>
+        <TextInput
+          value={editCarga}
+          onChangeText={setEditCarga}
+          keyboardType="decimal-pad"
+          placeholder="Ex: 20"
+          placeholderTextColor={colors.muted}
+          className="mb-4 rounded border border-border bg-surface px-4 py-3 font-body text-base text-text"
+        />
+
+        <View className="flex-row gap-2">
+          <Button variant="secondary" className="flex-1" onPress={() => setEditingExercise(null)}>
+            Cancelar
+          </Button>
+          <Button className="flex-1" onPress={handleEditExerciseConfirm}>
+            Salvar
+          </Button>
+        </View>
+
+        <Button
+          variant="destructive"
+          className="mt-2"
+          onPress={() => {
+            const id = editingExercise?.id;
+            setEditingExercise(null);
+            if (id != null) handleRemoveExercise(id);
+          }}>
+          Remover exercício do dia
+        </Button>
       </FormModal>
     </Screen>
   );
