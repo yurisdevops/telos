@@ -8,12 +8,13 @@ import {
   Pressable,
   Text,
   TextInput,
+  Vibration,
   View,
 } from 'react-native';
 import { eq, sql } from 'drizzle-orm';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { useRouter } from 'expo-router';
-import * as Haptics from 'expo-haptics';
+import { useKeepAwake } from 'expo-keep-awake';
 import { Ionicons } from '@expo/vector-icons';
 
 import { Screen } from '@/components/screen';
@@ -44,6 +45,11 @@ import {
   getWeekdayLabel,
 } from '@/lib/date';
 import { formatCountdown, formatElapsed, useNow } from '@/lib/duration';
+import {
+  cancelRestEndNotification,
+  ensureRestNotificationPermission,
+  scheduleRestEndNotification,
+} from '@/lib/rest-notification';
 import { RPE_CATEGORY_LABEL, RPE_CATEGORY_ORDER, RPE_CATEGORY_VALUE, rpeValueToCategory, type RpeCategory } from '@/lib/rpe';
 import { suggestNextLoad } from '@/lib/suggest-load';
 import { suggestRestSeconds } from '@/lib/suggest-rest';
@@ -52,6 +58,11 @@ import { formatLastPerformance, useLastPerformance } from '@/lib/use-last-perfor
 import { colors } from '@/theme/tokens';
 
 const DEFAULT_REST_SECONDS = 90;
+// Padrão longo e repetido (não o pulso único do expo-haptics) — pra ser
+// percebido com o celular na bancada. Repete até o usuário fechar o overlay
+// ou até o teto de segurança abaixo, o que vier primeiro.
+const REST_DONE_VIBRATION_PATTERN = [0, 700, 400, 700, 400, 700];
+const REST_DONE_VIBRATION_MAX_MS = 20000;
 
 function reportError(context: string, err: unknown) {
   console.error(context, err);
@@ -428,6 +439,7 @@ function SessionExecution({ session }: { session: Session }) {
         .update(sessions)
         .set({ concluida: true, horaFim: Date.now(), restTimerStartedAt: null })
         .where(eq(sessions.id, session.id));
+      await cancelRestEndNotification();
     } catch (err) {
       reportError('Erro ao concluir treino', err);
     }
@@ -511,6 +523,8 @@ function SessionExecution({ session }: { session: Session }) {
             restTimerDurationSeconds: suggestedSeconds,
           })
           .where(eq(sessions.id, session.id));
+        const granted = await ensureRestNotificationPermission();
+        if (granted) await scheduleRestEndNotification(suggestedSeconds);
       } catch (err) {
         reportError('Erro ao iniciar descanso', err);
       }
@@ -524,16 +538,21 @@ function SessionExecution({ session }: { session: Session }) {
       const next = Math.max(15, current + deltaSeconds);
       try {
         await db.update(sessions).set({ restTimerDurationSeconds: next }).where(eq(sessions.id, session.id));
+        if (session.restTimerStartedAt != null) {
+          const elapsedSeconds = (Date.now() - session.restTimerStartedAt) / 1000;
+          await scheduleRestEndNotification(next - elapsedSeconds);
+        }
       } catch (err) {
         reportError('Erro ao ajustar descanso', err);
       }
     },
-    [session.id, session.restTimerDurationSeconds]
+    [session.id, session.restTimerDurationSeconds, session.restTimerStartedAt]
   );
 
   const cancelRestTimer = useCallback(async () => {
     try {
       await db.update(sessions).set({ restTimerStartedAt: null }).where(eq(sessions.id, session.id));
+      await cancelRestEndNotification();
     } catch (err) {
       reportError('Erro ao cancelar descanso', err);
     }
@@ -544,19 +563,20 @@ function SessionExecution({ session }: { session: Session }) {
       ? (session.restTimerDurationSeconds ?? DEFAULT_REST_SECONDS) - (now - session.restTimerStartedAt) / 1000
       : null;
 
-  const hapticFiredRef = useRef(false);
+  // Depende do booleano (não de `restRemaining` bruto, que muda a cada
+  // segundo) — senão o efeito re-executaria a cada tick e cancelaria o timeout
+  // de segurança antes da hora. Assim ele só dispara na transição pra "pronto"
+  // e só limpa (cancela a vibração) na transição de volta pra null/reiniciado.
+  const isRestDone = restRemaining !== null && restRemaining <= 0;
   useEffect(() => {
-    if (restRemaining === null) {
-      hapticFiredRef.current = false;
-      return;
-    }
-    if (restRemaining <= 0 && !hapticFiredRef.current) {
-      hapticFiredRef.current = true;
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    } else if (restRemaining > 0) {
-      hapticFiredRef.current = false;
-    }
-  }, [restRemaining]);
+    if (!isRestDone) return;
+    Vibration.vibrate(REST_DONE_VIBRATION_PATTERN, true);
+    const safetyTimeout = setTimeout(() => Vibration.cancel(), REST_DONE_VIBRATION_MAX_MS);
+    return () => {
+      clearTimeout(safetyTimeout);
+      Vibration.cancel();
+    };
+  }, [isRestDone]);
 
   return (
     <View>
@@ -663,6 +683,11 @@ function RestTimerOverlay({
   onAdjust: (deltaSeconds: number) => void;
   onDismiss: () => void;
 }) {
+  // Ativa enquanto este overlay estiver montado (ou seja, exatamente enquanto
+  // o timer está rodando ou mostrando "concluído") e desativa sozinho ao
+  // desmontar — não precisa de start/stop manual.
+  useKeepAwake();
+
   const isDone = restRemaining <= 0;
 
   return (
