@@ -59,6 +59,7 @@ function reportError(context: string, err: unknown) {
 }
 
 export default function HojeScreen() {
+  const router = useRouter();
   const todayStr = getTodayDateString();
   const today = new Date();
 
@@ -117,15 +118,19 @@ export default function HojeScreen() {
           <Text className="font-body text-muted">Nenhuma sessão concluída ainda.</Text>
         ) : (
           sortedHistory.map((item) => (
-            <Card key={item.id} className="mb-2">
-              <Text className="font-card-title text-lg text-text">{item.dayLabel}</Text>
-              <View className="mt-1 flex-row items-center justify-between">
-                <Label>{formatShortDateLabel(item.data)}</Label>
-                {item.horaInicio != null && item.horaFim != null && (
-                  <Label>{formatElapsed(item.horaFim - item.horaInicio)}</Label>
-                )}
-              </View>
-            </Card>
+            <Pressable
+              key={item.id}
+              onPress={() => router.push({ pathname: '/sessao/[id]', params: { id: String(item.id) } })}>
+              <Card className="mb-2">
+                <Text className="font-card-title text-lg text-text">{item.dayLabel}</Text>
+                <View className="mt-1 flex-row items-center justify-between">
+                  <Label>{formatShortDateLabel(item.data)}</Label>
+                  {item.horaInicio != null && item.horaFim != null && (
+                    <Label>{formatElapsed(item.horaFim - item.horaInicio)}</Label>
+                  )}
+                </View>
+              </Card>
+            </Pressable>
           ))
         )}
       </View>
