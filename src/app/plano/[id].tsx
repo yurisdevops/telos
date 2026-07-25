@@ -6,6 +6,7 @@ import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { Ionicons } from '@expo/vector-icons';
 
 import { FormModal } from '@/components/form-modal';
+import { HelpIcon } from '@/components/help-icon';
 import { Screen } from '@/components/screen';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -39,6 +40,11 @@ export default function PlanoDetailScreen() {
   const [editReps, setEditReps] = useState('');
   const [editCarga, setEditCarga] = useState('');
   const [editSupersetGroup, setEditSupersetGroup] = useState<string | null>(null);
+
+  const [groupingDayId, setGroupingDayId] = useState<number | null>(null);
+  const [selectedForGroup, setSelectedForGroup] = useState<Set<number>>(new Set());
+  const [groupLetterModalVisible, setGroupLetterModalVisible] = useState(false);
+  const [groupLetter, setGroupLetter] = useState<string | null>(null);
 
   const [duplicatePlanModalVisible, setDuplicatePlanModalVisible] = useState(false);
   const [duplicatePlanName, setDuplicatePlanName] = useState('');
@@ -169,6 +175,60 @@ export default function PlanoDetailScreen() {
     } catch (err) {
       console.error('Falha ao editar exercício:', err);
       Alert.alert('Erro ao editar exercício', String(err instanceof Error ? err.message : err));
+    }
+  };
+
+  const startGrouping = (dayId: number) => {
+    setGroupingDayId(dayId);
+    setSelectedForGroup(new Set());
+  };
+
+  const cancelGrouping = () => {
+    setGroupingDayId(null);
+    setSelectedForGroup(new Set());
+  };
+
+  const toggleExerciseSelected = (rowId: number) => {
+    setSelectedForGroup((prev) => {
+      const next = new Set(prev);
+      if (next.has(rowId)) {
+        next.delete(rowId);
+      } else {
+        next.add(rowId);
+      }
+      return next;
+    });
+  };
+
+  const openGroupLetterPicker = () => {
+    if (selectedForGroup.size < 2 || groupingDayId == null) return;
+    const used = new Set(
+      (exercisesByDay.get(groupingDayId) ?? [])
+        .map((row) => row.supersetGroup)
+        .filter((value): value is string => value != null)
+    );
+    const nextFree = SUPERSET_GROUP_OPTIONS.find((option) => option !== 'Nenhuma' && !used.has(option));
+    setGroupLetter(nextFree ?? 'A');
+    setGroupLetterModalVisible(true);
+  };
+
+  const handleConfirmGrouping = () => {
+    if (selectedForGroup.size < 2) return;
+    try {
+      const ids = Array.from(selectedForGroup);
+      db.transaction((tx) => {
+        for (const id of ids) {
+          tx.update(workoutDayExercises)
+            .set({ supersetGroup: groupLetter })
+            .where(eq(workoutDayExercises.id, id))
+            .run();
+        }
+      });
+      setGroupLetterModalVisible(false);
+      cancelGrouping();
+    } catch (err) {
+      console.error('Falha ao agrupar em supersérie:', err);
+      Alert.alert('Erro ao agrupar', String(err instanceof Error ? err.message : err));
     }
   };
 
@@ -368,57 +428,94 @@ export default function PlanoDetailScreen() {
                 {`${dayExerciseList.length} ${dayExerciseList.length === 1 ? 'exercício' : 'exercícios'}`}
               </Label>
 
-              {dayExerciseList.map((row, index) => (
-                <View
-                  key={row.id}
-                  className="mb-2 flex-row items-center justify-between rounded border border-border bg-bg px-3 py-2">
-                  <Pressable
-                    className="flex-1 flex-row items-center justify-between pr-2"
-                    onPress={() => openEditExercise(row)}>
-                    <View className="flex-1 pr-2">
-                      <Text className="font-body-medium text-base text-text" numberOfLines={1}>
-                        {row.exerciseNome}
-                      </Text>
-                      {row.supersetGroup != null && (
-                        <Label className="mt-0.5 text-accent">{`Supersérie ${row.supersetGroup}`}</Label>
-                      )}
-                    </View>
-                    <Text className="font-display text-lg text-text" numberOfLines={1}>
-                      {`${row.seriesAlvo}x${row.repsAlvo}`}
-                      {row.cargaAlvo != null && (
-                        <Text className="font-display text-lg text-muted">{` · ${row.cargaAlvo}kg`}</Text>
-                      )}
-                    </Text>
-                  </Pressable>
-                  <View className="flex-row items-center">
-                    <Pressable
-                      onPress={() => handleMoveExercise(day.id, row.id, 'up')}
-                      disabled={index === 0}
-                      hitSlop={6}
-                      className="p-1">
-                      <Ionicons
-                        name="chevron-up"
-                        size={18}
-                        color={index === 0 ? colors.border : colors.muted}
-                      />
-                    </Pressable>
-                    <Pressable
-                      onPress={() => handleMoveExercise(day.id, row.id, 'down')}
-                      disabled={index === dayExerciseList.length - 1}
-                      hitSlop={6}
-                      className="p-1">
-                      <Ionicons
-                        name="chevron-down"
-                        size={18}
-                        color={index === dayExerciseList.length - 1 ? colors.border : colors.muted}
-                      />
-                    </Pressable>
-                    <Button variant="ghost" onPress={() => handleRemoveExercise(row.id)}>
-                      <Ionicons name="close" size={18} color={colors.muted} />
+              {dayExerciseList.length >= 2 &&
+                (groupingDayId === day.id ? (
+                  <View className="mb-3 flex-row items-center gap-2">
+                    <Label className="flex-1">{`${selectedForGroup.size} selecionado(s)`}</Label>
+                    <Button variant="secondary" onPress={cancelGrouping}>
+                      Cancelar
+                    </Button>
+                    <Button disabled={selectedForGroup.size < 2} onPress={openGroupLetterPicker}>
+                      Agrupar
                     </Button>
                   </View>
-                </View>
-              ))}
+                ) : (
+                  <Button
+                    variant="secondary"
+                    className="mb-3 self-start"
+                    onPress={() => startGrouping(day.id)}>
+                    Agrupar em supersérie
+                  </Button>
+                ))}
+
+              {dayExerciseList.map((row, index) => {
+                const isGroupingThisDay = groupingDayId === day.id;
+                const isSelectedForGroup = selectedForGroup.has(row.id);
+                return (
+                  <View
+                    key={row.id}
+                    className="mb-2 flex-row items-center justify-between rounded border border-border bg-bg px-3 py-2">
+                    <Pressable
+                      className="flex-1 flex-row items-center justify-between pr-2"
+                      onPress={() =>
+                        isGroupingThisDay ? toggleExerciseSelected(row.id) : openEditExercise(row)
+                      }>
+                      <View className="flex-1 flex-row items-center gap-2 pr-2">
+                        {isGroupingThisDay && (
+                          <Ionicons
+                            name={isSelectedForGroup ? 'checkmark-circle' : 'ellipse-outline'}
+                            size={18}
+                            color={isSelectedForGroup ? colors.accent : colors.muted}
+                          />
+                        )}
+                        <View className="flex-1">
+                          <Text className="font-body-medium text-base text-text" numberOfLines={1}>
+                            {row.exerciseNome}
+                          </Text>
+                          {row.supersetGroup != null && (
+                            <Label className="mt-0.5 text-accent">{`Supersérie ${row.supersetGroup}`}</Label>
+                          )}
+                        </View>
+                      </View>
+                      <Text className="font-display text-lg text-text" numberOfLines={1}>
+                        {`${row.seriesAlvo}x${row.repsAlvo}`}
+                        {row.cargaAlvo != null && (
+                          <Text className="font-display text-lg text-muted">{` · ${row.cargaAlvo}kg`}</Text>
+                        )}
+                      </Text>
+                    </Pressable>
+                    {!isGroupingThisDay && (
+                      <View className="flex-row items-center">
+                        <Pressable
+                          onPress={() => handleMoveExercise(day.id, row.id, 'up')}
+                          disabled={index === 0}
+                          hitSlop={6}
+                          className="p-1">
+                          <Ionicons
+                            name="chevron-up"
+                            size={18}
+                            color={index === 0 ? colors.border : colors.muted}
+                          />
+                        </Pressable>
+                        <Pressable
+                          onPress={() => handleMoveExercise(day.id, row.id, 'down')}
+                          disabled={index === dayExerciseList.length - 1}
+                          hitSlop={6}
+                          className="p-1">
+                          <Ionicons
+                            name="chevron-down"
+                            size={18}
+                            color={index === dayExerciseList.length - 1 ? colors.border : colors.muted}
+                          />
+                        </Pressable>
+                        <Button variant="ghost" onPress={() => handleRemoveExercise(row.id)}>
+                          <Ionicons name="close" size={18} color={colors.muted} />
+                        </Button>
+                      </View>
+                    )}
+                  </View>
+                );
+              })}
 
               <Button
                 variant="primary"
@@ -516,7 +613,17 @@ export default function PlanoDetailScreen() {
           className="mb-4 rounded border border-border bg-surface px-4 py-3 font-body text-base text-text"
         />
 
-        <Label className="mb-1">Supersérie</Label>
+        <View className="mb-1 flex-row items-center gap-1">
+          <Label>Supersérie</Label>
+          <HelpIcon title="Supersérie">
+            Marca esse exercício como parte de um grupo (mesma letra = mesmo grupo). Na aba Hoje os
+            exercícios do grupo aparecem conectados visualmente e o botão de descanso só aparece
+            depois do último exercício do grupo — não entre eles. Prefira o botão "Agrupar em
+            supersérie" na lista do dia pra marcar vários exercícios de uma vez; este seletor aqui
+            serve pra ajustar ou remover o grupo de um exercício só. Nada força você a alternar
+            entre os exercícios do grupo — a ordem de preenchimento continua livre.
+          </HelpIcon>
+        </View>
         <View className="mb-4 flex-row flex-wrap gap-2">
           {SUPERSET_GROUP_OPTIONS.map((option) => {
             const value = option === 'Nenhuma' ? null : option;
@@ -550,6 +657,37 @@ export default function PlanoDetailScreen() {
           }}>
           Remover exercício do dia
         </Button>
+      </FormModal>
+
+      <FormModal
+        visible={groupLetterModalVisible}
+        onRequestClose={() => setGroupLetterModalVisible(false)}>
+        <Text className="mb-3 font-card-title text-lg text-text">Agrupar em supersérie</Text>
+        <Label className="mb-2">{`${selectedForGroup.size} exercícios selecionados`}</Label>
+        <View className="mb-4 flex-row flex-wrap gap-2">
+          {SUPERSET_GROUP_OPTIONS.map((option) => {
+            const value = option === 'Nenhuma' ? null : option;
+            return (
+              <Chip
+                key={option}
+                label={option}
+                selected={groupLetter === value}
+                onPress={() => setGroupLetter(value)}
+              />
+            );
+          })}
+        </View>
+        <View className="flex-row gap-2">
+          <Button
+            variant="secondary"
+            className="flex-1"
+            onPress={() => setGroupLetterModalVisible(false)}>
+            Cancelar
+          </Button>
+          <Button className="flex-1" onPress={handleConfirmGrouping}>
+            Confirmar
+          </Button>
+        </View>
       </FormModal>
 
       <FormModal
