@@ -23,6 +23,12 @@ const CATEGORIES = [
   "Panturrilhas",
 ];
 
+const NIVEIS = ["iniciante", "intermediário", "avançado"];
+
+function capitalize(value: string) {
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
 const CARD_HEIGHT = 76;
 const CARD_GAP = 12;
 const ROW_HEIGHT = CARD_HEIGHT + CARD_GAP;

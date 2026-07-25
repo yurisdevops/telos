@@ -179,8 +179,15 @@ export default function ExercicioDetailScreen() {
         }
       />
 
-      <View className="self-start rounded border border-border px-3 py-1">
-        <Label>{exercise.categoria}</Label>
+      <View className="flex-row flex-wrap gap-2">
+        <View className="self-start rounded border border-border px-3 py-1">
+          <Label>{exercise.categoria}</Label>
+        </View>
+        {exercise.nivel && (
+          <View className="self-start rounded border border-border px-3 py-1">
+            <Label>{exercise.nivel}</Label>
+          </View>
+        )}
       </View>
 
       <Section title="Músculos">

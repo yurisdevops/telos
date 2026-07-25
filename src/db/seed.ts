@@ -16,6 +16,7 @@ type SeedExercise = {
   musculos_secundarios: string[];
   descricao: string | null;
   dica: string | null;
+  nivel: string | null;
 };
 
 const CHUNK_SIZE = 100;
@@ -113,6 +114,7 @@ function toRow(item: SeedExercise) {
     musculosSecundarios: JSON.stringify(item.musculos_secundarios),
     descricao: item.descricao,
     dica: item.dica,
+    nivel: item.nivel,
   };
 }
 
@@ -254,10 +256,36 @@ function logAndAlertResult(result: ReconcileResult) {
   );
 }
 
+/**
+ * 2026-07: campo `nivel` adicionado ao catálogo (coluna aditiva, migração
+ * 0006). Os wgerId não mudaram, então `alreadyMigrated` abaixo continuaria
+ * batendo e puloria o UPDATE que preenche esse campo nas linhas já existentes
+ * — por isso esse preenchimento roda à parte, fora do reconcile completo.
+ * Idempotente: sai cedo se não houver nada faltando, não apaga nem remapeia
+ * nada, só faz UPDATE por wgerId da coluna nova.
+ */
+function backfillNivel(existingRows: { id: number; wgerId: number; nivel: string | null }[]) {
+  const missing = existingRows.filter((row) => row.nivel == null);
+  if (missing.length === 0) return;
+
+  const nivelByWgerId = new Map((seedData as SeedExercise[]).map((item) => [item.wgerId, item.nivel]));
+  let updated = 0;
+  db.transaction((tx) => {
+    for (const row of missing) {
+      const nivel = nivelByWgerId.get(row.wgerId);
+      if (nivel != null) {
+        tx.update(exercises).set({ nivel }).where(eq(exercises.id, row.id)).run();
+        updated += 1;
+      }
+    }
+  });
+  console.log(`[catalog] Campo "nivel" preenchido em ${updated} de ${missing.length} exercício(s) existente(s).`);
+}
+
 export function seedDatabase() {
   try {
     const existingRows = db
-      .select({ id: exercises.id, wgerId: exercises.wgerId })
+      .select({ id: exercises.id, wgerId: exercises.wgerId, nivel: exercises.nivel })
       .from(exercises)
       .all();
 
@@ -281,6 +309,7 @@ export function seedDatabase() {
       newWgerIds.every((id) => currentWgerIds.has(id));
 
     if (alreadyMigrated) {
+      backfillNivel(existingRows);
       return;
     }
 
