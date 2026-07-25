@@ -1,6 +1,7 @@
 import { Text, View } from 'react-native';
 import { eq, sql } from 'drizzle-orm';
 
+import { HelpIcon } from '@/components/help-icon';
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { db } from '@/db';
@@ -80,7 +81,14 @@ export function StagnationSection() {
 
   return (
     <Card className="mb-6">
-      <Text className="mb-1 font-card-title text-lg text-text">Estagnação de carga</Text>
+      <View className="flex-row items-center gap-1">
+        <Text className="mb-1 font-card-title text-lg text-text">Estagnação de carga</Text>
+        <HelpIcon title="Estagnação de carga">
+          Esse indicador é automático: sinaliza um exercício quando você ainda o treina (treinado
+          nos últimos 21 dias) mas a carga máxima não sobe há 28 dias ou mais. Só mostra o dado,
+          sem julgar nem sugerir nenhuma ação — a decisão é sua.
+        </HelpIcon>
+      </View>
       <Label className="mb-4">Carga máxima sem subir há 4 semanas ou mais, em exercícios ainda em treino</Label>
 
       {rows === undefined ? null : rows.length === 0 ? (

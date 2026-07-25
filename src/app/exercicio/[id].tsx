@@ -135,8 +135,8 @@ export default function ExercicioDetailScreen() {
       setSubstitutionTarget(null);
       setSubstitutionPickerVisible(false);
     } catch (err) {
-      console.error('Falha ao marcar substituição:', err);
-      Alert.alert('Erro', 'Não foi possível marcar a substituição.');
+      console.error('Falha ao unir histórico:', err);
+      Alert.alert('Erro', 'Não foi possível unir o histórico.');
     }
   };
 
@@ -302,13 +302,14 @@ export default function ExercicioDetailScreen() {
         )}
       </Section>
 
-      <Section title="Substituição">
+      <Section title="Unir histórico">
         <Text className="mb-3 font-body text-sm text-muted">
           Se você trocou este exercício por outro (ex: hack squat por leg press), marque aqui pra
-          manter a continuidade do histórico e dos gráficos.
+          unir os dois num só histórico e gráfico de evolução. Isso não altera nenhum plano nem
+          sessão de treino — é só um vínculo pra continuidade do gráfico.
         </Text>
         <Button variant="secondary" onPress={() => setSubstitutionPickerVisible(true)}>
-          Marcar substituição
+          Unir histórico com outro exercício
         </Button>
       </Section>
 
@@ -379,7 +380,7 @@ export default function ExercicioDetailScreen() {
         ) : (
           <View style={{ height: 480 }}>
             <Text className="mb-3 font-card-title text-lg text-text">
-              Qual exercício este substitui?
+              Qual exercício quer unir ao histórico deste?
             </Text>
             <ExerciseCatalogList onSelectExercise={handleSelectSubstitutionTarget} />
           </View>

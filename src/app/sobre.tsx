@@ -41,6 +41,16 @@ export default function SobreScreen() {
         progresso, tudo salvo no próprio dispositivo.
       </Text>
 
+      <Pressable onPress={() => router.push('/ajuda')} className="mb-3">
+        <Card className="flex-row items-center justify-between">
+          <View>
+            <Text className="font-card-title text-lg text-text">Ajuda</Text>
+            <Label className="mt-1">Como funciona cada parte do app, por área</Label>
+          </View>
+          <Ionicons name="chevron-forward" size={20} color={colors.muted} />
+        </Card>
+      </Pressable>
+
       <Pressable onPress={() => router.push('/backup')} className="mb-6">
         <Card className="flex-row items-center justify-between">
           <View>

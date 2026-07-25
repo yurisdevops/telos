@@ -4,6 +4,7 @@ import * as DocumentPicker from 'expo-document-picker';
 import { File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 
+import { HelpIcon } from '@/components/help-icon';
 import { Screen } from '@/components/screen';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -187,7 +188,16 @@ export default function BackupScreen() {
           Escolha um arquivo de backup exportado pelo Telos.
         </Text>
 
-        <Label className="mb-2">Ao importar</Label>
+        <View className="mb-2 flex-row items-center gap-1">
+          <Label>Ao importar</Label>
+          <HelpIcon title="Mesclar vs Substituir tudo">
+            Mesclar adiciona só o que ainda não existe no aparelho (compara plano por nome, dia por
+            nome, sessão por data etc.) sem apagar nada — favoritos e notas existentes nunca são
+            sobrescritos pelo backup. Substituir tudo apaga TODOS os planos, sessões e histórico
+            atuais antes de importar; é irreversível. Se o backup citar um exercício que não existe
+            mais no catálogo, aquela linha é ignorada e aparece no resumo ao final.
+          </HelpIcon>
+        </View>
         <View className="mb-3 flex-row gap-2">
           <Chip label="Mesclar" selected={mode === 'merge'} onPress={() => setMode('merge')} />
           <Chip label="Substituir tudo" selected={mode === 'replace'} onPress={() => setMode('replace')} />
