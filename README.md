@@ -8,18 +8,22 @@ App de gestão de treino de academia, **local-first e 100% offline** — sem bac
 - [Expo Router](https://docs.expo.dev/router/introduction/) — navegação por arquivos
 - [Drizzle ORM](https://orm.drizzle.team/) + [Expo SQLite](https://docs.expo.dev/versions/latest/sdk/sqlite/) — persistência local, com migrações versionadas via `drizzle-kit`
 - [Nativewind](https://www.nativewind.dev/) — Tailwind CSS para React Native
-- [react-native-gifted-charts](https://github.com/Abhinandan-Kushwaha/react-native-gifted-charts) (+ `react-native-svg`) — gráficos da aba Progresso
+- [react-native-gifted-charts](https://github.com/Abhinandan-Kushwaha/react-native-gifted-charts) (+ `react-native-svg`) — gráficos interativos da aba Progresso (toque numa barra mostra o detalhe daquele ponto)
+- `expo-keep-awake` — mantém a tela acesa durante o timer de descanso
+- `expo-notifications` — notificação local (agendada via trigger de tempo, dispara mesmo com o app minimizado) ao fim do descanso; exige config plugin em `app.json` e um development/preview build (mudança de dependência nativa não vai por OTA)
 - Fontes [Barlow Condensed](https://fonts.google.com/specimen/Barlow+Condensed) e [Inter](https://fonts.google.com/specimen/Inter) via Google Fonts
 
 Direção visual própria ("Chapa e Ferro"): fundo escuro, tipografia condensada pesada para títulos e números, uma única cor de destaque usada com parcimônia.
 
 ## Funcionalidades
 
-- **Catálogo** — 872 exercícios com nome (PT/EN), categoria, equipamento, músculos primários e secundários, descrição e dica de execução técnica. Busca por texto (tolerante a acentos) e filtro por grupo muscular.
-- **Detalhe do exercício** — informações completas, gráfico de evolução da carga máxima ao longo do tempo, e um botão que abre uma busca no YouTube por vídeos de execução (link externo, nada embutido).
-- **Planilhas** — criação de planos de treino com dias de nome livre (ex: "Push", "Peito e Tríceps"), cada um com seus próprios exercícios, séries, repetições e carga alvo.
-- **Hoje** — escolha do treino do dia, execução da sessão com registro de reps e carga reais por série, barra de progresso da sessão, conclusão do treino e histórico das sessões concluídas.
-- **Progresso** — frequência de treino (sequência de semanas seguidas + calendário do mês), volume semanal (repetições × carga), distribuição de volume por grupo muscular, e recordes pessoais por exercício.
+- **Catálogo** — 839 exercícios com nome (PT/EN), categoria, equipamento, músculos primários e secundários, descrição, dica de execução técnica e nível de dificuldade (iniciante/intermediário/avançado). Busca por texto (tolerante a acentos), filtro por grupo muscular e por nível, favoritos e nota pessoal por exercício.
+- **Detalhe do exercício** — informações completas, badge de nível, gráfico de evolução da carga máxima ao longo do tempo, um botão que abre uma busca no YouTube por vídeos de execução (link externo, nada embutido), e "Unir histórico" pra continuar o gráfico de evolução quando você troca de exercício (não altera nenhum plano nem sessão).
+- **Planilhas** — criação e edição de planos de treino com dias de nome livre (ex: "Push", "Peito e Tríceps"), cada um com seus próprios exercícios, séries, repetições e carga alvo; duplicar plano/dia, compartilhar plano como texto, e agrupar exercícios em supersérie (individualmente ou em lote).
+- **Hoje** — escolha do treino do dia, execução da sessão com registro de reps e carga reais por série, sugestão de carga e RPE por série, timer de descanso (tela acesa, notificação e vibração ao terminar, mesmo com o app minimizado), exercício avulso e pular exercício do plano, barra de progresso da sessão, conclusão do treino, e histórico das sessões concluídas — cada sessão do histórico pode ser reaberta pra editar reps/carga ou ser apagada por completo. Uma confirmação avisa se você tentar trocar de aba com o treino de hoje ainda em andamento.
+- **Progresso** — frequência de treino (sequência de semanas seguidas + calendário do mês), séries por grupo muscular na semana, volume semanal (repetições × carga, com marcação manual de deload), volume por músculo e por padrão de movimento, densidade de treino, indicador automático de estagnação de carga, peso corporal, recordes pessoais e aderência ao plano — os gráficos de barra respondem a toque, mostrando o detalhe do ponto selecionado.
+- **Ajuda** — tela de consulta rápida (acessível por Sobre) organizada por área do app, mais ícones de ajuda contextual (ⓘ) nos pontos de maior risco de confusão.
+- **Backup** — exportar todos os dados de treino para um arquivo, e restaurar mesclando (nunca sobrescreve o que já existe) ou substituindo tudo.
 
 ## Decisões de arquitetura
 
