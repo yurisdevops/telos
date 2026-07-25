@@ -30,7 +30,7 @@ function capitalize(value: string) {
 }
 
 const CARD_HEIGHT = 76;
-const CARD_GAP = 12;
+const CARD_GAP = 16;
 const ROW_HEIGHT = CARD_HEIGHT + CARD_GAP;
 
 function normalize(value: string) {
@@ -52,6 +52,7 @@ export function ExerciseCatalogList({
 }) {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<string | null>(null);
+  const [nivel, setNivel] = useState<string | null>(null);
   const [favoritesOnly, setFavoritesOnly] = useState(false);
 
   const { data } = useLiveQuery(db.select().from(exercises));
@@ -67,6 +68,7 @@ export function ExerciseCatalogList({
     const result = (data ?? []).filter((item) => {
       if (favoritesOnly && !favoriteWgerIds.has(item.wgerId)) return false;
       if (category && item.categoria !== category) return false;
+      if (nivel && item.nivel !== nivel) return false;
       if (normalizedSearch && !normalize(item.nome).includes(normalizedSearch))
         return false;
       return true;
@@ -84,7 +86,7 @@ export function ExerciseCatalogList({
         return a.index - b.index;
       })
       .map(({ item }) => item);
-  }, [data, search, category, favoritesOnly, favoriteWgerIds]);
+  }, [data, search, category, nivel, favoritesOnly, favoriteWgerIds]);
 
   const toggleFavorite = async (item: Exercise) => {
     try {
@@ -104,12 +106,20 @@ export function ExerciseCatalogList({
 
   return (
     <View className="flex-1">
-      <View className="pb-3">
+      <View className="relative pb-3">
         <Input
           value={search}
           onChangeText={setSearch}
           placeholder={searchPlaceholder}
+          className={search.length > 0 ? "pr-10" : undefined}
         />
+        {search.length > 0 && (
+          <View className="absolute bottom-0 right-3 top-0 justify-center">
+            <Pressable onPress={() => setSearch("")} hitSlop={8}>
+              <Ionicons name="close-circle" size={20} color={colors.muted} />
+            </Pressable>
+          </View>
+        )}
       </View>
 
       <ScrollView
@@ -138,6 +148,28 @@ export function ExerciseCatalogList({
             label={cat}
             selected={category === cat}
             onPress={() => setCategory(cat)}
+          />
+        ))}
+      </ScrollView>
+
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={{ flexGrow: 0, flexShrink: 0 }}
+        contentContainerStyle={{
+          gap: 8,
+          paddingHorizontal: 16,
+          paddingTop: 8,
+          alignItems: "center",
+        }}
+      >
+        <Chip label="Todos os níveis" selected={nivel === null} onPress={() => setNivel(null)} />
+        {NIVEIS.map((n) => (
+          <Chip
+            key={n}
+            label={capitalize(n)}
+            selected={nivel === n}
+            onPress={() => setNivel(n)}
           />
         ))}
       </ScrollView>

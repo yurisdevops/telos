@@ -26,12 +26,17 @@ export function BodyWeightSection() {
 
   const chartData = useMemo(() => {
     const recent = (rows ?? []).slice(-RECENT_ENTRIES);
-    return recent.map((row) => ({
-      value: row.pesoKg,
-      label: formatDayMonthLabel(parseLocalIsoDate(row.data)),
-      frontColor: colors.accent,
-    }));
+    return recent.map((row) => ({ value: row.pesoKg, data: row.data }));
   }, [rows]);
+
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const selectedEntry = selectedIndex != null ? chartData[selectedIndex] : null;
+
+  const barData = chartData.map((entry, index) => ({
+    value: entry.value,
+    label: formatDayMonthLabel(parseLocalIsoDate(entry.data)),
+    frontColor: index === selectedIndex ? colors.text : colors.accent,
+  }));
 
   const TARGET_SECTIONS = 4;
   const rawMax = Math.max(...chartData.map((d) => d.value), 0);
@@ -65,23 +70,35 @@ export function BodyWeightSection() {
       <Label className="mb-4">Evolução ao longo do tempo</Label>
 
       {chartData.length > 0 ? (
-        <BarChart
-          data={chartData}
-          height={140}
-          barWidth={16}
-          spacing={14}
-          initialSpacing={8}
-          roundedTop
-          hideRules
-          xAxisThickness={1}
-          xAxisColor={colors.border}
-          yAxisThickness={0}
-          yAxisTextStyle={{ color: colors.muted, fontSize: 10 }}
-          xAxisLabelTextStyle={{ color: colors.muted, fontSize: 9 }}
-          maxValue={niceMax}
-          noOfSections={TARGET_SECTIONS}
-          formatYLabel={(label) => formatNumberPtBr(Number(label))}
-        />
+        <>
+          <BarChart
+            data={barData}
+            height={140}
+            barWidth={16}
+            spacing={14}
+            initialSpacing={8}
+            roundedTop
+            hideRules
+            xAxisThickness={1}
+            xAxisColor={colors.border}
+            yAxisThickness={0}
+            yAxisTextStyle={{ color: colors.muted, fontSize: 10 }}
+            xAxisLabelTextStyle={{ color: colors.muted, fontSize: 9 }}
+            maxValue={niceMax}
+            noOfSections={TARGET_SECTIONS}
+            formatYLabel={(label) => formatNumberPtBr(Number(label))}
+            onPress={(_item: unknown, index: number) =>
+              setSelectedIndex((current) => (current === index ? null : index))
+            }
+          />
+          <View className="mt-3 items-center" style={{ minHeight: 20 }}>
+            {selectedEntry && (
+              <Text className="font-body-medium text-sm text-text">
+                {`Peso em ${formatDayMonthLabel(parseLocalIsoDate(selectedEntry.data))}: ${formatNumberPtBr(selectedEntry.value)}kg`}
+              </Text>
+            )}
+          </View>
+        </>
       ) : (
         <Text className="py-8 text-center font-body text-muted">Sem registros de peso ainda.</Text>
       )}

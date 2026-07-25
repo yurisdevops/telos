@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import { Text } from 'react-native';
+import { useMemo, useState } from 'react';
+import { Text, View } from 'react-native';
 import { and, eq, isNotNull, sql } from 'drizzle-orm';
 import { BarChart } from 'react-native-gifted-charts';
 
@@ -7,7 +7,7 @@ import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { db } from '@/db';
 import { sessions, setLogs } from '@/db/schema';
-import { getWeekStartIso } from '@/lib/date';
+import { formatDayMonthLabel, getWeekStartIso, parseLocalIsoDate } from '@/lib/date';
 import { chooseNiceStep, formatNumberPtBr } from '@/lib/format';
 import { useDbQuery } from '@/lib/use-db-query';
 import { buildWeekWindow } from '@/lib/weeks';
@@ -61,8 +61,13 @@ export function DensitySection() {
   }, [rows, weekWindow]);
 
   const hasAny = weeklyAvg.some((week) => week.avg > 0);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const selectedWeek = selectedIndex != null ? weeklyAvg[selectedIndex] : null;
 
-  const barData = weeklyAvg.map((week) => ({ value: Math.round(week.avg), frontColor: colors.accent }));
+  const barData = weeklyAvg.map((week, index) => ({
+    value: Math.round(week.avg),
+    frontColor: index === selectedIndex ? colors.text : colors.accent,
+  }));
   const TARGET_SECTIONS = 4;
   const rawMax = Math.max(...weeklyAvg.map((week) => week.avg), 0);
   const step = chooseNiceStep(rawMax / TARGET_SECTIONS || 1);
@@ -74,22 +79,34 @@ export function DensitySection() {
       <Label className="mb-4">Volume ÷ duração (kg por minuto) · média semanal, últimas {WEEKS_WINDOW} semanas</Label>
 
       {hasAny ? (
-        <BarChart
-          data={barData}
-          height={140}
-          barWidth={16}
-          spacing={14}
-          initialSpacing={8}
-          roundedTop
-          hideRules
-          xAxisThickness={1}
-          xAxisColor={colors.border}
-          yAxisThickness={0}
-          yAxisTextStyle={{ color: colors.muted, fontSize: 10 }}
-          maxValue={niceMax}
-          noOfSections={TARGET_SECTIONS}
-          formatYLabel={(label) => formatNumberPtBr(Number(label))}
-        />
+        <>
+          <BarChart
+            data={barData}
+            height={140}
+            barWidth={16}
+            spacing={14}
+            initialSpacing={8}
+            roundedTop
+            hideRules
+            xAxisThickness={1}
+            xAxisColor={colors.border}
+            yAxisThickness={0}
+            yAxisTextStyle={{ color: colors.muted, fontSize: 10 }}
+            maxValue={niceMax}
+            noOfSections={TARGET_SECTIONS}
+            formatYLabel={(label) => formatNumberPtBr(Number(label))}
+            onPress={(_item: unknown, index: number) =>
+              setSelectedIndex((current) => (current === index ? null : index))
+            }
+          />
+          <View className="mt-3 items-center" style={{ minHeight: 20 }}>
+            {selectedWeek && (
+              <Text className="font-body-medium text-sm text-text">
+                {`Semana de ${formatDayMonthLabel(parseLocalIsoDate(selectedWeek.weekKey))}: ${formatNumberPtBr(Math.round(selectedWeek.avg))} kg/min de média`}
+              </Text>
+            )}
+          </View>
+        </>
       ) : (
         <Text className="py-8 text-center font-body text-muted">
           Sem sessões com duração registrada ainda.

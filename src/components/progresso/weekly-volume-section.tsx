@@ -1,8 +1,9 @@
-import { useMemo } from 'react';
-import { ScrollView, Text } from 'react-native';
+import { useMemo, useState } from 'react';
+import { ScrollView, Text, View } from 'react-native';
 import { eq, sql } from 'drizzle-orm';
 import { BarChart } from 'react-native-gifted-charts';
 
+import { HelpIcon } from '@/components/help-icon';
 import { Card } from '@/components/ui/card';
 import { Chip } from '@/components/ui/chip';
 import { Label } from '@/components/ui/label';
@@ -40,15 +41,23 @@ export function WeeklyVolumeSection() {
   const weekWindow = useMemo(() => buildWeekWindow(WEEKS_WINDOW), []);
 
   const weeklyData = useMemo(() => {
-    const byWeek = new Map<string, number>();
+    const byWeek = new Map<string, { volume: number; sessionCount: number }>();
     for (const row of volumeRows ?? []) {
       const weekKey = getWeekStartIso(row.data);
-      byWeek.set(weekKey, (byWeek.get(weekKey) ?? 0) + Number(row.volume));
+      const entry = byWeek.get(weekKey) ?? { volume: 0, sessionCount: 0 };
+      entry.volume += Number(row.volume);
+      entry.sessionCount += 1;
+      byWeek.set(weekKey, entry);
     }
-    return weekWindow.map((weekKey) => ({ weekKey, volume: byWeek.get(weekKey) ?? 0 }));
+    return weekWindow.map((weekKey) => {
+      const entry = byWeek.get(weekKey);
+      return { weekKey, volume: entry?.volume ?? 0, sessionCount: entry?.sessionCount ?? 0 };
+    });
   }, [volumeRows, weekWindow]);
 
   const hasAnyVolume = weeklyData.some((week) => week.volume > 0);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const selectedWeek = selectedIndex != null ? weeklyData[selectedIndex] : null;
 
   // Show the date on every other bar (always keeping the most recent one
   // labeled) so 10 short labels don't crowd a narrow chart — every bar still
@@ -60,7 +69,7 @@ export function WeeklyVolumeSection() {
     return {
       value: week.volume,
       label: showLabel ? formatDayMonthLabel(parseLocalIsoDate(week.weekKey)) : '',
-      frontColor: isDeload ? colors.warning : colors.accent,
+      frontColor: index === selectedIndex ? colors.text : isDeload ? colors.warning : colors.accent,
     };
   });
 
@@ -87,28 +96,47 @@ export function WeeklyVolumeSection() {
       <Label className="mb-4">{`${VOLUME_LEGEND} · semanas iniciadas na data indicada`}</Label>
 
       {hasAnyVolume ? (
-        <BarChart
-          data={barData}
-          height={160}
-          barWidth={16}
-          spacing={14}
-          initialSpacing={8}
-          roundedTop
-          hideRules
-          xAxisThickness={1}
-          xAxisColor={colors.border}
-          yAxisThickness={0}
-          yAxisTextStyle={{ color: colors.muted, fontSize: 10 }}
-          xAxisLabelTextStyle={{ color: colors.muted, fontSize: 9 }}
-          maxValue={niceMax}
-          noOfSections={TARGET_SECTIONS}
-          formatYLabel={(label) => formatNumberPtBr(Number(label))}
-        />
+        <>
+          <BarChart
+            data={barData}
+            height={160}
+            barWidth={16}
+            spacing={14}
+            initialSpacing={8}
+            roundedTop
+            hideRules
+            xAxisThickness={1}
+            xAxisColor={colors.border}
+            yAxisThickness={0}
+            yAxisTextStyle={{ color: colors.muted, fontSize: 10 }}
+            xAxisLabelTextStyle={{ color: colors.muted, fontSize: 9 }}
+            maxValue={niceMax}
+            noOfSections={TARGET_SECTIONS}
+            formatYLabel={(label) => formatNumberPtBr(Number(label))}
+            onPress={(_item: unknown, index: number) =>
+              setSelectedIndex((current) => (current === index ? null : index))
+            }
+          />
+          <View className="mt-3 items-center" style={{ minHeight: 20 }}>
+            {selectedWeek && (
+              <Text className="font-body-medium text-sm text-text">
+                {`Semana de ${formatDayMonthLabel(parseLocalIsoDate(selectedWeek.weekKey))}: ${formatNumberPtBr(selectedWeek.volume)}kg · ${selectedWeek.sessionCount} ${selectedWeek.sessionCount === 1 ? 'treino' : 'treinos'}`}
+              </Text>
+            )}
+          </View>
+        </>
       ) : (
         <Text className="py-8 text-center font-body text-muted">Sem registros de treino ainda.</Text>
       )}
 
-      <Label className="mb-2 mt-4 text-warning">Marcar semana como deload</Label>
+      <View className="mb-2 mt-4 flex-row items-center gap-1">
+        <Label className="text-warning">Marcar semana como deload</Label>
+        <HelpIcon title="Marcar semana como deload">
+          Isso é 100% manual: você escolhe quando marcar. Não existe nenhuma detecção automática de
+          quando você precisa de um deload. O único efeito é mudar a cor da barra dessa semana pra
+          âmbar no gráfico acima.
+        </HelpIcon>
+      </View>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         {weekWindow.map((weekIso) => (
           <Chip

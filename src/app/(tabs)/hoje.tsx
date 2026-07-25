@@ -267,10 +267,6 @@ function SessionExecution({ session }: { session: Session }) {
   const router = useRouter();
   const now = useNow(1000);
 
-  // Preferência de visão, não persistida entre aberturas do app — mesmo
-  // padrão já usado pro `collapsed` de cada card (useState local).
-  const [modoTreino, setModoTreino] = useState(false);
-
   const { data: dayRows } = useLiveQuery(
     db.select({ label: workoutDays.label }).from(workoutDays).where(eq(workoutDays.id, session.workoutDayId)),
     [session.workoutDayId]
@@ -580,16 +576,9 @@ function SessionExecution({ session }: { session: Session }) {
 
   return (
     <View>
-      <View className="mb-1 flex-row items-center justify-between">
-        <Text className="flex-1 font-display text-5xl uppercase text-text" numberOfLines={1}>
-          {dayLabel}
-        </Text>
-        <Chip
-          label="Modo treino"
-          selected={modoTreino}
-          onPress={() => setModoTreino((m) => !m)}
-        />
-      </View>
+      <Text className="mb-1 font-display text-5xl uppercase text-text" numberOfLines={1}>
+        {dayLabel}
+      </Text>
 
       {session.horaInicio != null && (
         <Label className="mb-1">
@@ -639,7 +628,6 @@ function SessionExecution({ session }: { session: Session }) {
           onUnskip={handleUnskip}
           onRemove={handleRemoveExtra}
           onRequestRest={startRestTimer}
-          modoTreino={modoTreino}
         />
       ))}
 
@@ -699,31 +687,29 @@ function RestTimerOverlay({
         <Label>{isDone ? 'Descanso concluído' : 'Descanso'}</Label>
 
         {isDone ? (
-          <View className="my-6 items-center">
+          <View className="my-6 items-center justify-center rounded-lg border-2 border-success bg-surface px-10 py-8">
             <Ionicons name="checkmark-circle" size={72} color={colors.success} />
           </View>
         ) : (
-          <Text
-            className="my-4 font-display text-8xl text-text"
-            numberOfLines={1}
-            adjustsFontSizeToFit
-          >
-            {formatCountdown(restRemaining)}
-          </Text>
+          <View className="my-6 items-center justify-center rounded-lg border-2 border-accent bg-surface px-10 py-8">
+            <Text
+              className="font-display text-8xl text-accent"
+              numberOfLines={1}
+              adjustsFontSizeToFit
+            >
+              {formatCountdown(restRemaining)}
+            </Text>
+          </View>
         )}
 
         {!isDone && (
           <View className="mb-8 flex-row items-center gap-4">
-            <Pressable
-              onPress={() => onAdjust(-30)}
-              className="rounded border border-border px-6 py-3">
-              <Text className="font-label text-base uppercase text-muted">-30s</Text>
-            </Pressable>
-            <Pressable
-              onPress={() => onAdjust(30)}
-              className="rounded border border-border px-6 py-3">
-              <Text className="font-label text-base uppercase text-muted">+30s</Text>
-            </Pressable>
+            <Button variant="primary" onPress={() => onAdjust(-30)} className="px-8 py-4">
+              <Text className="font-label text-base uppercase tracking-wide text-white">-30s</Text>
+            </Button>
+            <Button variant="primary" onPress={() => onAdjust(30)} className="px-8 py-4">
+              <Text className="font-label text-base uppercase tracking-wide text-white">+30s</Text>
+            </Button>
           </View>
         )}
 
@@ -767,7 +753,6 @@ const ExerciseSessionCard = memo(
     onUnskip,
     onRemove,
     onRequestRest,
-    modoTreino,
   }: {
     item: SessionExerciseItem;
     sessionId: number;
@@ -776,7 +761,6 @@ const ExerciseSessionCard = memo(
     onUnskip: (skipId: number) => void;
     onRemove: (extraId: number, hasLogs: boolean) => void;
     onRequestRest: (suggestedSeconds: number) => void;
-    modoTreino: boolean;
   }) {
     const logsBySerie = useMemo(() => {
       const map = new Map<number, LogEntry>();
@@ -912,7 +896,7 @@ const ExerciseSessionCard = memo(
           </View>
         </Pressable>
 
-        {!modoTreino && (canSkip || canRemove) && (
+        {(canSkip || canRemove) && (
           <Pressable
             onPress={() =>
               item.kind === 'avulso' ? onRemove(item.itemId, isStarted) : onSkip(item.itemId)
@@ -928,10 +912,10 @@ const ExerciseSessionCard = memo(
           <>
             <Label className="mt-1">{targetLabel}</Label>
             {nota && <Label className="mt-1 italic text-muted">{nota}</Label>}
-            {!modoTreino && lastPerformanceLabel && (
+            {lastPerformanceLabel && (
               <Label className="mt-1 text-muted">{`Última vez: ${lastPerformanceLabel}`}</Label>
             )}
-            {!modoTreino && loadSuggestionLabel && (
+            {loadSuggestionLabel && (
               <Label className="mt-1 text-accent">{loadSuggestionLabel}</Label>
             )}
           </>
@@ -939,16 +923,14 @@ const ExerciseSessionCard = memo(
           <>
             <Label className="mt-1">{`Alvo: ${targetLabel}`}</Label>
             {nota && <Label className="mt-1 italic text-muted">{nota}</Label>}
-            {!modoTreino && (
-              <Label className="mt-1 text-muted">
-                {lastPerformanceLabel ? `Última vez: ${lastPerformanceLabel}` : ' '}
-              </Label>
-            )}
-            {!modoTreino && loadSuggestionLabel && (
+            <Label className="mt-1 text-muted">
+              {lastPerformanceLabel ? `Última vez: ${lastPerformanceLabel}` : ' '}
+            </Label>
+            {loadSuggestionLabel ? (
               <Label className="mb-3 mt-1 text-accent">{loadSuggestionLabel}</Label>
+            ) : (
+              <View className="mb-3" />
             )}
-            {!modoTreino && !loadSuggestionLabel && <View className="mb-3" />}
-            {modoTreino && <View className="mb-3" />}
 
             <View className="mb-1 flex-row items-center gap-3">
               <View className="w-16" />
@@ -967,7 +949,6 @@ const ExerciseSessionCard = memo(
                 onRequestRest={handleRequestRest}
                 suggestedRestSeconds={suggestedRestSeconds}
                 showRestButton={item.isLastInSupersetGroup}
-                modoTreino={modoTreino}
                 accessoryViewId={accessoryViewId}
                 registerRepsInput={registerRepsInput}
                 focusReps={focusReps}
@@ -996,7 +977,6 @@ const ExerciseSessionCard = memo(
   },
   (prev, next) =>
     prev.sessionId === next.sessionId &&
-    prev.modoTreino === next.modoTreino &&
     itemsEqual(prev.item, next.item) &&
     logsAreEqual(prev.logs, next.logs)
 );
@@ -1010,7 +990,6 @@ function SetRow({
   onRequestRest,
   suggestedRestSeconds,
   showRestButton,
-  modoTreino,
   accessoryViewId,
   registerRepsInput,
   focusReps,
@@ -1024,7 +1003,6 @@ function SetRow({
   onRequestRest: () => void;
   suggestedRestSeconds: number;
   showRestButton: boolean;
-  modoTreino: boolean;
   accessoryViewId: string;
   registerRepsInput: (numeroSerie: number, ref: TextInput | null) => void;
   focusReps: (numeroSerie: number) => void;
@@ -1128,7 +1106,7 @@ function SetRow({
             inputAccessoryViewID={accessoryViewId}
             keyboardType="number-pad"
             placeholder="0"
-            className={`text-center font-display ${modoTreino ? 'text-4xl' : 'text-2xl'}`}
+            className="text-center font-display text-2xl"
           />
         </View>
         <View className="flex-1">
@@ -1145,7 +1123,7 @@ function SetRow({
             inputAccessoryViewID={accessoryViewId}
             keyboardType="decimal-pad"
             placeholder="0"
-            className={`text-center font-display ${modoTreino ? 'text-4xl' : 'text-2xl'}`}
+            className="text-center font-display text-2xl"
           />
         </View>
       </View>
@@ -1159,7 +1137,7 @@ function SetRow({
         </Pressable>
       )}
 
-      {isFilled && !modoTreino && (
+      {isFilled && (
         <View className="ml-16 mt-2 flex-row gap-2">
           {RPE_CATEGORY_ORDER.map((category) => (
             <Chip
