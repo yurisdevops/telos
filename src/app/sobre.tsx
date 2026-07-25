@@ -26,6 +26,15 @@ export default function SobreScreen() {
     <Screen showBack scrollable>
       <ScreenTitle title="Sobre" subtitle={`Telos · versão ${version}`} />
 
+      <View className="mb-6">
+        <Text className="font-display text-3xl uppercase text-text">Telos</Text>
+        <Text className="mt-2 font-body text-base text-muted">
+          Do grego τέλος — "propósito" ou "objetivo último": a finalidade para a qual algo existe.
+          Cada treino registrado aqui é um passo em direção ao seu — o corpo e a força que você
+          está construindo.
+        </Text>
+      </View>
+
       <Text className="mb-6 font-body text-base text-text">
         Telos é um app de gestão de treino de academia, local-first e totalmente offline —
         catálogo de exercícios, criação de planos, execução de sessões e acompanhamento de
