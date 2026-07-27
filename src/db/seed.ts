@@ -259,27 +259,34 @@ function logAndAlertResult(result: ReconcileResult) {
 /**
  * 2026-07: campo `nivel` adicionado ao catálogo (coluna aditiva, migração
  * 0006). Os wgerId não mudaram, então `alreadyMigrated` abaixo continuaria
- * batendo e puloria o UPDATE que preenche esse campo nas linhas já existentes
- * — por isso esse preenchimento roda à parte, fora do reconcile completo.
- * Idempotente: sai cedo se não houver nada faltando, não apaga nem remapeia
- * nada, só faz UPDATE por wgerId da coluna nova.
+ * batendo e puloria o UPDATE que sincroniza esse campo nas linhas já
+ * existentes — por isso essa sincronização roda à parte, fora do reconcile
+ * completo.
+ *
+ * Sincroniza tanto o preenchimento inicial (nivel NULL) quanto correções
+ * pontuais do seed (uma leva anterior classificou 128 exercícios errado;
+ * dispositivos que já rodaram aquele seed ficaram com o valor antigo
+ * gravado). Só toca a coluna `nivel`, por UPDATE via wgerId — nunca mexe em
+ * id, nas demais colunas de catálogo, nem em tabela de usuário (planos,
+ * séries, histórico). Idempotente: compara em memória antes de escrever, só
+ * gera UPDATE para wgerId cujo nivel gravado diverge do seed atual; roda de
+ * novo sem nada divergente é um no-op (nenhuma escrita).
  */
-function backfillNivel(existingRows: { id: number; wgerId: number; nivel: string | null }[]) {
-  const missing = existingRows.filter((row) => row.nivel == null);
-  if (missing.length === 0) return;
-
+function syncNivelFromSeed(existingRows: { id: number; wgerId: number; nivel: string | null }[]) {
   const nivelByWgerId = new Map((seedData as SeedExercise[]).map((item) => [item.wgerId, item.nivel]));
-  let updated = 0;
+
+  const outOfSync = existingRows.filter((row) => {
+    const seedNivel = nivelByWgerId.get(row.wgerId);
+    return seedNivel !== undefined && seedNivel !== row.nivel;
+  });
+  if (outOfSync.length === 0) return;
+
   db.transaction((tx) => {
-    for (const row of missing) {
-      const nivel = nivelByWgerId.get(row.wgerId);
-      if (nivel != null) {
-        tx.update(exercises).set({ nivel }).where(eq(exercises.id, row.id)).run();
-        updated += 1;
-      }
+    for (const row of outOfSync) {
+      tx.update(exercises).set({ nivel: nivelByWgerId.get(row.wgerId) }).where(eq(exercises.id, row.id)).run();
     }
   });
-  console.log(`[catalog] Campo "nivel" preenchido em ${updated} de ${missing.length} exercício(s) existente(s).`);
+  console.log(`[catalog] Campo "nivel" sincronizado com o seed em ${outOfSync.length} de ${existingRows.length} exercício(s).`);
 }
 
 export function seedDatabase() {
@@ -309,7 +316,7 @@ export function seedDatabase() {
       newWgerIds.every((id) => currentWgerIds.has(id));
 
     if (alreadyMigrated) {
-      backfillNivel(existingRows);
+      syncNivelFromSeed(existingRows);
       return;
     }
 
