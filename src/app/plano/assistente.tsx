@@ -1,12 +1,16 @@
 import { useState } from 'react';
-import { Alert, Text, TextInput, View } from 'react-native';
+import { Text, TextInput, View } from 'react-native';
 
+import { FormModal } from '@/components/form-modal';
 import { Screen } from '@/components/screen';
 import { Button } from '@/components/ui/button';
 import { Chip } from '@/components/ui/chip';
 import { Label } from '@/components/ui/label';
 import { ProgressBar } from '@/components/ui/progress-bar';
 import { ScreenTitle } from '@/components/ui/screen-title';
+import { db } from '@/db';
+import { exercises } from '@/db/schema';
+import { generateWorkout, type GeneratedPlan } from '@/lib/assistant-generator';
 import {
   EXPERIENCE_OPTIONS,
   FREQUENCY_OPTIONS,
@@ -28,6 +32,7 @@ export default function AssistenteScreen() {
   const [objetivo, setObjetivo] = useState<AssistantGoal | null>(null);
   const [frequencia, setFrequencia] = useState<number | null>(null);
   const [experiencia, setExperiencia] = useState<AssistantExperience | null>(null);
+  const [generatedPlan, setGeneratedPlan] = useState<GeneratedPlan | null>(null);
 
   const isSummary = step === TOTAL_QUESTIONS;
   const progress = Math.min(step + 1, TOTAL_QUESTIONS) / TOTAL_QUESTIONS;
@@ -54,11 +59,13 @@ export default function AssistenteScreen() {
       frequencia: frequencia!,
       experiencia: experiencia!,
     };
+    // Consulta única (não-reativa) só pra alimentar a geração — nada é
+    // salvo no banco aqui, é só modo de inspeção temporário.
+    const catalog = db.select().from(exercises).all();
+    const plan = generateWorkout(profile, catalog);
     console.log('[assistente] perfil coletado:', profile);
-    Alert.alert(
-      'Em breve',
-      'A geração automática do plano ainda não está disponível — essa parte vem numa próxima etapa.'
-    );
+    console.log('[assistente] plano gerado:', plan);
+    setGeneratedPlan(plan);
   };
 
   return (
@@ -197,6 +204,48 @@ export default function AssistenteScreen() {
           </Button>
         )}
       </View>
+
+      <FormModal visible={!!generatedPlan} onRequestClose={() => setGeneratedPlan(null)}>
+        <Text className="mb-1 font-label text-xs uppercase tracking-wide text-warning">
+          Modo de inspeção — nada foi salvo
+        </Text>
+        <Text className="mb-4 font-card-title text-xl text-text">{generatedPlan?.nomeSugerido}</Text>
+
+        {generatedPlan?.avisos.map((aviso, index) => (
+          <View key={index} className="mb-2 rounded border-l-4 border-l-warning bg-surface px-3 py-2">
+            <Text className="font-body text-sm text-text">{aviso}</Text>
+          </View>
+        ))}
+
+        {generatedPlan?.dias.map((dia) => (
+          <View key={dia.label} className="mb-4 mt-2">
+            <Text className="mb-2 font-card-title text-base text-text">{dia.label}</Text>
+            {dia.exercises.map((ex) => (
+              <View key={ex.wgerId} className="mb-1 flex-row items-center justify-between">
+                <Text className="flex-1 pr-2 font-body text-sm text-text" numberOfLines={1}>
+                  {ex.nome}
+                </Text>
+                <Label>{`${ex.seriesAlvo}x${ex.repsAlvo}`}</Label>
+              </View>
+            ))}
+          </View>
+        ))}
+
+        {generatedPlan && generatedPlan.trocas.length > 0 && (
+          <View className="mb-4 mt-2">
+            <Text className="mb-2 font-card-title text-base text-text">Trocas feitas</Text>
+            {generatedPlan.trocas.map((troca, index) => (
+              <Text key={index} className="mb-1 font-body text-sm text-muted">
+                {`[${troca.motivo === 'nivel' ? 'nível' : 'altura'}] ${troca.dia}: ${troca.original} → ${troca.substituto}`}
+              </Text>
+            ))}
+          </View>
+        )}
+
+        <Button className="mt-2" onPress={() => setGeneratedPlan(null)}>
+          Fechar
+        </Button>
+      </FormModal>
     </Screen>
   );
 }
