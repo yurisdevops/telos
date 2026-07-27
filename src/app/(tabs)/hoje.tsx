@@ -15,7 +15,7 @@ import { eq, sql } from 'drizzle-orm';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { useRouter } from 'expo-router';
 import { useKeepAwake } from 'expo-keep-awake';
-import { Ionicons } from '@expo/vector-icons';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { Screen } from '@/components/screen';
 import { Button } from '@/components/ui/button';

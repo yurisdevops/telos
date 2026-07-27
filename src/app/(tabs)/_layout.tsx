@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { Alert } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { Tabs } from 'expo-router';
 
 import { useOpenSessionNeedsConfirm } from '@/lib/use-open-session-guard';

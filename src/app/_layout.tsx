@@ -1,11 +1,17 @@
 import '@/global.css';
 
-import {
-  BarlowCondensed_600SemiBold,
-  BarlowCondensed_700Bold,
-  BarlowCondensed_900Black,
-} from '@expo-google-fonts/barlow-condensed';
-import { Inter_400Regular, Inter_500Medium, Inter_600SemiBold } from '@expo-google-fonts/inter';
+// Importa cada peso do seu próprio submódulo (não do índice raiz do pacote)
+// de propósito: o index.js agregado do @expo-google-fonts/* faz require() dos
+// 18 pesos (9 + itálico) incondicionalmente, então importar dali faz o Metro
+// empacotar todos eles mesmo só usando 3 — ~7,8MB de fontes não usadas por
+// família. Importando do submódulo específico, só o peso realmente usado
+// entra no bundle.
+import { BarlowCondensed_600SemiBold } from '@expo-google-fonts/barlow-condensed/600SemiBold';
+import { BarlowCondensed_700Bold } from '@expo-google-fonts/barlow-condensed/700Bold';
+import { BarlowCondensed_900Black } from '@expo-google-fonts/barlow-condensed/900Black';
+import { Inter_400Regular } from '@expo-google-fonts/inter/400Regular';
+import { Inter_500Medium } from '@expo-google-fonts/inter/500Medium';
+import { Inter_600SemiBold } from '@expo-google-fonts/inter/600SemiBold';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';

@@ -8,6 +8,7 @@
     "@expo/vector-icons": "^15.0.2",
     "drizzle-orm": "^0.45.2",
     "expo": "~57.0.7",
+    "expo-build-properties": "~57.0.7",
     "expo-constants": "~57.0.6",
     "expo-dev-client": "~57.0.7",
     "expo-device": "~57.0.1",

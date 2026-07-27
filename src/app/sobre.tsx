@@ -1,7 +1,7 @@
 import { Linking, Pressable, Text, View } from 'react-native';
 import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { Screen } from '@/components/screen';
 import { Card } from '@/components/ui/card';

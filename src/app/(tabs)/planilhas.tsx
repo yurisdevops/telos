@@ -3,6 +3,7 @@ import { FlatList, Pressable, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { eq, sql } from 'drizzle-orm';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { Screen } from '@/components/screen';
 import { Button } from '@/components/ui/button';
@@ -11,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import { ScreenTitle } from '@/components/ui/screen-title';
 import { db } from '@/db';
 import { workoutDayExercises, workoutDays, workoutPlans, type WorkoutPlan } from '@/db/schema';
+import { colors } from '@/theme/tokens';
 
 export default function PlanilhasScreen() {
   const router = useRouter();
@@ -52,6 +54,19 @@ export default function PlanilhasScreen() {
           </Button>
         }
       />
+
+      <Pressable onPress={() => router.push('/plano/assistente')} className="mb-4">
+        <Card className="flex-row items-center gap-3 border-l-4 border-l-accent">
+          <Ionicons name="sparkles-outline" size={26} color={colors.accent} />
+          <View className="flex-1">
+            <Text className="font-card-title text-lg text-text">Montar com assistente</Text>
+            <Label className="mt-1">
+              Responda 5 perguntas rápidas e receba uma sugestão de ponto de partida
+            </Label>
+          </View>
+          <Ionicons name="chevron-forward" size={20} color={colors.muted} />
+        </Card>
+      </Pressable>
 
       <FlatList
         style={{ flex: 1 }}

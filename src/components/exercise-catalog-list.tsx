@@ -2,7 +2,7 @@ import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { useMemo, useState } from "react";
 import { FlatList, Pressable, ScrollView, Text, View } from "react-native";
 import { eq } from "drizzle-orm";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 import { Card } from "@/components/ui/card";
 import { Chip } from "@/components/ui/chip";

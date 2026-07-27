@@ -4,7 +4,7 @@ import { Alert, Linking, Pressable, Text, TextInput, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { eq } from 'drizzle-orm';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
-import { Ionicons } from '@expo/vector-icons';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { LineChart } from 'react-native-gifted-charts';
 
 import { ExerciseCatalogList } from '@/components/exercise-catalog-list';
