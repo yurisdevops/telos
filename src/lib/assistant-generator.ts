@@ -77,6 +77,61 @@ function allowedLevels(experiencia: AssistantExperience): Set<AssistantExperienc
   return new Set(['iniciante', 'intermediario', 'avancado']);
 }
 
+type KeyCompoundRule = {
+  categoria: string;
+  matches: (nomeNormalizado: string) => boolean;
+};
+
+/**
+ * Compostos fundamentais liberados pro iniciante mesmo quando classificados
+ * "intermediário" no catálogo. Sem essa exceção, NENHUM composto livre
+ * apareceria pra quem está começando — a classificação de nível (Onda de
+ * catálogo anterior) marca todo composto livre como "intermediário" por
+ * definição, então "iniciante só aceita nível iniciante" colapsava o Full
+ * Body inteiro em máquinas/isoladores, sem nenhuma âncora.
+ *
+ * Nunca libera nível "avançado" (checado à parte, em `isKeyCompoundForIniciante`),
+ * nem terra convencional, nem levantamento olímpico, nem variação técnica
+ * (agachamento frontal, búlgaro, afundo, sumô) — só o padrão básico com carga
+ * controlável, exatamente os 5 pedidos: agachamento (barra/Smith), supino
+ * reto, remada curvada/apoio no peito, desenvolvimento de ombro, puxada alta.
+ */
+const INICIANTE_KEY_COMPOUND_RULES: KeyCompoundRule[] = [
+  {
+    categoria: 'Pernas',
+    matches: (n) =>
+      n.includes('agachamento') &&
+      (n.includes('barra') || n.includes('smith') || n.includes('livre')) &&
+      !n.includes('frontal') &&
+      !n.includes('bulgaro') &&
+      !n.includes('afundo') &&
+      !n.includes('sumo'),
+  },
+  {
+    categoria: 'Peito',
+    matches: (n) => n.includes('supino') && n.includes('reto'),
+  },
+  {
+    categoria: 'Costas',
+    matches: (n) =>
+      n.includes('remada') &&
+      (n.includes('curvada') || n.includes('cavalinho') || (n.includes('apoio') && n.includes('peito'))),
+  },
+  {
+    categoria: 'Ombros',
+    matches: (n) => n.includes('desenvolvimento'),
+  },
+  {
+    categoria: 'Costas',
+    matches: (n) => n.includes('puxada alta') || n.includes('puxada frontal') || n.includes('pulldown'),
+  },
+];
+
+function isKeyCompoundForIniciante(exercise: Exercise): boolean {
+  const nome = normalize(exercise.nome);
+  return INICIANTE_KEY_COMPOUND_RULES.some((rule) => rule.categoria === exercise.categoria && rule.matches(nome));
+}
+
 function parseMuscles(json: string): string[] {
   try {
     return JSON.parse(json);
@@ -194,13 +249,19 @@ function baseDaysForFrequency(frequenciaEfetiva: number): BaseDayDef[] {
 }
 
 /** Busca um substituto de mesma categoria + músculo em comum, dentro dos
- * níveis permitidos, excluindo o que já está no dia. Ordenado por wgerId
- * pra ser 100% determinístico independente da ordem de `catalog`. */
+ * níveis permitidos, excluindo o que já está no dia. Candidatos ordenados por
+ * wgerId (base determinística, independente da ordem de `catalog`), mas o
+ * ESCOLHIDO roda por `dayIndex % candidates.length` em vez de ser sempre o
+ * primeiro — senão o mesmo original vira sempre o mesmo substituto em todo
+ * dia do plano (Full Body A/B/C colapsando em quase o mesmo dia repetido).
+ * Continua determinístico: mesmo perfil + catálogo produz sempre o mesmo
+ * plano, só que agora varia ENTRE os dias quando há mais de um candidato. */
 function findLevelSubstitute(
   original: Exercise,
   catalog: Exercise[],
   allowed: Set<AssistantExperience>,
-  excludeWgerIds: Set<number>
+  excludeWgerIds: Set<number>,
+  dayIndex: number
 ): Exercise | null {
   const originalMuscles = parseMuscles(original.musculos);
   const candidates = catalog
@@ -212,7 +273,8 @@ function findLevelSubstitute(
     })
     .filter((ex) => parseMuscles(ex.musculos).some((m) => originalMuscles.includes(m)))
     .sort((a, b) => a.wgerId - b.wgerId);
-  return candidates[0] ?? null;
+  if (candidates.length === 0) return null;
+  return candidates[dayIndex % candidates.length];
 }
 
 type HeightSwapRule = {
@@ -269,7 +331,8 @@ function buildDay(
   catalog: Exercise[],
   allowed: Set<AssistantExperience>,
   avisos: string[],
-  trocas: ExerciseSwap[]
+  trocas: ExerciseSwap[],
+  dayIndex: number
 ): GeneratedDay {
   const usedInDay = new Set<number>();
   const resultExercises: GeneratedExercise[] = [];
@@ -286,9 +349,16 @@ function buildDay(
     // nível é permitido), então nem entra nesse bloco.
     if (profile.experiencia !== 'avancado') {
       const nivelAtual = normalizeNivel(exercise.nivel);
-      const nivelPermitido = nivelAtual !== null && allowed.has(nivelAtual);
+      // Composto-chave liberado pro iniciante mesmo em nível "intermediário"
+      // (nunca em "avançado") — só se aplica à experiência iniciante, então
+      // não muda nada pro caminho de intermediário.
+      const liberadoComoChave =
+        profile.experiencia === 'iniciante' &&
+        (nivelAtual === 'iniciante' || nivelAtual === 'intermediario') &&
+        isKeyCompoundForIniciante(exercise);
+      const nivelPermitido = liberadoComoChave || (nivelAtual !== null && allowed.has(nivelAtual));
       if (!nivelPermitido) {
-        const substituto = findLevelSubstitute(exercise, catalog, allowed, usedInDay);
+        const substituto = findLevelSubstitute(exercise, catalog, allowed, usedInDay, dayIndex);
         if (substituto) {
           trocas.push({ dia: label, motivo: 'nivel', original: exercise.nome, substituto: substituto.nome });
           usedInDay.delete(exercise.wgerId);
@@ -352,8 +422,8 @@ export function generateWorkout(profile: AssistantProfile, catalog: Exercise[]):
   const catalogByWgerId = new Map(catalog.map((ex) => [ex.wgerId, ex]));
 
   const baseDays = baseDaysForFrequency(frequenciaEfetiva);
-  const dias = baseDays.map((day) =>
-    buildDay(day.label, day.exercises, profile, catalogByWgerId, catalog, allowed, avisos, trocas)
+  const dias = baseDays.map((day, dayIndex) =>
+    buildDay(day.label, day.exercises, profile, catalogByWgerId, catalog, allowed, avisos, trocas, dayIndex)
   );
 
   return {
