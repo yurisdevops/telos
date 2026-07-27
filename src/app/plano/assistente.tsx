@@ -1,6 +1,9 @@
 import { useState } from 'react';
-import { Text, TextInput, View } from 'react-native';
+import { Alert, Pressable, Text, TextInput, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
+import { ExerciseCatalogList } from '@/components/exercise-catalog-list';
 import { FormModal } from '@/components/form-modal';
 import { Screen } from '@/components/screen';
 import { Button } from '@/components/ui/button';
@@ -9,8 +12,15 @@ import { Label } from '@/components/ui/label';
 import { ProgressBar } from '@/components/ui/progress-bar';
 import { ScreenTitle } from '@/components/ui/screen-title';
 import { db } from '@/db';
-import { exercises } from '@/db/schema';
-import { generateWorkout, type GeneratedPlan } from '@/lib/assistant-generator';
+import { exercises, workoutPlans, type Exercise } from '@/db/schema';
+import { applyGeneratedPlan } from '@/db/templates';
+import {
+  computeTargets,
+  generateWorkout,
+  parseRepsRangeToInt,
+  type ExerciseSwap,
+  type GeneratedDay,
+} from '@/lib/assistant-generator';
 import {
   EXPERIENCE_OPTIONS,
   FREQUENCY_OPTIONS,
@@ -24,7 +34,10 @@ import { colors } from '@/theme/tokens';
 
 const TOTAL_QUESTIONS = 5;
 
+type ExerciseTarget = { dayIndex: number; exerciseIndex: number };
+
 export default function AssistenteScreen() {
+  const router = useRouter();
   const [step, setStep] = useState(0);
 
   const [alturaText, setAlturaText] = useState('');
@@ -32,7 +45,19 @@ export default function AssistenteScreen() {
   const [objetivo, setObjetivo] = useState<AssistantGoal | null>(null);
   const [frequencia, setFrequencia] = useState<number | null>(null);
   const [experiencia, setExperiencia] = useState<AssistantExperience | null>(null);
-  const [generatedPlan, setGeneratedPlan] = useState<GeneratedPlan | null>(null);
+
+  const [profile, setProfile] = useState<AssistantProfile | null>(null);
+  const [reviewOpen, setReviewOpen] = useState(false);
+  const [planName, setPlanName] = useState('');
+  const [draftDays, setDraftDays] = useState<GeneratedDay[]>([]);
+  const [avisos, setAvisos] = useState<string[]>([]);
+  const [trocas, setTrocas] = useState<ExerciseSwap[]>([]);
+
+  const [editingTarget, setEditingTarget] = useState<ExerciseTarget | null>(null);
+  const [editSeries, setEditSeries] = useState('');
+  const [editReps, setEditReps] = useState('');
+
+  const [swapTarget, setSwapTarget] = useState<ExerciseTarget | null>(null);
 
   const isSummary = step === TOTAL_QUESTIONS;
   const progress = Math.min(step + 1, TOTAL_QUESTIONS) / TOTAL_QUESTIONS;
@@ -52,21 +77,308 @@ export default function AssistenteScreen() {
   const handleGenerate = () => {
     // objetivo/frequencia/experiencia já são garantidos não-nulos aqui — não
     // dá pra chegar no resumo sem passar pela validação de cada etapa.
-    const profile: AssistantProfile = {
+    const nextProfile: AssistantProfile = {
       alturaCm: parseOptionalNumber(alturaText),
       pesoKg: parseOptionalNumber(pesoText),
       objetivo: objetivo!,
       frequencia: frequencia!,
       experiencia: experiencia!,
     };
-    // Consulta única (não-reativa) só pra alimentar a geração — nada é
-    // salvo no banco aqui, é só modo de inspeção temporário.
+    // Consulta única (não-reativa) só pra alimentar a geração.
     const catalog = db.select().from(exercises).all();
-    const plan = generateWorkout(profile, catalog);
-    console.log('[assistente] perfil coletado:', profile);
-    console.log('[assistente] plano gerado:', plan);
-    setGeneratedPlan(plan);
+    const plan = generateWorkout(nextProfile, catalog);
+    setProfile(nextProfile);
+    setPlanName(plan.nomeSugerido);
+    setDraftDays(plan.dias.map((dia) => ({ label: dia.label, exercises: [...dia.exercises] })));
+    setAvisos(plan.avisos);
+    setTrocas(plan.trocas);
+    setReviewOpen(true);
   };
+
+  const handleRemoveExercise = (target: ExerciseTarget) => {
+    const exercise = draftDays[target.dayIndex]?.exercises[target.exerciseIndex];
+    if (!exercise) return;
+    Alert.alert('Remover exercício', `Remover "${exercise.nome}" deste dia?`, [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Remover',
+        style: 'destructive',
+        onPress: () => {
+          setDraftDays((days) =>
+            days.map((day, i) =>
+              i === target.dayIndex
+                ? { ...day, exercises: day.exercises.filter((_, j) => j !== target.exerciseIndex) }
+                : day
+            )
+          );
+        },
+      },
+    ]);
+  };
+
+  const openEditExercise = (target: ExerciseTarget) => {
+    const exercise = draftDays[target.dayIndex]?.exercises[target.exerciseIndex];
+    if (!exercise) return;
+    setEditingTarget(target);
+    setEditSeries(String(exercise.seriesAlvo));
+    setEditReps(exercise.repsAlvo);
+  };
+
+  const handleEditExerciseConfirm = () => {
+    if (!editingTarget) return;
+    const seriesNum = Number(editSeries);
+    const repsText = editReps.trim();
+    if (!seriesNum || !repsText) return;
+    setDraftDays((days) =>
+      days.map((day, i) =>
+        i === editingTarget.dayIndex
+          ? {
+              ...day,
+              exercises: day.exercises.map((ex, j) =>
+                j === editingTarget.exerciseIndex ? { ...ex, seriesAlvo: seriesNum, repsAlvo: repsText } : ex
+              ),
+            }
+          : day
+      )
+    );
+    setEditingTarget(null);
+  };
+
+  const handleSelectSubstitute = (exercise: Exercise) => {
+    if (!swapTarget || !profile) return;
+    const targets = computeTargets(profile, exercise);
+    setDraftDays((days) =>
+      days.map((day, i) =>
+        i === swapTarget.dayIndex
+          ? {
+              ...day,
+              exercises: day.exercises.map((ex, j) =>
+                j === swapTarget.exerciseIndex
+                  ? {
+                      wgerId: exercise.wgerId,
+                      nome: exercise.nome,
+                      seriesAlvo: targets.seriesAlvo,
+                      repsAlvo: targets.repsAlvo,
+                      cargaAlvo: null,
+                    }
+                  : ex
+              ),
+            }
+          : day
+      )
+    );
+    setSwapTarget(null);
+  };
+
+  const handleCancelReview = () => {
+    Alert.alert('Descartar sugestão?', 'O plano gerado não será salvo.', [
+      { text: 'Continuar editando', style: 'cancel' },
+      { text: 'Descartar', style: 'destructive', onPress: () => setReviewOpen(false) },
+    ]);
+  };
+
+  const showTrocasDetail = (motivo: ExerciseSwap['motivo']) => {
+    const items = trocas.filter((t) => t.motivo === motivo);
+    if (items.length === 0) return;
+    const message = items.map((t) => `${t.dia}: ${t.original} → ${t.substituto}`).join('\n');
+    Alert.alert(motivo === 'altura' ? 'Ajustes por altura' : 'Ajustes por nível de experiência', message);
+  };
+
+  const handleSavePlan = () => {
+    const trimmedName = planName.trim();
+    if (!trimmedName) return;
+    try {
+      const planId = db.transaction((tx) => {
+        const created = tx
+          .insert(workoutPlans)
+          .values({ nome: trimmedName, tipo: 'Assistente', criadoEm: new Date().toISOString() })
+          .returning()
+          .get();
+
+        // Mesma sequência de persistência de applyTemplate/plano/novo.tsx —
+        // aqui só reduz a faixa de reps do gerador ("8-12") ao inteiro que o
+        // schema espera antes de repassar pra applyGeneratedPlan.
+        applyGeneratedPlan(
+          tx,
+          created.id,
+          draftDays.map((day) => ({
+            label: day.label,
+            exercises: day.exercises.map((ex) => ({
+              wgerId: ex.wgerId,
+              seriesAlvo: ex.seriesAlvo,
+              repsAlvo: parseRepsRangeToInt(ex.repsAlvo),
+            })),
+          }))
+        );
+
+        return created.id;
+      });
+      router.replace({ pathname: '/plano/[id]', params: { id: String(planId) } });
+    } catch (err) {
+      console.error('Falha ao salvar plano do assistente:', err);
+      Alert.alert('Erro ao salvar plano', String(err instanceof Error ? err.message : err));
+    }
+  };
+
+  if (reviewOpen && swapTarget) {
+    return (
+      <Screen>
+        <Pressable
+          onPress={() => setSwapTarget(null)}
+          hitSlop={8}
+          className="mb-2 flex-row items-center gap-1 self-start">
+          <Ionicons name="chevron-back" size={22} color={colors.muted} />
+          <Text className="font-body text-base text-muted">Voltar</Text>
+        </Pressable>
+
+        <ScreenTitle title="Trocar exercício" />
+
+        <ExerciseCatalogList
+          onSelectExercise={handleSelectSubstitute}
+          onViewDetails={(exercise) =>
+            router.push({ pathname: '/exercicio/[id]', params: { id: String(exercise.id) } })
+          }
+        />
+      </Screen>
+    );
+  }
+
+  if (reviewOpen) {
+    const hasAltura = trocas.some((t) => t.motivo === 'altura');
+    const hasNivel = trocas.some((t) => t.motivo === 'nivel');
+
+    return (
+      <Screen scrollable>
+        <Pressable
+          onPress={handleCancelReview}
+          hitSlop={8}
+          className="mb-2 flex-row items-center gap-1 self-start">
+          <Ionicons name="chevron-back" size={22} color={colors.muted} />
+          <Text className="font-body text-base text-muted">Cancelar</Text>
+        </Pressable>
+
+        <ScreenTitle title="Revisar plano" subtitle="Sugestão do assistente" />
+
+        <View className="mb-4 rounded border-l-4 border-l-accent bg-surface px-3 py-2">
+          <Text className="font-body text-sm text-muted">
+            Isso é só um ponto de partida sugerido — revise, ajuste o que quiser e salve quando estiver de
+            acordo.
+          </Text>
+        </View>
+
+        <Label className="mb-1">Nome do plano</Label>
+        <TextInput
+          value={planName}
+          onChangeText={setPlanName}
+          className="mb-4 rounded border border-border bg-surface px-4 py-3 font-body text-base text-text"
+        />
+
+        {avisos.map((aviso, index) => (
+          <View key={index} className="mb-2 rounded border-l-4 border-l-warning bg-surface px-3 py-2">
+            <Text className="font-body text-sm text-text">{aviso}</Text>
+          </View>
+        ))}
+
+        {hasAltura && (
+          <Pressable
+            onPress={() => showTrocasDetail('altura')}
+            className="mb-2 rounded border-l-4 border-l-accent bg-surface px-3 py-2">
+            <Text className="font-body text-sm text-muted">
+              Ajustamos alguns exercícios pensando na sua altura — toque para saber mais
+            </Text>
+          </Pressable>
+        )}
+
+        {hasNivel && (
+          <Pressable
+            onPress={() => showTrocasDetail('nivel')}
+            className="mb-2 rounded border-l-4 border-l-accent bg-surface px-3 py-2">
+            <Text className="font-body text-sm text-muted">
+              Trocamos alguns exercícios pra combinar com seu nível de experiência — toque para saber mais
+            </Text>
+          </Pressable>
+        )}
+
+        {draftDays.map((day, dayIndex) => (
+          <View key={`${day.label}-${dayIndex}`} className="mb-4 mt-2">
+            <Text className="mb-2 font-card-title text-base text-text">{day.label}</Text>
+
+            {day.exercises.map((ex, exerciseIndex) => (
+              <View
+                key={`${ex.wgerId}-${exerciseIndex}`}
+                className="mb-2 flex-row items-center justify-between rounded border border-border bg-bg px-3 py-2">
+                <Pressable
+                  className="flex-1 flex-row items-center justify-between pr-2"
+                  onPress={() => openEditExercise({ dayIndex, exerciseIndex })}>
+                  <Text className="flex-1 pr-2 font-body-medium text-base text-text" numberOfLines={1}>
+                    {ex.nome}
+                  </Text>
+                  <Text className="font-display text-lg text-text" numberOfLines={1}>
+                    {`${ex.seriesAlvo}x${ex.repsAlvo}`}
+                  </Text>
+                </Pressable>
+                <Pressable
+                  onPress={() => setSwapTarget({ dayIndex, exerciseIndex })}
+                  hitSlop={6}
+                  className="ml-2 p-1">
+                  <Ionicons name="swap-horizontal" size={20} color={colors.muted} />
+                </Pressable>
+                <Pressable
+                  onPress={() => handleRemoveExercise({ dayIndex, exerciseIndex })}
+                  hitSlop={6}
+                  className="ml-1 p-1">
+                  <Ionicons name="trash-outline" size={20} color={colors.muted} />
+                </Pressable>
+              </View>
+            ))}
+
+            {day.exercises.length === 0 && (
+              <Text className="font-body text-sm text-muted">Nenhum exercício neste dia.</Text>
+            )}
+          </View>
+        ))}
+
+        <Button className="mt-2" disabled={!planName.trim()} onPress={handleSavePlan}>
+          Salvar plano
+        </Button>
+        <Button variant="secondary" className="mt-2" onPress={handleCancelReview}>
+          Cancelar
+        </Button>
+
+        <FormModal visible={!!editingTarget} onRequestClose={() => setEditingTarget(null)}>
+          <Text className="mb-3 font-card-title text-lg text-text">
+            {editingTarget ? draftDays[editingTarget.dayIndex]?.exercises[editingTarget.exerciseIndex]?.nome : ''}
+          </Text>
+
+          <Label className="mb-1">Séries</Label>
+          <TextInput
+            value={editSeries}
+            onChangeText={setEditSeries}
+            keyboardType="number-pad"
+            className="mb-3 rounded border border-border bg-surface px-4 py-3 font-body text-base text-text"
+          />
+
+          <Label className="mb-1">Repetições</Label>
+          <TextInput
+            value={editReps}
+            onChangeText={setEditReps}
+            placeholder="Ex: 8-12"
+            placeholderTextColor={colors.muted}
+            className="mb-4 rounded border border-border bg-surface px-4 py-3 font-body text-base text-text"
+          />
+
+          <View className="flex-row gap-2">
+            <Button variant="secondary" className="flex-1" onPress={() => setEditingTarget(null)}>
+              Cancelar
+            </Button>
+            <Button className="flex-1" onPress={handleEditExerciseConfirm}>
+              Salvar
+            </Button>
+          </View>
+        </FormModal>
+      </Screen>
+    );
+  }
 
   return (
     <Screen showBack scrollable>
@@ -204,48 +516,6 @@ export default function AssistenteScreen() {
           </Button>
         )}
       </View>
-
-      <FormModal visible={!!generatedPlan} onRequestClose={() => setGeneratedPlan(null)}>
-        <Text className="mb-1 font-label text-xs uppercase tracking-wide text-warning">
-          Modo de inspeção — nada foi salvo
-        </Text>
-        <Text className="mb-4 font-card-title text-xl text-text">{generatedPlan?.nomeSugerido}</Text>
-
-        {generatedPlan?.avisos.map((aviso, index) => (
-          <View key={index} className="mb-2 rounded border-l-4 border-l-warning bg-surface px-3 py-2">
-            <Text className="font-body text-sm text-text">{aviso}</Text>
-          </View>
-        ))}
-
-        {generatedPlan?.dias.map((dia) => (
-          <View key={dia.label} className="mb-4 mt-2">
-            <Text className="mb-2 font-card-title text-base text-text">{dia.label}</Text>
-            {dia.exercises.map((ex) => (
-              <View key={ex.wgerId} className="mb-1 flex-row items-center justify-between">
-                <Text className="flex-1 pr-2 font-body text-sm text-text" numberOfLines={1}>
-                  {ex.nome}
-                </Text>
-                <Label>{`${ex.seriesAlvo}x${ex.repsAlvo}`}</Label>
-              </View>
-            ))}
-          </View>
-        ))}
-
-        {generatedPlan && generatedPlan.trocas.length > 0 && (
-          <View className="mb-4 mt-2">
-            <Text className="mb-2 font-card-title text-base text-text">Trocas feitas</Text>
-            {generatedPlan.trocas.map((troca, index) => (
-              <Text key={index} className="mb-1 font-body text-sm text-muted">
-                {`[${troca.motivo === 'nivel' ? 'nível' : 'altura'}] ${troca.dia}: ${troca.original} → ${troca.substituto}`}
-              </Text>
-            ))}
-          </View>
-        )}
-
-        <Button className="mt-2" onPress={() => setGeneratedPlan(null)}>
-          Fechar
-        </Button>
-      </FormModal>
     </Screen>
   );
 }

@@ -192,3 +192,54 @@ export function applyTemplate(tx: Tx, planId: number, templateKey: TemplateKey) 
     });
   });
 }
+
+/** Mesmo formato de dia/exercício de `Template`, mas vindo do gerador do
+ * assistente (`generateWorkout`) em vez de um `TEMPLATES[key]` fixo — a faixa
+ * de reps já deve ter sido reduzida a um inteiro (`parseRepsRangeToInt` em
+ * assistant-generator.ts) antes de chegar aqui. Tipo estrutural (sem importar
+ * de assistant-generator.ts) pra não criar dependência circular entre os dois
+ * módulos. */
+type GeneratedPlanDay = {
+  label: string;
+  exercises: { wgerId: number; seriesAlvo: number; repsAlvo: number }[];
+};
+
+/** Aplica o plano montado pelo assistente a um plano recém-criado — mesma
+ * sequência de inserts de `applyTemplate` (mapa wgerId→id, cria o dia, insere
+ * cada exercício, pula silenciosamente o que não existir mais no catálogo),
+ * só que os dias vêm já resolvidos (com trocas/remoções já aplicadas na tela
+ * de revisão) em vez de olhar pra `TEMPLATES`. */
+export function applyGeneratedPlan(tx: Tx, planId: number, days: GeneratedPlanDay[]) {
+  const wgerIdMap = new Map(
+    tx
+      .select({ id: exercises.id, wgerId: exercises.wgerId })
+      .from(exercises)
+      .all()
+      .map((row) => [row.wgerId, row.id])
+  );
+
+  days.forEach((day, dayIndex) => {
+    const createdDay = tx
+      .insert(workoutDays)
+      .values({ planId, label: day.label, ordem: dayIndex })
+      .returning()
+      .get();
+
+    day.exercises.forEach((exercise, exerciseIndex) => {
+      const exerciseId = wgerIdMap.get(exercise.wgerId);
+      if (exerciseId === undefined) return;
+
+      tx.insert(workoutDayExercises)
+        .values({
+          dayId: createdDay.id,
+          exerciseId,
+          seriesAlvo: exercise.seriesAlvo,
+          repsAlvo: exercise.repsAlvo,
+          cargaAlvo: null,
+          ordem: exerciseIndex,
+          supersetGroup: null,
+        })
+        .run();
+    });
+  });
+}

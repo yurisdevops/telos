@@ -164,6 +164,35 @@ function repsForGoal(objetivo: AssistantGoal, isCompound: boolean): string {
   }
 }
 
+/** Séries/reps que o gerador aplicaria a `exercise` dentro de `profile` — usado
+ * pela tela de revisão pra calcular o alvo de um exercício escolhido na troca
+ * manual (mesma regra de composto/isolado usada em `buildDay`). */
+export function computeTargets(
+  profile: AssistantProfile,
+  exercise: Exercise
+): { seriesAlvo: number; repsAlvo: string } {
+  const pattern = classifyMovementPattern(exercise);
+  const isCompound = pattern !== null && pattern !== 'isolado';
+  return {
+    seriesAlvo: seriesForExperience(profile.experiencia, isCompound),
+    repsAlvo: repsForGoal(profile.objetivo, isCompound),
+  };
+}
+
+/** Reduz a faixa de reps do gerador (ex: "8-12") a um único inteiro pra
+ * persistir no schema atual (`workoutDayExercises.repsAlvo` é `integer`).
+ * Guarda o limite SUPERIOR da faixa: a sugestão de carga (`suggest-load.ts`)
+ * só recomenda subir peso quando todas as séries baterem o alvo de reps, então
+ * guardar o topo da faixa deixa o usuário progredir dentro dela antes de a
+ * carga ser reajustada. Aceita também um número isolado (sem "-"); se não der
+ * pra interpretar, cai num valor padrão seguro. */
+export function parseRepsRangeToInt(repsText: string): number {
+  const match = repsText.match(/(\d+)\s*-\s*(\d+)/);
+  if (match) return Number(match[2]);
+  const single = Number(repsText);
+  return Number.isFinite(single) && single > 0 ? single : 12;
+}
+
 /**
  * Se o template pedir mais dias do que o recomendável pro nível do usuário,
  * usa um teto — nunca gera 5-6 dias pra quem está começando. Devolve a
