@@ -82,7 +82,7 @@
     "musculos_secundarios": [],
     "descricao": "Ajoelhado, segure a barra no chão com pegada na largura dos ombros. Role a barra para a frente estendendo o corpo com o abdômen contraído e retorne puxando com o core.",
     "dica": "Mantenha o quadril levemente à frente e as costelas 'fechadas': o alongamento máximo do abdômen no ponto mais distante é onde está o estímulo — vá só até onde controla a volta.",
-    "nivel": "iniciante"
+    "nivel": "avançado"
   },
   {
     "wgerId": 43,
@@ -256,7 +256,7 @@
     ],
     "descricao": "Deitado no banco com os pés firmes no chão, desça a barra controladamente até o peito e empurre de volta até a extensão dos cotovelos, mantendo escápulas retraídas.",
     "dica": "Desça em 2–3 segundos com os cotovelos a ~45–70° do tronco e toque o peito na altura dos mamilos: o alongamento do peitoral sob controle vale mais que carga com quique.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 75,
@@ -276,7 +276,7 @@
     ],
     "descricao": "O movimento é muito semelhante ao supino com barra; no entanto, o peso é abaixado até o peito em um ponto mais baixo. Segure dois halteres e deite-se em um banco. Mantenha os pesos próximos ao peito, na altura dos mamilos, e empurre-os para cima até que os braços fiquem estendidos. Abaixe o peso de forma lenta e controlada.",
     "dica": "Halteres descem mais fundo que a barra: aproveite o alongamento extra do peitoral com descida de 2–3 segundos.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 76,
@@ -296,7 +296,7 @@
     ],
     "descricao": "Deitado no banco, segure a barra com as mãos na largura dos ombros ou pouco menos. Desça ao peito com os cotovelos próximos ao corpo e empurre de volta.",
     "dica": "Cotovelos junto ao tronco transferem o trabalho para o tríceps; desça devagar e evite abrir a pegada demais para não virar supino comum.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 79,
@@ -518,7 +518,7 @@
     ],
     "descricao": "Sentado na máquina de supino com as manoplas na altura do peito, empurre até a extensão dos cotovelos e retorne de forma controlada.",
     "dica": "Ajuste o banco para as manoplas ficarem na linha do peito médio; retorne devagar até sentir o peitoral alongar sem perder a tensão.",
-    "nivel": "avançado"
+    "nivel": "iniciante"
   },
   {
     "wgerId": 132,
@@ -537,7 +537,7 @@
     ],
     "descricao": "Posição inicial: Fique de pé reto, com os pés afastados alinhados ao quadris. Passos: • Se agache e se apoie com as mãos no chão entre os joelhos e a frente de seus pés, mantendo as costas retas. • Mantendo as mãos no chão, pule jogando as pernas para trás para a posição de prancha altas. • Faça uma flexão de braços. • Pule os pés para frente para voltar à posição de agachamento. • Repita.",
     "dica": "Ritmo constante e peito tocando o chão de verdade: o burpee bem feito é o cardio mais honesto que existe.",
-    "nivel": "intermediário"
+    "nivel": "avançado"
   },
   {
     "wgerId": 135,
@@ -720,7 +720,7 @@
     ],
     "descricao": "Deitado transversalmente no banco com apenas as costas apoiadas, segure um halter acima do peito e desça-o por trás da cabeça em arco, retornando pela mesma trajetória.",
     "dica": "Desça em 3 segundos até o alongamento máximo do dorsal e do peitoral com as costelas 'fechadas': o pullover vive da fase de alongamento.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 165,
@@ -906,7 +906,7 @@
     ],
     "descricao": "No banco declinado, desça a barra controladamente até a parte baixa do peito e empurre de volta até a extensão.",
     "dica": "O declínio enfatiza o peitoral inferior com trajetória mais curta: desça devagar e não deixe a barra quicar no peito.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 186,
@@ -925,7 +925,7 @@
     ],
     "descricao": "No banco declinado com um halter em cada mão, desça-os até a linha do peito alongando o peitoral e empurre de volta juntando levemente os halteres no topo.",
     "dica": "Aproxime os halteres no topo sem bater um no outro: essa adução final é onde o peitoral atinge o pico de contração.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 189,
@@ -984,7 +984,7 @@
     ],
     "descricao": "Levante-se em barras paralelas mantenha pressionado por 1 segundo, abaixe lentamente e controle por 4 segundos, depois volte sem descanso",
     "dica": "Tronco inclinado à frente pega mais peito; vertical, mais tríceps — desça até o ombro na linha do cotovelo.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 197,
@@ -1318,7 +1318,7 @@
     ],
     "descricao": "Com a barra apoiada nos deltoides anteriores e cotovelos altos, agache mantendo o tronco o mais vertical possível e suba empurrando o chão.",
     "dica": "Cotovelos altos o tempo todo: se eles caírem, a barra rola. O front squat é o rei do quadríceps com tronco vertical.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 258,
@@ -1411,7 +1411,7 @@
     ],
     "descricao": "Em pé com a barra nas costas e joelhos semiflexionados, incline o tronco à frente empurrando o quadril para trás com a coluna neutra, e retorne contraindo glúteos e posteriores.",
     "dica": "Desça até sentir os posteriores alongarem de verdade (tronco ~paralelo): o bom dia é dobradiça de quadril pura — quadril para trás, não tronco para baixo.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 272,
@@ -1516,7 +1516,7 @@
     ],
     "descricao": "Salte no lugar elevando os joelhos à altura do quadril alternadamente em ritmo acelerado.",
     "dica": "Aterrisse na ponta dos pés com joelhos macios: o objetivo é elevação rápida de frequência cardíaca com impacto controlado.",
-    "nivel": "avançado"
+    "nivel": "iniciante"
   },
   {
     "wgerId": 291,
@@ -1586,7 +1586,7 @@
     "musculos_secundarios": [],
     "descricao": "Deitado de costas, eleve pernas e ombros do chão formando um 'C' com o corpo, braços estendidos atrás da cabeça, e sustente a posição.",
     "dica": "Lombar pressionada no chão define a qualidade: se ela descolar, dobre os joelhos ou aproxime os braços do corpo.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 301,
@@ -1604,7 +1604,7 @@
     ],
     "descricao": "No banco romano com o quadril apoiado, desça o tronco à frente com a coluna neutra e suba até o alinhamento do corpo contraindo lombar e glúteos.",
     "dica": "Suba até a linha reta, sem hiperestender: para focar glúteos, arredonde levemente o alto das costas e pense em 'empurrar o quadril' contra o apoio.",
-    "nivel": "intermediário"
+    "nivel": "iniciante"
   },
   {
     "wgerId": 308,
@@ -1659,7 +1659,7 @@
     "musculos_secundarios": [],
     "descricao": "Em prancha com as mãos elevadas num apoio, toque o chão à frente com uma mão de cada vez mantendo o quadril estável.",
     "dica": "O quadril não pode girar quando a mão sai do apoio: é anti-rotação de core disfarçada de exercício de braço.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 314,
@@ -1747,7 +1747,7 @@
     ],
     "descricao": "No smith, posicione a barra nas costas e agache com os pés levemente à frente da linha do corpo, subindo pela força das pernas.",
     "dica": "Os pés à frente permitem tronco mais vertical e ênfase no quadríceps: use a trilha fixa a seu favor descendo fundo e controlado.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 346,
@@ -2100,7 +2100,7 @@
     ],
     "descricao": "Na máquina articulada de supino, empurre as manoplas à frente até a extensão dos cotovelos e retorne devagar até o alongamento do peitoral.",
     "dica": "Máquinas articuladas permitem levar perto da falha com segurança: use isso — última repetição difícil, retorno sempre controlado.",
-    "nivel": "avançado"
+    "nivel": "iniciante"
   },
   {
     "wgerId": 380,
@@ -2334,7 +2334,7 @@
     ],
     "descricao": "Desça a barra ao peito, faça uma pausa completa de 1–2 segundos com a barra parada, e empurre de volta com força máxima.",
     "dica": "A pausa elimina o reflexo elástico: a força sai 'do zero', o que constrói potência na saída do peito — conte a pausa de verdade.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 448,
@@ -2411,7 +2411,7 @@
     ],
     "descricao": "Posição inicial: • Inicie na posição de quatro.Os braços devem dobrar-se em um ângulo reto, com os ombro alinhados aos cotovelos.As costas devem estar direitas, com todo o corpo em linha reta. Passos: • Mantenha essa posição.",
     "dica": "Glúteos e abdômen espremidos: 20 segundos perfeitos valem mais que 2 minutos com o quadril desabando.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 465,
@@ -2611,7 +2611,7 @@
     ],
     "descricao": "Deitado no banco, segure a barra com as palmas voltadas para você (pegada supinada) e execute o supino descendo à parte baixa do peito.",
     "dica": "A pegada invertida desloca o estímulo para peitoral superior e tríceps: cotovelos mais fechados e trajetória levemente diagonal.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 500,
@@ -2627,7 +2627,7 @@
     "musculos_secundarios": [],
     "descricao": "Sentado com as mãos apoiadas atrás do quadril, eleve o quadril até o corpo formar uma linha reta de calcanhares a ombros, e sustente ou repita.",
     "dica": "Empurre o chão com as mãos e aperte os glúteos no topo: abre o peitoral e fortalece a cadeia posterior de uma vez.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 501,
@@ -2682,7 +2682,7 @@
     ],
     "descricao": "Em pé com a barra à frente das coxas, empurre o quadril para trás descendo a barra rente às pernas até o alongamento dos posteriores, e suba contraindo glúteos.",
     "dica": "Joelhos semiflexionados e fixos, barra colada na perna: desça até sentir o alongamento forte atrás da coxa (meio da canela) e suba apertando o glúteo — não é agachamento.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 508,
@@ -2740,7 +2740,7 @@
     ],
     "descricao": "Sentado na polia baixa com o triângulo, puxe-o ao abdômen com o tronco firme e retorne deixando o dorsal alongar por completo.",
     "dica": "Tronco oscila no máximo 10°: puxe até o triângulo tocar o abdômen, aperte 1 segundo e devolva em 3.",
-    "nivel": "intermediário"
+    "nivel": "iniciante"
   },
   {
     "wgerId": 516,
@@ -2826,7 +2826,7 @@
     ],
     "descricao": "• • O banco deve estar inclinado entre 30 e 45 graus. • • Certifique-se de empurrar os halteres diretamente para cima (perpendiculares ao chão).",
     "dica": "Desça até o alongamento pleno do peitoral superior e suba convergindo os halteres: 30–45° já cumprem o papel.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 538,
@@ -2846,7 +2846,7 @@
     ],
     "descricao": "No banco inclinado (~30–45°), desça a barra controladamente até a parte alta do peito e empurre de volta até a extensão.",
     "dica": "30° já enfatiza o peitoral superior sem virar desenvolvimento: desça em 2–3 segundos até tocar de leve abaixo das clavículas.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 539,
@@ -2865,7 +2865,7 @@
     ],
     "descricao": "No smith com banco inclinado, desça a barra até a parte alta do peito e empurre pela trilha fixa.",
     "dica": "A trilha do smith permite focar só em empurrar: aproveite para trabalhar perto da falha com segurança e descida lenta.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 543,
@@ -3012,7 +3012,7 @@
     ],
     "descricao": "No smith, posicione-se com a barra na linha da frente dos ombros e empurre-a acima da cabeça pela trilha fixa.",
     "dica": "Ajuste o banco/posição para a barra descer à frente do rosto sem esforço cervical: a trilha fixa cobra alinhamento perfeito.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 570,
@@ -3132,7 +3132,7 @@
     ],
     "descricao": "• Deite-se de lado, com o cotovelo inferior em ângulo reto, com o braço para fora • Levante sua pélvis do chão levantando o ombro inferior para cima, mantendo o antebraço no chão; sua cabeça, pélvis e pés devem estar em linha reta • Mantenha esta posição",
     "dica": "Quadril alto e à frente durante todo o tempo: o oblíquo do lado de baixo é quem paga a conta.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 583,
@@ -3186,7 +3186,7 @@
     ],
     "descricao": "Sentado na máquina com os joelhos sob as almofadas, eleve os calcanhares o máximo possível e desça até o alongamento completo.",
     "dica": "Joelho dobrado isola o sóleo: pausa de 2 segundos no alongamento embaixo e pico no topo — o sóleo responde a repetições e paciência.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 591,
@@ -3236,7 +3236,7 @@
     ],
     "descricao": "No smith com pegada na largura dos ombros, desça a barra à parte baixa do peito com cotovelos fechados e empurre de volta.",
     "dica": "Trilha fixa + pegada fechada = tríceps sob tensão máxima com segurança: excelente para progredir carga no supino fechado.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 599,
@@ -3378,7 +3378,7 @@
     "musculos_secundarios": [],
     "descricao": "Em pé na máquina ou num degrau, eleve os calcanhares até a ponta dos pés e desça até o alongamento máximo da panturrilha.",
     "dica": "Pausa de 2 segundos embaixo (alongamento) e 1 no topo (pico): panturrilha odeia pressa e ama amplitude completa.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 623,
@@ -3428,7 +3428,7 @@
     ],
     "descricao": "Voce pega o halter, trava a dorsal estufa o peito, inclina até a altura do calcanhar",
     "dica": "Joelhos semiflexionados e fixos, barra colada na perna: desça até sentir o alongamento forte atrás da coxa.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 628,
@@ -3553,7 +3553,7 @@
     ],
     "descricao": "Com o tronco inclinado e o cotovelo elevado junto ao corpo, estenda o antebraço para trás até a extensão completa e retorne devagar.",
     "dica": "O pico de contração com o braço estendido atrás é tudo: segure 1–2 segundos — se o cotovelo cair, a carga está alta demais.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 659,
@@ -3589,7 +3589,7 @@
     ],
     "descricao": "Agarre a barra, fique em pé com os pés afastados dos ombros, mantenha as costas retas e incline-se um pouco para a frente. Empurre a barra para baixo, certificando-se de que os cotovelos não se movam durante o exercício. Sem pausa, volte à posição inicial.",
     "dica": "Cotovelos soldados ao tronco: pico de 1 segundo embaixo com o tríceps duro — subir além de 90° tira a tensão.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 661,
@@ -3751,7 +3751,7 @@
     ],
     "descricao": "No smith, puxe a barra verticalmente rente ao corpo até a altura do peito, cotovelos acima das mãos, e desça devagar.",
     "dica": "Pare na linha do peito (não do queixo) para poupar os ombros: cotovelos lideram o movimento o tempo todo.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 693,
@@ -3805,7 +3805,7 @@
     "musculos_secundarios": [],
     "descricao": "• Fique de pé no chão ou na borda de um degrau para aumentar o alcance do movimento. Levante um pé, colocando a parte superior sobre sua panturrilha. • Levante os calcanhares até ficar de pé sobre os dedos do pé. • Fique nesta posição por três segundos, depois abaixe o pé sem tocar o chão com seu calcanhar.",
     "dica": "Unilateral revela diferenças entre as pernas: pausa de 2 segundos no alongamento embaixo e pico completo em cima.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 711,
@@ -4295,7 +4295,7 @@
     ],
     "descricao": "Sentado no smith com a barra na linha da frente dos ombros, empurre-a acima da cabeça e desça controladamente até o queixo.",
     "dica": "A trilha fixa permite ir perto da falha sozinho com segurança: desça em 2–3 segundos e não bata a barra nos limitadores.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 917,
@@ -4427,7 +4427,7 @@
     ],
     "descricao": "No smith com o banco levemente inclinado (~15–30°), desça a barra à parte alta do peito e empurre de volta.",
     "dica": "A leve inclinação pega o peitoral superior sem sobrecarregar o ombro: desça controlado até o toque suave.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 926,
@@ -4937,7 +4937,7 @@
     "musculos_secundarios": [],
     "descricao": "Posição inicial: Fique de pé reto, com os pés afastados alinhados ao quadris. Passos: • Se agache e se apoie com as mãos no chão entre os joelhos e a frente de seus pés, mantendo as costas retas. • Mantendo as mãos no chão, pule jogando as pernas para trás para a posição de prancha altas • Pule os pés para frente para voltar à posição de agachamento. • Repita.",
     "dica": "Sem a flexão, o foco é o ritmo contínuo: suba e desça mantendo a cadência — cardio puro sem descanso.",
-    "nivel": "intermediário"
+    "nivel": "avançado"
   },
   {
     "wgerId": 999,
@@ -4988,7 +4988,7 @@
     "musculos_secundarios": [],
     "descricao": "Posição inicial: Entre na posição de prancha alta:as mãos e os dedos dos pés devem tocar o chão, as costas, os braços e as pernas devem estar retos.Para chegar a essa posição, você pode deitar de bruços, colocar as mãos voltadas para baixo ao lado da cabeça e levantar os braços até que estejam retos. Passos: • Mantenha a posição inicial durante todo o exercício.",
     "dica": "Mãos sob os ombros e corpo em linha reta: aperte glúteos e abdômen — a prancha alta é a base de toda flexão.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1002,
@@ -5287,7 +5287,7 @@
     ],
     "descricao": "• Deite-se de lado, com o cotovelo inferior em ângulo reto, com o braço para fora • Levante sua pélvis do chão levantando o ombro inferior para cima, mantendo o antebraço no chão; sua cabeça, pélvis e pés devem estar em linha reta • Mantenha esta posição",
     "dica": "Quadril alto formando uma linha reta perfeita: o oblíquo do lado apoiado sustenta o corpo inteiro.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1020,
@@ -5322,7 +5322,7 @@
     "musculos_secundarios": [],
     "descricao": "• Fique de pé no chão ou na borda de um degrau para aumentar o alcance do movimento. Levante um pé, colocando a parte superior sobre sua panturrilha. • Levante os calcanhares até ficar de pé sobre os dedos do pé. • Fique nesta posição por três segundos, depois abaixe o pé sem tocar o chão com seu calcanhar.",
     "dica": "Mesma contagem para os dois lados: pausa de 2 segundos no alongamento embaixo e ponta dos pés no topo.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1022,
@@ -5343,7 +5343,7 @@
     ],
     "descricao": "Em prancha alta segurando um halter, reme-o em direção à cintura mantendo o quadril imóvel, série completa de um lado antes de trocar.",
     "dica": "O quadril é o juiz: se ele girar na remada, alargue os pés ou diminua a carga.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1027,
@@ -5501,7 +5501,7 @@
     ],
     "descricao": "Deitado no chão com halteres, desça os cotovelos até tocarem o chão e empurre de volta até a extensão.",
     "dica": "O chão limita a amplitude e protege os ombros: pause 1 segundo com o cotovelo no chão e exploda — ótimo para força de tríceps e travamento.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1086,
@@ -5614,7 +5614,7 @@
     ],
     "descricao": "Em prancha alta, toque o ombro oposto com uma mão de cada vez mantendo o quadril completamente estável.",
     "dica": "O exercício é o quadril não balançar — o toque é só o pretexto: pés mais abertos facilitam, juntos dificultam.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1092,
@@ -5679,7 +5679,7 @@
     ],
     "descricao": "Sentado na máquina de supino vertical, empurre as manoplas à frente até a extensão e retorne até o alongamento do peitoral.",
     "dica": "Ajuste o banco para as manoplas na linha do peito médio: retorno lento até sentir o peitoral abrir.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1096,
@@ -5813,7 +5813,7 @@
     ],
     "descricao": "Da ponte de glúteo, caminhe com os pés para frente e para trás em pequenos passos mantendo o quadril elevado.",
     "dica": "Quadril alto e glúteos contraídos durante toda a caminhada: se o quadril cair, resete e recomece.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1104,
@@ -6481,7 +6481,7 @@
     "musculos_secundarios": [],
     "descricao": "Em pé na perna esquerda, eleve o calcanhar até a ponta do pé e desça até o alongamento completo, série completa antes de trocar.",
     "dica": "Unilateral revela diferenças: mesma contagem para os dois lados e pausa de 2 segundos no alongamento embaixo.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1204,
@@ -6602,7 +6602,7 @@
     ],
     "descricao": "Em pé numa perna com o halter na mão oposta, incline o tronco à frente empurrando o quadril para trás até o alongamento do posterior, e retorne contraindo o glúteo.",
     "dica": "Quadril nivelado (bolsos apontando para o chão): o RDL unilateral é equilíbrio + posterior + glúteo — comece leve e domine o padrão.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1214,
@@ -6662,7 +6662,7 @@
     ],
     "descricao": "Na barra fixa, execute puxadas parciais explosivas a partir da suspensão, focando a ativação máxima do dorsal.",
     "dica": "Puxadas de intenção máxima mesmo que curtas: recrutamento neural para destravar as primeiras barras completas.",
-    "nivel": "intermediário"
+    "nivel": "iniciante"
   },
   {
     "wgerId": 1217,
@@ -6823,7 +6823,7 @@
     "musculos_secundarios": [],
     "descricao": "Deitado no banco com halteres em pegada neutra e cotovelos junto ao corpo, desça-os ao lado do peito e empurre de volta.",
     "dica": "Pegada neutra + cotovelos fechados = tríceps e peito interno: os halteres se tocam no topo com aperto proposital.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1229,
@@ -6995,7 +6995,7 @@
     "musculos_secundarios": [],
     "descricao": "Sentado com o elástico preso à frente e enrolado no pé, puxe a ponta do pé em direção à canela contra a resistência e retorne.",
     "dica": "Fortalece o tibial anterior: movimento completo e controlado — previne canelite e entorses.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1242,
@@ -7011,7 +7011,7 @@
     "musculos_secundarios": [],
     "descricao": "Sentado com o elástico na sola do pé segurando as pontas, empurre a ponta do pé à frente contra a resistência e retorne devagar.",
     "dica": "A volta lenta é o segredo: a panturrilha trabalha excentricamente no retorno — controle total.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1243,
@@ -7027,7 +7027,7 @@
     "musculos_secundarios": [],
     "descricao": "Em pé com os dois pés na plataforma ou no chão, eleve os calcanhares até a ponta dos pés e desça até o alongamento completo.",
     "dica": "Pausa dupla: 1 segundo no topo (pico), 2 embaixo (alongamento) — sem quicar, a panturrilha adora tempo sob tensão.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1244,
@@ -7211,7 +7211,7 @@
     ],
     "descricao": "Sentado com as mãos atrás do quadril e pés no chão, eleve o quadril até o corpo formar uma mesa, e sustente ou repita.",
     "dica": "Aperte glúteos e abra o peito no topo: excelente antídoto para o dia sentado — ombros longe das orelhas.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1266,
@@ -7229,7 +7229,7 @@
     ],
     "descricao": "Segurando as alças do TRX de costas para a ancoragem, flexione os cotovelos deixando o corpo descer à frente e estenda de volta.",
     "dica": "É o tríceps testa com o peso do corpo: cotovelos parados no espaço — quanto mais inclinado, mais brutal.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1269,
@@ -7283,7 +7283,7 @@
     ],
     "descricao": "Deitado no banco segurando um halter ou barra acima do peito, desça o peso em arco por trás da cabeça e retorne pela mesma trajetória.",
     "dica": "Costelas fechadas e quadril baixo: a descida lenta em 3 segundos até o alongamento máximo é o coração do pullover.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1274,
@@ -7535,7 +7535,7 @@
     ],
     "descricao": "Com um braço nas costas e o outro no chão afastado do corpo, desça o peito e empurre de volta com um braço só.",
     "dica": "O topo das flexões: pés bem abertos para compensar, corpo rígido — chegue nela por flexões arqueadas e negativas lentas.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1294,
@@ -7571,7 +7571,7 @@
     ],
     "descricao": "Deitado no banco com os pés firmes, desça a barra ao peito médio com as escápulas retraídas e empurre até a extensão.",
     "dica": "Arco natural, escápulas travadas e pés empurrando o chão: o supino é corpo inteiro — desça em 2–3s e toque sem quicar.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1296,
@@ -7683,7 +7683,7 @@
     ],
     "descricao": "Apoiado nos antebraços e pontas dos pés com o corpo reto, sustente a posição contraindo abdômen e glúteos.",
     "dica": "Glúteos e abdômen espremidos encurtam o tempo mas fazem a prancha valer: 20 segundos perfeitos > 2 minutos desabados.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1315,
@@ -7745,7 +7745,7 @@
     ],
     "descricao": "Sustente a posição de prancha nos antebraços com o corpo em linha reta da cabeça aos calcanhares.",
     "dica": "Imagine esmagar uma noz entre os glúteos e puxar os cotovelos aos pés (sem mover): a tensão total transforma a prancha.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1318,
@@ -7805,7 +7805,7 @@
     ],
     "descricao": "De lado com o antebraço no chão e os pés empilhados, eleve o quadril até o corpo formar linha reta e sustente.",
     "dica": "Quadril alto e à frente (a tendência é ele cair e voltar): o oblíquo do lado de baixo é quem paga a conta.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1322,
@@ -7896,7 +7896,7 @@
     ],
     "descricao": "Em pé ou sentado, segure um halter com as duas mãos atrás da cabeça e estenda os cotovelos até a extensão total.",
     "dica": "Cotovelos apontando à frente e fechados: desça fundo — a cabeça longa do tríceps só cresce quando alonga de verdade.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1338,
@@ -7949,7 +7949,7 @@
     ],
     "descricao": "Deitado no banco com halteres em pegada neutra (palmas se olhando), desça-os ao lado do peito e empurre até quase se tocarem.",
     "dica": "A pegada neutra poupa os ombros e ativa mais o tríceps: cotovelos deslizam rente ao corpo.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1360,
@@ -7994,7 +7994,7 @@
     ],
     "descricao": "Com dois kettlebells na posição de rack (apoiados nos antebraços à frente dos ombros), agache mantendo o tronco vertical e suba.",
     "dica": "O rack duplo desafia o core e a respiração: cotovelos apontando à frente e peito aberto durante todo o agachamento.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1363,
@@ -8063,7 +8063,7 @@
     ],
     "descricao": "Na máquina de mergulho assistido (ou com elástico), execute o mergulho com parte do peso compensado, descendo até 90° e empurrando de volta.",
     "dica": "A assistência permite amplitude completa desde o dia 1: reduza a ajuda gradualmente — é o caminho honesto para o mergulho livre.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1373,
@@ -8350,7 +8350,7 @@
     ],
     "descricao": "Com as pernas bem afastadas e as mãos atrás da cabeça ou no peito, incline o tronco à frente pelo quadril e retorne contraindo a cadeia posterior.",
     "dica": "Bom dia + panqueca: adutores e posteriores alongam sob leve carga — desça só até a coluna começar a perder a linha.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1398,
@@ -8497,7 +8497,7 @@
     "musculos_secundarios": [],
     "descricao": "Em prancha, eleve uma perna estendida do chão, segure brevemente e alterne, mantendo o quadril estável.",
     "dica": "A perna sobe SEM o quadril girar ou a lombar arquear: pequena elevação com glúteo contraído já cumpre a missão.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1411,
@@ -8729,7 +8729,7 @@
     ],
     "descricao": "No rack com os pinos na altura do peito, inicie o supino com a barra apoiada nos pinos, empurre até a extensão e retorne aos pinos.",
     "dica": "Partir do ponto morto elimina o reflexo elástico: força pura da posição mais difícil — ótimo para destravar o meio do supino.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1437,
@@ -8789,7 +8789,7 @@
     ],
     "descricao": "No rack com os pinos na altura da testa ou queixo, empurre a barra dos pinos até a extensão acima da cabeça e retorne aos pinos.",
     "dica": "Cada repetição parte do zero no ângulo mais difícil: constrói a saída do desenvolvimento sem ajuda do impulso.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1440,
@@ -8885,7 +8885,7 @@
     ],
     "descricao": "Na máquina inclinada com pegadas independentes, empurre as manoplas até a extensão e retorne até o alongamento do peitoral superior.",
     "dica": "Braços independentes revelam assimetrias: desça fundo e suba parelho — a máquina segura a estabilidade, você faz a força.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1445,
@@ -9119,7 +9119,7 @@
     ],
     "descricao": "Deitado no banco com os pés elevados ou sobre o banco, execute o supino com halteres sem apoio dos pés no chão.",
     "dica": "Sem leg drive, o tronco estabiliza sozinho: carga menor e core ligado — sinta a diferença que as pernas faziam.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1462,
@@ -9211,7 +9211,7 @@
     ],
     "descricao": "No banco inclinado com pegada na largura dos ombros, desça a barra à parte alta do peito com os cotovelos fechados e empurre de volta.",
     "dica": "Inclinado + pegada fechada = peitoral superior e tríceps juntos: cotovelos a ~30° do tronco, descida controlada.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1468,
@@ -9456,7 +9456,7 @@
     ],
     "descricao": "Na polia alta de costas ou de lado, 'arraste' a manopla para baixo rente ao corpo até a extensão do cotovelo atrás do quadril.",
     "dica": "A trajetória rente ao corpo muda o vetor da cabeça longa: termine com o braço estendido ATRÁS da linha do corpo.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1482,
@@ -9511,7 +9511,7 @@
     ],
     "descricao": "Nas polias, execute o cross-over variando a altura das polias entre séries: alta, média e baixa.",
     "dica": "Cada altura pega uma porção do peitoral: alta = inferior, média = medial, baixa = superior — o peito completo numa sessão.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1485,
@@ -9583,7 +9583,7 @@
     ],
     "descricao": "Deitado no banco segurando um halter acima do peito com as duas mãos, desça-o em arco atrás da cabeça e retorne.",
     "dica": "Desça em 3 segundos até o alongamento máximo de dorsal e peito: braços semiflexionados e costelas fechadas — pullover é alongamento sob carga.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1489,
@@ -9603,7 +9603,7 @@
     ],
     "descricao": "Em prancha alta ou nos antebraços, abra e feche as pernas em saltos curtos mantendo o quadril estável.",
     "dica": "O quadril não sobe nem balança: só as pernas abrem e fecham — cardio + core na mesma moeda.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1490,
@@ -9622,7 +9622,7 @@
     ],
     "descricao": "Deitado de bruços num banco inclinado ou de lado, estenda o cotovelo para trás até a extensão completa e retorne devagar.",
     "dica": "Deitar elimina o balanço do tronco: o coice fica puro — pico de 1–2 segundos com o braço estendido.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1492,
@@ -9696,7 +9696,7 @@
     ],
     "descricao": "Deitado no banco com halteres e as palmas voltadas para você, desça-os ao peito baixo e empurre de volta mantendo a pegada invertida.",
     "dica": "A pegada supinada desloca o estímulo para o peitoral superior: cotovelos fechados e trajetória em leve diagonal.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1498,
@@ -9715,7 +9715,7 @@
     ],
     "descricao": "Deitado com halteres e os cotovelos colados ao tronco, desça-os rente ao corpo e empurre de volta.",
     "dica": "Cotovelos grudados = tríceps e peito interno: os halteres sobem 'raspando' o corpo — pegada neutra ajuda.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1501,
@@ -9768,7 +9768,7 @@
     "musculos_secundarios": [],
     "descricao": "Deitado com halteres em pegada neutra e os cotovelos deslizando rente ao corpo, empurre-os do peito baixo para cima em trajetória vertical.",
     "dica": "Variação de cotovelos colados que vira meio-termo entre supino e extensão: peito interno e tríceps — controle no toque embaixo.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1504,
@@ -9805,7 +9805,7 @@
     "musculos_secundarios": [],
     "descricao": "No smith com o banco a ~60–75°, desça a barra à parte alta do peito e empurre de volta pela trilha.",
     "dica": "Entre o supino e o desenvolvimento: peitoral superior e deltoide anterior dividem a conta — descida lenta ao alto do peito.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1509,
@@ -9946,7 +9946,7 @@
     ],
     "descricao": "Em pé ou sentado com halter ou barra atrás da cabeça, estenda os cotovelos até a extensão completa e desça devagar.",
     "dica": "Desça fundo atrás da cabeça em 3 segundos: a cabeça longa só recebe o estímulo completo nesse alongamento.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1521,
@@ -10219,7 +10219,7 @@
     ],
     "descricao": "Na barra fixa, puxe o corpo deslocando-o para um lado com um braço dominando e o outro quase estendido, alternando.",
     "dica": "Ponte entre a barra fixa e a unilateral: o braço 'estendido' ajuda cada vez menos — desloque-se mais a cada semana.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1546,
@@ -10276,7 +10276,7 @@
     ],
     "descricao": "Em posição de prancha alta com as mãos sob os ombros, desça o peito ao chão flexionando os cotovelos e empurre de volta.",
     "dica": "Corpo rígido da cabeça ao calcanhar e cotovelos a ~45°: desça em 2 segundos até o peito quase tocar — amplitude honesta sempre.",
-    "nivel": "intermediário"
+    "nivel": "iniciante"
   },
   {
     "wgerId": 1554,
@@ -10648,7 +10648,7 @@
     ],
     "descricao": "No smith em posição de afundo com a barra nas costas, desça o joelho de trás ao chão e suba pela perna da frente.",
     "dica": "A trilha trava o equilíbrio: sobra 100% de foco na perna da frente — desça fundo e empurre pelo calcanhar.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1602,
@@ -10879,7 +10879,7 @@
     "musculos_secundarios": [],
     "descricao": "Sentado com um halter apoiado sobre o joelho, eleve o calcanhar ao máximo e desça até o alongamento.",
     "dica": "A versão caseira da máquina: pausa embaixo, pico em cima — o sóleo não sabe se é máquina ou halter, só sente o trabalho.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1621,
@@ -10898,7 +10898,7 @@
     ],
     "descricao": "De frente para a polia, puxe a manopla ao tronco com um braço mantendo o quadril firme, e retorne alongando.",
     "dica": "Gire levemente o tronco na volta deixando a escápula protrair: amplitude que a versão bilateral não alcança.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1630,
@@ -10944,7 +10944,7 @@
     ],
     "descricao": "Na polia alta com a corda, combine o pullover com braços estendidos e a remada com flexão de cotovelos em sequência.",
     "dica": "Dois estímulos de dorsal na mesma série: arco de braços retos + puxada com cotovelos — alongamento e contração completos.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1635,
@@ -11040,7 +11040,7 @@
     ],
     "descricao": "Segure os halteres apoiados nos ombros com os cotovelos altos e agache mantendo o tronco vertical.",
     "dica": "A versão acessível do front squat: cotovelos altos seguram o tronco em pé — quadríceps no comando.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1641,
@@ -11186,7 +11186,7 @@
     ],
     "descricao": "Com halteres à frente das coxas, desça-os rente às pernas empurrando o quadril para trás até o alongamento dos posteriores, e suba contraindo os glúteos.",
     "dica": "Halteres colados na perna e joelhos semiflexionados fixos: desça até sentir esticar forte atrás — a lombar não dobra, o quadril recua.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1653,
@@ -11223,7 +11223,7 @@
     ],
     "descricao": "Nas polias altas com o tronco levemente inclinado à frente, empurre as manoplas para baixo e à frente em trajetória declinada.",
     "dica": "O vetor descendente pega o peitoral inferior com tensão contínua: termine com as mãos convergindo à frente do quadril.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1657,
@@ -11296,7 +11296,7 @@
     ],
     "descricao": "Nas polias baixas, empurre as manoplas para cima e à frente em trajetória inclinada até a extensão.",
     "dica": "O vetor ascendente ataca o peitoral superior com a tensão contínua do cabo: convergir as mãos no topo fecha a conta.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1662,
@@ -11560,7 +11560,7 @@
     ],
     "descricao": "Com um pé completo no chão e o outro apenas na ponta atrás (kickstand), incline o tronco à frente pelo quadril e retorne.",
     "dica": "80% do peso na perna da frente: é o RDL unilateral com 'rodinha de apoio' — aprenda aqui antes da versão livre.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1689,
@@ -11637,7 +11637,7 @@
     ],
     "descricao": "No smith com banco inclinado, empurre a barra da linha do peito alto até a extensão acima e retorne controlado.",
     "dica": "Meio supino, meio desenvolvimento: peitoral superior e deltoide dividem — descida lenta até a clavícula.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1693,
@@ -11672,7 +11672,7 @@
     ],
     "descricao": "Na máquina de supino reto, empurre as manoplas até a extensão e retorne até o alongamento do peitoral.",
     "dica": "Trajetória travada = intensidade liberada: vá perto da falha com segurança e volte sempre em 2–3 segundos.",
-    "nivel": "avançado"
+    "nivel": "iniciante"
   },
   {
     "wgerId": 1696,
@@ -11767,7 +11767,7 @@
     ],
     "descricao": "Em pé com a barra, desça-a rente às pernas empurrando o quadril para trás até o alongamento máximo dos posteriores, e suba contraindo os glúteos.",
     "dica": "Barra raspando a perna, joelhos semiflexionados fixos: o RDL vive do alongamento — desça até o limite da coluna neutra e nem um centímetro a mais.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1701,
@@ -11821,7 +11821,7 @@
     "musculos_secundarios": [],
     "descricao": "Em pé ou em quatro apoios, estenda a perna para trás e para cima contraindo o glúteo no topo, e retorne devagar.",
     "dica": "A lombar não arqueia: o movimento acaba quando o glúteo contrai — 2 segundos de aperto no topo.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1704,
@@ -11841,7 +11841,7 @@
     ],
     "descricao": "Sentado com as mãos apoiadas no chão ou em paralelas, eleve o corpo com os joelhos recolhidos ao peito e sustente.",
     "dica": "Versão de entrada do L-sit: empurre o chão 'para baixo' e recolha os joelhos — segundos de qualidade constroem o completo.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1706,
@@ -11860,7 +11860,7 @@
     ],
     "descricao": "Com o peito do pé de trás num banco e halteres nas mãos, desça o joelho de trás ao chão e suba pela perna da frente.",
     "dica": "O búlgaro pune e recompensa: 90% do peso na frente, tronco estável — o melhor unilateral de pernas que existe.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1707,
@@ -12052,7 +12052,7 @@
     ],
     "descricao": "Na polia alta com a corda ou barra, puxe em direção ao rosto/peito alto com os cotovelos altos e abertos.",
     "dica": "Cotovelos na linha dos ombros e aperto de escápulas: dorsal alto, trapézio e posterior de ombro no mesmo golpe.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1719,
@@ -12424,7 +12424,7 @@
     ],
     "descricao": "Execute a barra fixa mantendo as pernas estendidas à frente em L durante todo o movimento.",
     "dica": "Core em isometria + dorsal em dinâmica: as pernas não caem nem balançam — dobro de exercício na mesma barra.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1742,
@@ -12519,7 +12519,7 @@
     ],
     "descricao": "No smith com a barra no trapézio, agache pela trilha com os pés levemente à frente e suba com força.",
     "dica": "Pés à frente da barra = quadríceps com tronco vertical: use a trilha para descer mais fundo com confiança.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1748,
@@ -12649,7 +12649,7 @@
     ],
     "descricao": "Deitado no banco, desça a barra ao peito com controle e empurre até a extensão completa.",
     "dica": "Escápulas retraídas, pés firmes e barra na linha dos mamilos: técnica sólida vale mais que qualquer quilo extra.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1766,
@@ -12665,7 +12665,7 @@
     "musculos_secundarios": [],
     "descricao": "Em prancha, estenda um braço à frente até a linha do corpo, pause e alterne, mantendo o quadril estável.",
     "dica": "O alcance desestabiliza — o core reestabiliza: quadril de mármore enquanto o braço 'flutua'.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1768,
@@ -12771,7 +12771,7 @@
     ],
     "descricao": "Na máquina inclinada convergente, empurre as manoplas até a extensão e retorne até o alongamento do peitoral superior.",
     "dica": "Máquinas convergentes unem trajetória natural e segurança: desça fundo e suba convergindo — peito superior sem estabilizar nada.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1774,
@@ -12859,7 +12859,7 @@
     ],
     "descricao": "No banco inclinado, desça o peso à parte alta do peito e empurre até a extensão.",
     "dica": "30–45° é a janela do peitoral superior: descida lenta até a clavícula e subida convergente.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1779,
@@ -13027,7 +13027,7 @@
     "musculos_secundarios": [],
     "descricao": "Deitado de bruços num banco alto com as pernas pendendo, eleve-as estendidas até a linha do corpo contraindo glúteos e lombar.",
     "dica": "A hiperextensão ao contrário: pernas sobem, tronco fica — glúteos e lombar sem compressão — pausa de 1 segundo em cima.",
-    "nivel": "intermediário"
+    "nivel": "iniciante"
   },
   {
     "wgerId": 1810,
@@ -13097,7 +13097,7 @@
     ],
     "descricao": "Deitado no banco com halteres acima do peito, dobre os cotovelos para DENTRO descendo os halteres ao peito, e estenda de volta.",
     "dica": "Os cotovelos abrem para os lados e os halteres 'caem' no peito: ângulo único de tríceps — carga moderada e controle total.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1825,
@@ -13225,7 +13225,7 @@
     ],
     "descricao": "Na máquina Hammer declinada, empurre as manoplas até a extensão e retorne até o alongamento do peitoral inferior.",
     "dica": "Braços independentes e trajetória convergente: desça fundo e empurre parelho — a máquina denuncia o lado fraco.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1832,
@@ -13260,7 +13260,7 @@
     ],
     "descricao": "Deitado de costas com os calcanhares em discos deslizantes e o quadril elevado, deslize os pés à frente estendendo as pernas e puxe de volta.",
     "dica": "A flexora sem máquina: quadril alto durante todo o deslize — os posteriores choram na volta, e é aí que crescem.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1834,
@@ -13429,7 +13429,7 @@
     ],
     "descricao": "Sentado com as pernas bem afastadas, incline o tronco à frente pelo quadril com a coluna longa, e retorne.",
     "dica": "A panqueca sentada: dobre pelo quadril (o peito avança, não a cabeça cai) — o alongamento definitivo de adutores e posteriores.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1846,
@@ -13467,7 +13467,7 @@
     ],
     "descricao": "Sentado com as pernas abertas em V, apoie as mãos à frente e eleve o corpo do chão mantendo as pernas estendidas e abertas.",
     "dica": "O straddle facilita a alavanca do L-sit: empurre o chão e 'flutue' — flexores de quadril e core no limite.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1852,
@@ -13488,7 +13488,7 @@
     ],
     "descricao": "Sentado com as mãos apoiadas ao lado do quadril, eleve o corpo do chão com as pernas estendidas juntas à frente, e sustente.",
     "dica": "Empurre o chão para baixo e aponte os pés: cada segundo de L-sit vale por uma série de abdominal — acumule segundos.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1853,
@@ -13509,7 +13509,7 @@
     ],
     "descricao": "Sentado com as mãos apoiadas e os calcanhares no chão, eleve o quadril sustentando parte do peso, progredindo para tirar os pés.",
     "dica": "A regressão certa: quadril alto e peso nas mãos — quando os calcanhares 'aliviarem', o L-sit real está chegando.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1854,
@@ -13669,7 +13669,7 @@
     "musculos_secundarios": [],
     "descricao": "Deitado de costas com os braços abertos, cruze uma perna sobre o corpo até o lado oposto, mantendo os ombros no chão.",
     "dica": "Ombros pregados no chão: a rotação alonga lombar e glúteo — respire e deixe a gravidade trabalhar.",
-    "nivel": "intermediário"
+    "nivel": "iniciante"
   },
   {
     "wgerId": 1864,
@@ -13963,7 +13963,7 @@
     ],
     "descricao": "Na máquina de supino, empurre as manoplas até a extensão e retorne até o alongamento com controle.",
     "dica": "Máquina = intensidade segura: última série até quase a falha com volta lenta — sem medo de ficar preso.",
-    "nivel": "avançado"
+    "nivel": "iniciante"
   },
   {
     "wgerId": 1884,
@@ -14067,7 +14067,7 @@
     ],
     "descricao": "Deitado no banco com pegada na largura dos ombros, desça a barra à parte baixa do peito com cotovelos fechados e empurre.",
     "dica": "Cotovelos a ~30° do corpo: o supino fechado é o construtor de tríceps mais forte que existe — desça com paciência.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1900,
@@ -14139,7 +14139,7 @@
     ],
     "descricao": "Avance em passadas alternadas contínuas, descendo o joelho de trás ao chão a cada passo.",
     "dica": "Cada passada é um exercício completo: tronco vertical, joelho da frente estável e subida pelo calcanhar.",
-    "nivel": "intermediário"
+    "nivel": "iniciante"
   },
   {
     "wgerId": 1904,
@@ -14194,7 +14194,7 @@
     "musculos_secundarios": [],
     "descricao": "Deitado com os joelhos dobrados, eleve o quadril até a linha do corpo contraindo os glúteos, e desça devagar.",
     "dica": "O glúteo sobe o quadril, a lombar só acompanha: 2 segundos de aperto no topo — a base de todo treino de glúteo.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1907,
@@ -14284,7 +14284,7 @@
     ],
     "descricao": "Da prancha, arqueie as costas para cima como um gato e retorne à linha neutra, alternando com controle.",
     "dica": "Prancha + mobilidade: o arco ativa o serrátil e alonga as costas — transições lentas e respiradas.",
-    "nivel": "iniciante"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1912,
@@ -14356,7 +14356,7 @@
     ],
     "descricao": "Em quatro apoios, eleve uma perna dobrada lateralmente (como hidrante) mantendo o quadril estável, e desça devagar.",
     "dica": "O 'fire hydrant': sobe até onde o quadril não gira — glúteo médio no comando, lombar de fora.",
-    "nivel": "intermediário"
+    "nivel": "iniciante"
   },
   {
     "wgerId": 1916,
@@ -14395,7 +14395,7 @@
     ],
     "descricao": "Na máquina convergente de supino, empurre as manoplas até a extensão e retorne até o alongamento do peitoral.",
     "dica": "Trajetória convergente imita o arco natural do peito: aperte no final como se fechasse um crucifixo.",
-    "nivel": "avançado"
+    "nivel": "iniciante"
   },
   {
     "wgerId": 1919,
@@ -14537,7 +14537,7 @@
     ],
     "descricao": "Sentado na polia baixa com a pegada em V, puxe o triângulo ao abdômen e retorne até o alongamento total.",
     "dica": "O V permite a pegada neutra mais forte: puxe até tocar, aperte, e devolva em 3 segundos.",
-    "nivel": "intermediário"
+    "nivel": "iniciante"
   },
   {
     "wgerId": 1929,
@@ -14969,7 +14969,7 @@
     ],
     "descricao": "Deitado no banco sob a barra guiada, desça-a até o peito médio com os cotovelos a ~45° e empurre de volta pela trilha até a extensão.",
     "dica": "A trilha elimina a estabilização: aproveite para focar 100% na descida lenta e no toque controlado no peito.",
-    "nivel": "avançado"
+    "nivel": "intermediário"
   },
   {
     "wgerId": 1956,
@@ -15004,7 +15004,7 @@
     ],
     "descricao": "Sentado na máquina articulada com as manoplas na linha do peito, empurre os braços à frente de forma independente até a extensão, retornando até o alongamento do peitoral.",
     "dica": "Braços independentes revelam assimetria: se um lado sobe antes, reduza a carga e iguale — a máquina não deixa o lado forte compensar.",
-    "nivel": "avançado"
+    "nivel": "iniciante"
   },
   {
     "wgerId": 1958,
@@ -15023,7 +15023,7 @@
     ],
     "descricao": "Na máquina articulada inclinada, empurre as manoplas para cima e à frente de forma independente, descendo até o alongamento do peitoral superior.",
     "dica": "O trajeto convergente da máquina imita o arco natural do peito: aperte 1 segundo no topo com as mãos aproximadas.",
-    "nivel": "avançado"
+    "nivel": "iniciante"
   },
   {
     "wgerId": 1959,
