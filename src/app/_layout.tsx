@@ -16,14 +16,16 @@ import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, useColorScheme, View } from 'react-native';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 
+import { ChangelogModal } from '@/components/changelog-modal';
 import { db } from '@/db';
 import migrations from '@/db/migrations/migrations';
 import { seedDatabase } from '@/db/seed';
-import { ensureUserProfileRow } from '@/db/user-profile';
+import { ensureUserProfileRow, getLastSeenChangelogVersion, markChangelogSeen } from '@/db/user-profile';
+import { CURRENT_CHANGELOG_VERSION, getUnseenChangelog, type ChangelogEntry } from '@/lib/changelog';
 import { colors } from '@/theme/tokens';
 
 SplashScreen.preventAutoHideAsync();
@@ -40,12 +42,30 @@ export default function TabLayout() {
     Inter_600SemiBold,
   });
 
+  const [unseenChangelog, setUnseenChangelog] = useState<ChangelogEntry[]>([]);
+
   useEffect(() => {
-    if (success) {
-      seedDatabase();
-      ensureUserProfileRow();
-    }
+    if (!success) return;
+    seedDatabase();
+    // ensureUserProfileRow() é síncrono por baixo dos panos (.run(), não
+    // await) — termina e commita a linha id=1 antes desta linha seguinte
+    // rodar, então a leitura assíncrona abaixo (que só começa depois) nunca
+    // corre o risco de encontrar a tabela sem a linha. Falha na checagem de
+    // changelog (ex: erro de query) só é logada — nunca impede o boot, que
+    // depende só de `ready` (success && fontsLoaded), não desta checagem.
+    ensureUserProfileRow();
+
+    getLastSeenChangelogVersion()
+      .then((lastSeen) => setUnseenChangelog(getUnseenChangelog(lastSeen)))
+      .catch((err) => console.error('Falha ao checar novidades:', err));
   }, [success]);
+
+  const handleDismissChangelog = () => {
+    setUnseenChangelog([]);
+    markChangelogSeen(CURRENT_CHANGELOG_VERSION).catch((err) =>
+      console.error('Falha ao marcar novidades como vistas:', err)
+    );
+  };
 
   const ready = success && fontsLoaded;
   const anyError = error ?? fontError;
@@ -64,10 +84,15 @@ export default function TabLayout() {
           <Text style={styles.errorText}>Erro ao iniciar o app: {anyError.message}</Text>
         </View>
       ) : ready ? (
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="plano/novo" options={{ presentation: 'modal' }} />
-        </Stack>
+        <>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="(tabs)" />
+            <Stack.Screen name="plano/novo" options={{ presentation: 'modal' }} />
+          </Stack>
+          {unseenChangelog.length > 0 && (
+            <ChangelogModal visible entries={unseenChangelog} onDismiss={handleDismissChangelog} />
+          )}
+        </>
       ) : (
         <View style={styles.center}>
           <ActivityIndicator />

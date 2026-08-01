@@ -6,6 +6,7 @@ import { File } from 'expo-file-system';
 import { Image } from 'expo-image';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
+import { ChangelogModal } from '@/components/changelog-modal';
 import { Screen } from '@/components/screen';
 import { SummaryStatsSection } from '@/components/perfil/summary-stats-section';
 import { VolumeAnalysisSection } from '@/components/perfil/volume-analysis-section';
@@ -19,6 +20,7 @@ import { ScreenTitle } from '@/components/ui/screen-title';
 import { getLatestBodyWeightKg, upsertBodyWeightToday } from '@/db/body-weight';
 import { pickAndSaveProfilePhoto, removeProfilePhoto, updateUserProfile, useUserProfile } from '@/db/user-profile';
 import { EXPERIENCE_OPTIONS, type AssistantExperience } from '@/lib/assistant-profile';
+import { CHANGELOG_ENTRIES } from '@/lib/changelog';
 import { formatNumberPtBr } from '@/lib/format';
 import { useDbQuery } from '@/lib/use-db-query';
 import { colors } from '@/theme/tokens';
@@ -31,6 +33,11 @@ function reportError(context: string, err: unknown) {
 export default function PerfilScreen() {
   const router = useRouter();
   const profile = useUserProfile();
+
+  // Reler pelo Perfil mostra o changelog INTEIRO (não só o não visto — é "o
+  // que mudou", não "o que há de novo") e só fecha ao dispensar; nunca chama
+  // markChangelogSeen (isso é papel exclusivo do modal do boot).
+  const [changelogModalVisible, setChangelogModalVisible] = useState(false);
 
   // fotoUri pode apontar pra um arquivo que não existe mais (ex: restaurou
   // backup de outro device — o arquivo nunca viaja, só o caminho). Checagem
@@ -218,7 +225,7 @@ export default function PerfilScreen() {
       </Section>
 
       <Section title="Dados">
-        <Pressable onPress={() => router.push('/backup')}>
+        <Pressable onPress={() => router.push('/backup')} className="mb-3">
           <Card className="flex-row items-center justify-between">
             <View>
               <Text className="font-card-title text-lg text-text">Dados e backup</Text>
@@ -227,7 +234,23 @@ export default function PerfilScreen() {
             <Ionicons name="chevron-forward" size={20} color={colors.muted} />
           </Card>
         </Pressable>
+
+        <Pressable onPress={() => setChangelogModalVisible(true)}>
+          <Card className="flex-row items-center justify-between">
+            <View>
+              <Text className="font-card-title text-lg text-text">Novidades</Text>
+              <Label className="mt-1">Reler o que já mudou no app</Label>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color={colors.muted} />
+          </Card>
+        </Pressable>
       </Section>
+
+      <ChangelogModal
+        visible={changelogModalVisible}
+        entries={CHANGELOG_ENTRIES}
+        onDismiss={() => setChangelogModalVisible(false)}
+      />
     </Screen>
   );
 }
