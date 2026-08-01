@@ -85,6 +85,7 @@ export const setLogs = sqliteTable('set_logs', {
   reps: integer('reps').notNull(),
   carga: real('carga').notNull(),
   rpe: real('rpe'),
+  pesoCorporal: integer('peso_corporal', { mode: 'boolean' }).notNull().default(false),
 });
 
 export type SetLog = typeof setLogs.$inferSelect;

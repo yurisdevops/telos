@@ -1,0 +1,1 @@
+ALTER TABLE `set_logs` ADD `peso_corporal` integer DEFAULT false NOT NULL;

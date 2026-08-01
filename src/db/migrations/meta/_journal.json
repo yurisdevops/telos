@@ -50,6 +50,13 @@
       "when": 1785003834076,
       "tag": "0006_violet_iron_lad",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1785547292933,
+      "tag": "0007_cooing_thor",
+      "breakpoints": true
     }
   ]
 }
