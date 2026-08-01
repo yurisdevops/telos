@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import { Text, View } from 'react-native';
+import { useMemo, useState } from 'react';
+import { Pressable, Text, View } from 'react-native';
 import { and, desc, eq, sql } from 'drizzle-orm';
 
 import { Card } from '@/components/ui/card';
@@ -83,9 +83,12 @@ function formatRatio(value: number): string {
   return value.toFixed(1).replace('.', ',');
 }
 
+const COLLAPSED_COUNT = 5;
+
 export function PersonalRecordsSection() {
   const prs = usePersonalRecords();
   const weights = useBodyWeightLogs();
+  const [expanded, setExpanded] = useState(false);
 
   const ratioByExercise = useMemo(() => {
     const map = new Map<number, number>();
@@ -106,30 +109,40 @@ export function PersonalRecordsSection() {
       {prs === undefined ? null : prs.length === 0 ? (
         <Text className="py-8 text-center font-body text-muted">Sem recordes ainda.</Text>
       ) : (
-        prs.map((pr, index) => {
-          const ratio = ratioByExercise.get(pr.exerciseId);
-          return (
-            <View
-              key={pr.exerciseId}
-              className={`flex-row items-baseline justify-between ${
-                index < prs.length - 1 ? 'mb-4 border-b border-border pb-4' : ''
-              }`}>
-              <View className="flex-1 pr-3">
-                <Text className="font-body-medium text-base text-text" numberOfLines={1}>
-                  {pr.nome}
+        <>
+          {(expanded ? prs : prs.slice(0, COLLAPSED_COUNT)).map((pr, index, visiblePrs) => {
+            const ratio = ratioByExercise.get(pr.exerciseId);
+            return (
+              <View
+                key={pr.exerciseId}
+                className={`flex-row items-baseline justify-between ${
+                  index < visiblePrs.length - 1 ? 'mb-4 border-b border-border pb-4' : ''
+                }`}>
+                <View className="flex-1 pr-3">
+                  <Text className="font-body-medium text-base text-text" numberOfLines={1}>
+                    {pr.nome}
+                  </Text>
+                  <Label className="mt-1">{`${pr.reps} reps · ${formatShortDateLabel(pr.data)}`}</Label>
+                  {ratio !== undefined && (
+                    <Label className="mt-1 text-accent">{`${formatRatio(ratio)}x seu peso`}</Label>
+                  )}
+                </View>
+                <Text className="font-display text-4xl text-accent">
+                  {pr.carga}
+                  <Text className="font-label text-sm text-muted"> kg</Text>
                 </Text>
-                <Label className="mt-1">{`${pr.reps} reps · ${formatShortDateLabel(pr.data)}`}</Label>
-                {ratio !== undefined && (
-                  <Label className="mt-1 text-accent">{`${formatRatio(ratio)}x seu peso`}</Label>
-                )}
               </View>
-              <Text className="font-display text-4xl text-accent">
-                {pr.carga}
-                <Text className="font-label text-sm text-muted"> kg</Text>
+            );
+          })}
+
+          {prs.length > COLLAPSED_COUNT && (
+            <Pressable onPress={() => setExpanded((e) => !e)} className="mt-1 items-center py-2">
+              <Text className="font-label text-xs uppercase text-accent">
+                {expanded ? 'Ver menos' : `Ver mais (${prs.length - COLLAPSED_COUNT})`}
               </Text>
-            </View>
-          );
-        })
+            </Pressable>
+          )}
+        </>
       )}
     </Card>
   );
