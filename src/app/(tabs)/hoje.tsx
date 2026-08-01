@@ -1,6 +1,8 @@
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Alert,
+  Animated,
+  Easing,
   InputAccessoryView,
   Keyboard,
   Modal,
@@ -695,6 +697,43 @@ function RestTimerOverlay({
 
   const isDone = restRemaining <= 0;
 
+  // Pulsação lenta no estado "concluído" — só escala + opacidade (nunca cor:
+  // o native driver não anima backgroundColor/borderColor). ~900ms por
+  // meia-fase, ~1,8s por ciclo completo — devagar de propósito, nunca um
+  // flash/estrobo (risco de fotossensibilidade). Roda só enquanto isDone;
+  // para e reseta no cleanup do efeito, que dispara tanto na transição de
+  // volta pra "contando" quanto no desmonte do overlay inteiro.
+  const pulse = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    if (!isDone) return;
+
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulse, {
+          toValue: 1,
+          duration: 900,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulse, {
+          toValue: 0,
+          duration: 900,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ])
+    );
+    loop.start();
+
+    return () => {
+      loop.stop();
+      pulse.setValue(0);
+    };
+  }, [isDone, pulse]);
+
+  const pulseScale = pulse.interpolate({ inputRange: [0, 1], outputRange: [1, 1.08] });
+  const pulseOpacity = pulse.interpolate({ inputRange: [0, 1], outputRange: [1, 0.75] });
+
   return (
     <Modal transparent animationType="fade" statusBarTranslucent onRequestClose={onDismiss}>
       <View
@@ -704,9 +743,23 @@ function RestTimerOverlay({
         <Label>{isDone ? 'Descanso concluído' : 'Descanso'}</Label>
 
         {isDone ? (
-          <View className="my-6 items-center justify-center rounded-lg border-2 border-success bg-surface px-10 py-8">
-            <Ionicons name="checkmark-circle" size={72} color={colors.success} />
-          </View>
+          <Animated.View
+            style={{
+              marginVertical: 24,
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 8,
+              borderWidth: 2,
+              borderColor: colors.accent,
+              backgroundColor: colors.surface,
+              paddingHorizontal: 40,
+              paddingVertical: 32,
+              transform: [{ scale: pulseScale }],
+              opacity: pulseOpacity,
+            }}
+          >
+            <Ionicons name="checkmark-circle" size={72} color={colors.accent} />
+          </Animated.View>
         ) : (
           <View className="my-6 items-center justify-center rounded-lg border-2 border-accent bg-surface px-10 py-8">
             <Text
