@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert, Pressable, Text, TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -14,6 +14,8 @@ import { ScreenTitle } from '@/components/ui/screen-title';
 import { db } from '@/db';
 import { exercises, workoutPlans, type Exercise } from '@/db/schema';
 import { applyGeneratedPlan } from '@/db/templates';
+import { getLatestBodyWeightKg } from '@/db/body-weight';
+import { useUserProfile } from '@/db/user-profile';
 import {
   computeTargets,
   generateWorkout,
@@ -30,11 +32,16 @@ import {
   type AssistantGoal,
   type AssistantProfile,
 } from '@/lib/assistant-profile';
+import { useDbQuery } from '@/lib/use-db-query';
 import { colors } from '@/theme/tokens';
 
 const TOTAL_QUESTIONS = 5;
 
 type ExerciseTarget = { dayIndex: number; exerciseIndex: number };
+
+function isAssistantExperience(value: string): value is AssistantExperience {
+  return EXPERIENCE_OPTIONS.some((option) => option.value === value);
+}
 
 export default function AssistenteScreen() {
   const router = useRouter();
@@ -45,6 +52,35 @@ export default function AssistenteScreen() {
   const [objetivo, setObjetivo] = useState<AssistantGoal | null>(null);
   const [frequencia, setFrequencia] = useState<number | null>(null);
   const [experiencia, setExperiencia] = useState<AssistantExperience | null>(null);
+
+  // Fonte única dos dados pessoais é o Perfil — o questionário só lê de lá
+  // pra pré-preencher, nunca escreve de volta (ajuste aqui é pontual pra
+  // este treino, o Perfil não muda). `savedProfile`/`latestPesoKg` chegam de
+  // forma assíncrona (useLiveQuery/useDbQuery) — os efeitos abaixo aplicam o
+  // valor salvo só uma vez, e só enquanto o campo não tiver sido tocado pelo
+  // usuário (guardado por *Touched), pra nunca sobrescrever uma edição.
+  const savedProfile = useUserProfile();
+  const latestPesoKg = useDbQuery(() => getLatestBodyWeightKg(), ['body_weight_logs'], []);
+  const [alturaTouched, setAlturaTouched] = useState(false);
+  const [pesoTouched, setPesoTouched] = useState(false);
+  const [experienciaTouched, setExperienciaTouched] = useState(false);
+
+  useEffect(() => {
+    if (alturaTouched) return;
+    if (savedProfile?.alturaCm != null) setAlturaText(String(savedProfile.alturaCm));
+  }, [savedProfile?.alturaCm, alturaTouched]);
+
+  useEffect(() => {
+    if (pesoTouched) return;
+    if (latestPesoKg != null) setPesoText(String(latestPesoKg));
+  }, [latestPesoKg, pesoTouched]);
+
+  useEffect(() => {
+    if (experienciaTouched) return;
+    if (savedProfile?.experiencia && isAssistantExperience(savedProfile.experiencia)) {
+      setExperiencia(savedProfile.experiencia);
+    }
+  }, [savedProfile?.experiencia, experienciaTouched]);
 
   const [profile, setProfile] = useState<AssistantProfile | null>(null);
   const [reviewOpen, setReviewOpen] = useState(false);
@@ -402,13 +438,19 @@ export default function AssistenteScreen() {
           <Label className="mb-3">Opcional — pode deixar em branco.</Label>
           <TextInput
             value={alturaText}
-            onChangeText={setAlturaText}
+            onChangeText={(text) => {
+              setAlturaTouched(true);
+              setAlturaText(text);
+            }}
             keyboardType="number-pad"
             placeholder="Ex: 175"
             placeholderTextColor={colors.muted}
             autoFocus
             className="rounded border border-border bg-surface px-4 py-3 font-body text-base text-text"
           />
+          {!alturaTouched && savedProfile?.alturaCm != null && (
+            <Label className="mt-2 text-accent">Preenchido do seu perfil — ajuste se quiser.</Label>
+          )}
         </View>
       )}
 
@@ -418,13 +460,19 @@ export default function AssistenteScreen() {
           <Label className="mb-3">Opcional — pode deixar em branco.</Label>
           <TextInput
             value={pesoText}
-            onChangeText={setPesoText}
+            onChangeText={(text) => {
+              setPesoTouched(true);
+              setPesoText(text);
+            }}
             keyboardType="decimal-pad"
             placeholder="Ex: 78"
             placeholderTextColor={colors.muted}
             autoFocus
             className="rounded border border-border bg-surface px-4 py-3 font-body text-base text-text"
           />
+          {!pesoTouched && latestPesoKg != null && (
+            <Label className="mt-2 text-accent">Preenchido do seu último registro de peso — ajuste se quiser.</Label>
+          )}
         </View>
       )}
 
@@ -471,10 +519,16 @@ export default function AssistenteScreen() {
                 key={option.value}
                 label={option.label}
                 selected={experiencia === option.value}
-                onPress={() => setExperiencia(option.value)}
+                onPress={() => {
+                  setExperienciaTouched(true);
+                  setExperiencia(option.value);
+                }}
               />
             ))}
           </View>
+          {!experienciaTouched && experiencia != null && (
+            <Label className="mt-3 text-accent">Preenchido do seu perfil — ajuste se quiser.</Label>
+          )}
         </View>
       )}
 
