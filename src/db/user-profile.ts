@@ -38,11 +38,12 @@ export async function updateUserProfile(patch: UserProfilePatch): Promise<void> 
 
 const PROFILE_PHOTO_BASENAME = 'profile-photo';
 
-// Apaga qualquer foto de perfil anterior em Paths.document, exceto (se
-// passado) o arquivo que acabou de ser gravado — cobre o caso de trocar de
-// foto com uma extensão diferente da anterior (ex: era .png, a nova é .jpg),
-// que senão deixaria a antiga órfã pra sempre (nunca mais referenciada, nunca
-// apagada).
+// Apaga toda foto de perfil anterior em Paths.document (qualquer arquivo com
+// o prefixo, sobra de trocas passadas), exceto (se passado) a que acabou de
+// ser gravada — o prefixo compartilhado (`profile-photo`) casa com qualquer
+// `profile-photo-<timestamp><ext>`, então continua pegando a anterior mesmo
+// com nome único por troca. Sem isso, cada troca de foto deixaria a anterior
+// órfã pra sempre (nunca mais referenciada, nunca apagada).
 function cleanupOldProfilePhotos(exceptFileName?: string) {
   for (const entry of Paths.document.list()) {
     if (entry instanceof File && entry.name.startsWith(PROFILE_PHOTO_BASENAME) && entry.name !== exceptFileName) {
@@ -63,23 +64,27 @@ function cleanupOldProfilePhotos(exceptFileName?: string) {
  *
  * A foto escolhida é copiada pra `Paths.document` — o diretório persistente
  * ("safe from being deleted by the system"), nunca `Paths.cache` (que o
- * sistema pode limpar sozinho, o que apagaria a foto sem aviso). Nome
- * estável (`profile-photo<extensão>`): trocar de foto sobrescreve a mesma
- * linha do banco e limpa qualquer arquivo anterior, nunca acumula lixo.
+ * sistema pode limpar sozinho, o que apagaria a foto sem aviso). Nome ÚNICO
+ * a cada troca (`profile-photo-<timestamp><extensão>`), não fixo: o
+ * `expo-image` cacheia por URI, e um nome fixo faz a URI ficar idêntica
+ * quando a extensão não muda — a tela então mostra a foto antiga do cache,
+ * mesmo com o arquivo já sobrescrito no disco. Nome único garante que toda
+ * troca produz uma URI genuinamente nova, então o cache nunca serve a antiga.
  */
 export async function pickAndSaveProfilePhoto(): Promise<void> {
   const pick = await File.pickFileAsync({ mimeTypes: 'image/*' });
   if (pick.canceled) return;
 
   const picked = pick.result;
-  const destination = new File(Paths.document, `${PROFILE_PHOTO_BASENAME}${picked.extension}`);
+  const destination = new File(Paths.document, `${PROFILE_PHOTO_BASENAME}-${Date.now()}${picked.extension}`);
   await picked.copy(destination, { overwrite: true });
 
-  // Só limpa depois que a cópia nova deu certo — se o copy() falhar, a foto
-  // antiga (se houver) continua intacta em vez de o usuário ficar sem nenhuma.
-  cleanupOldProfilePhotos(destination.name);
-
+  // Grava o caminho novo ANTES de limpar o(s) antigo(s): se algo falhar entre
+  // os dois passos, o perfil aponta pro arquivo novo (válido) — nunca fica
+  // apontando pra um arquivo que acabou de ser apagado.
   await updateUserProfile({ fotoUri: destination.uri });
+
+  cleanupOldProfilePhotos(destination.name);
 }
 
 /** Apaga o arquivo de foto (se existir) e limpa `fotoUri` no perfil. */
