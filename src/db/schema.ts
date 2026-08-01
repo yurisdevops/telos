@@ -170,3 +170,18 @@ export const exerciseSubstitutions = sqliteTable('exercise_substitutions', {
 
 export type ExerciseSubstitution = typeof exerciseSubstitutions.$inferSelect;
 export type NewExerciseSubstitution = typeof exerciseSubstitutions.$inferInsert;
+
+// Single-user, single-linha: `id` sempre 1, sem autoIncrement (nunca criamos
+// uma segunda linha) — ensureUserProfileRow() garante essa linha existir.
+// Peso não entra aqui de propósito: já vive em bodyWeightLogs (série
+// temporal); o Perfil lê o registro mais recente de lá em vez de duplicar.
+export const userProfile = sqliteTable('user_profile', {
+  id: integer('id').primaryKey(),
+  nome: text('nome'),
+  alturaCm: integer('altura_cm'),
+  experiencia: text('experiencia'),
+  fotoUri: text('foto_uri'),
+});
+
+export type UserProfile = typeof userProfile.$inferSelect;
+export type NewUserProfile = typeof userProfile.$inferInsert;

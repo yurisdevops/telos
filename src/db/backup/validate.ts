@@ -97,6 +97,13 @@ export function assertValidBackupPayload(json: unknown): BackupPayload {
   assertArray(json.exercisePreferences, 'exercisePreferences');
   assertArray(json.exerciseSubstitutions, 'exerciseSubstitutions');
 
+  // Perfil — ausente em backups anteriores, normalizado pra `null` (é um
+  // objeto único, não uma lista, então a regra de ausência aqui aponta pra
+  // `null` em vez de `[]`). Checagem estrita por `undefined` continua valendo:
+  // um `null` explícito no arquivo é um valor válido (perfil vazio), só
+  // `undefined` (chave ausente) é normalizado.
+  if (json.userProfile === undefined) json.userProfile = null;
+
   json.workoutPlans.forEach((row, index) => {
     if (!isRecord(row)) throw new BackupValidationError(`workoutPlans[${index}] inválido.`);
     assertNumber(row.id, `workoutPlans[${index}].id`);
@@ -205,6 +212,20 @@ export function assertValidBackupPayload(json: unknown): BackupPayload {
     assertString(row.newExerciseNomeSnapshot, `exerciseSubstitutions[${index}].newExerciseNomeSnapshot`);
     assertString(row.substitutedAt, `exerciseSubstitutions[${index}].substitutedAt`);
   });
+
+  if (json.userProfile !== null) {
+    if (!isRecord(json.userProfile)) {
+      throw new BackupValidationError('Campo "userProfile" deveria ser um objeto ou null.');
+    }
+    assertOptionalNullableString(json.userProfile.nome, 'userProfile.nome');
+    if (json.userProfile.nome === undefined) json.userProfile.nome = null;
+    assertOptionalNullableNumber(json.userProfile.alturaCm, 'userProfile.alturaCm');
+    if (json.userProfile.alturaCm === undefined) json.userProfile.alturaCm = null;
+    assertOptionalNullableString(json.userProfile.experiencia, 'userProfile.experiencia');
+    if (json.userProfile.experiencia === undefined) json.userProfile.experiencia = null;
+    assertOptionalNullableString(json.userProfile.fotoUri, 'userProfile.fotoUri');
+    if (json.userProfile.fotoUri === undefined) json.userProfile.fotoUri = null;
+  }
 
   return json as unknown as BackupPayload;
 }

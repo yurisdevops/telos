@@ -23,6 +23,7 @@ import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import { db } from '@/db';
 import migrations from '@/db/migrations/migrations';
 import { seedDatabase } from '@/db/seed';
+import { ensureUserProfileRow } from '@/db/user-profile';
 import { colors } from '@/theme/tokens';
 
 SplashScreen.preventAutoHideAsync();
@@ -42,6 +43,7 @@ export default function TabLayout() {
   useEffect(() => {
     if (success) {
       seedDatabase();
+      ensureUserProfileRow();
     }
   }, [success]);
 

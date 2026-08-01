@@ -11,10 +11,12 @@ import {
   sessionSkips,
   sessions,
   setLogs,
+  userProfile,
   workoutDayExercises,
   workoutDays,
   workoutPlans,
 } from '@/db/schema';
+import { USER_PROFILE_ID } from '@/db/user-profile';
 
 import type {
   BackupBodyWeightLog,
@@ -26,6 +28,7 @@ import type {
   BackupSessionExtraExercise,
   BackupSessionSkip,
   BackupSetLog,
+  BackupUserProfile,
   BackupWorkoutDay,
   BackupWorkoutDayExercise,
   BackupWorkoutPlan,
@@ -49,6 +52,7 @@ function emptySummary(): ImportSummary {
     deloadWeeks: 0,
     exercisePreferences: 0,
     exerciseSubstitutions: 0,
+    userProfile: 0,
   });
   return {
     inserted: zeroTable(),
@@ -481,6 +485,36 @@ function restoreExerciseSubstitutions(
   }
 }
 
+// Perfil — linha única (id fixo = 1, garantida por ensureUserProfileRow no
+// boot), por isso não segue o padrão merge-por-chave-natural das demais:
+// aqui é sempre upsert incondicional (mesmo em modo "merge"), já que não há
+// "outra linha" possível pra desambiguar contra. `fotoUri` é só uma string
+// de caminho — nenhuma verificação de existência do arquivo acontece aqui
+// (fica pra quando a etapa 5, de foto, for implementada).
+function restoreUserProfile(tx: Tx, row: BackupUserProfile | null, summary: ImportSummary) {
+  if (!row) return;
+
+  tx.insert(userProfile)
+    .values({
+      id: USER_PROFILE_ID,
+      nome: row.nome,
+      alturaCm: row.alturaCm,
+      experiencia: row.experiencia,
+      fotoUri: row.fotoUri,
+    })
+    .onConflictDoUpdate({
+      target: userProfile.id,
+      set: {
+        nome: row.nome,
+        alturaCm: row.alturaCm,
+        experiencia: row.experiencia,
+        fotoUri: row.fotoUri,
+      },
+    })
+    .run();
+  summary.inserted.userProfile += 1;
+}
+
 // Rede de segurança final — o algoritmo acima já garante isso por construção
 // (toda inserção resolve a FK por um mapa ou é pulada), mas é barato conferir
 // de novo antes de confirmar, no mesmo espírito da migração de catálogo do
@@ -609,6 +643,7 @@ export function importBackupPayload(payload: BackupPayload, mode: ImportMode): I
     restoreDeloadWeeks(tx, payload.deloadWeeks, mode, summary);
     restoreExercisePreferences(tx, payload.exercisePreferences, mode, summary);
     restoreExerciseSubstitutions(tx, payload.exerciseSubstitutions, mode, summary);
+    restoreUserProfile(tx, payload.userProfile, summary);
 
     validateNoOrphans(tx);
 

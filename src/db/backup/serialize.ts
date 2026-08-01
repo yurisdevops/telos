@@ -1,3 +1,5 @@
+import { eq } from 'drizzle-orm';
+
 import { db } from '@/db';
 import {
   bodyWeightLogs,
@@ -9,10 +11,12 @@ import {
   sessionSkips,
   sessions,
   setLogs,
+  userProfile,
   workoutDayExercises,
   workoutDays,
   workoutPlans,
 } from '@/db/schema';
+import { USER_PROFILE_ID } from '@/db/user-profile';
 import { FORMAT_VERSION, type BackupPayload } from './types';
 
 /** Lê os dados do usuário (nunca o catálogo de exercícios, que vem do seed) e
@@ -33,6 +37,7 @@ export async function buildBackupPayload(): Promise<BackupPayload> {
     deloadWeekRows,
     preferenceRows,
     substitutionRows,
+    profileRows,
   ] = await Promise.all([
     db.select().from(workoutPlans),
     db.select().from(workoutDays),
@@ -46,7 +51,9 @@ export async function buildBackupPayload(): Promise<BackupPayload> {
     db.select().from(deloadWeeks),
     db.select().from(exercisePreferences),
     db.select().from(exerciseSubstitutions),
+    db.select().from(userProfile).where(eq(userProfile.id, USER_PROFILE_ID)),
   ]);
+  const profile = profileRows[0];
 
   const exerciseById = new Map(allExercises.map((e) => [e.id, e]));
   const resolveExercise = (exerciseId: number) => {
@@ -136,5 +143,13 @@ export async function buildBackupPayload(): Promise<BackupPayload> {
       newExerciseNomeSnapshot: resolveNomeByWgerId(s.newExerciseWgerId),
       substitutedAt: s.substitutedAt,
     })),
+    userProfile: profile
+      ? {
+          nome: profile.nome,
+          alturaCm: profile.alturaCm,
+          experiencia: profile.experiencia,
+          fotoUri: profile.fotoUri,
+        }
+      : null,
   };
 }

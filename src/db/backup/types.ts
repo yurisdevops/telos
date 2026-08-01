@@ -106,6 +106,18 @@ export type BackupExerciseSubstitution = {
   substitutedAt: string;
 };
 
+// Perfil (aba Perfil, etapa 1) — single-row (id fixo = 1), por isso é objeto
+// único e nullable no payload, não array como as demais tabelas. Peso não
+// entra aqui de propósito: já vive em bodyWeightLogs. `fotoUri` é caminho de
+// arquivo local — pode não existir mais no dispositivo de destino ao
+// restaurar; a validação só confere que é string, sem tocar no arquivo.
+export type BackupUserProfile = {
+  nome: string | null;
+  alturaCm: number | null;
+  experiencia: string | null;
+  fotoUri: string | null;
+};
+
 export type BackupPayload = {
   formatVersion: number;
   exportedAt: string;
@@ -124,6 +136,9 @@ export type BackupPayload = {
   // Onda 5 — mesma regra: ausentes em backups anteriores, normalizado pra [].
   exercisePreferences: BackupExercisePreference[];
   exerciseSubstitutions: BackupExerciseSubstitution[];
+  // Perfil — ausente em backups anteriores, normalizado pra `null` (não `[]`,
+  // já que é um objeto único, não uma lista).
+  userProfile: BackupUserProfile | null;
 };
 
 export type ImportMode = 'replace' | 'merge';
@@ -139,7 +154,8 @@ export type TableKey =
   | 'bodyWeightLogs'
   | 'deloadWeeks'
   | 'exercisePreferences'
-  | 'exerciseSubstitutions';
+  | 'exerciseSubstitutions'
+  | 'userProfile';
 
 export type SkippedOrphanExercise = {
   table: TableKey;
@@ -166,4 +182,5 @@ export const TABLE_LABELS: Record<TableKey, string> = {
   deloadWeeks: 'semanas de deload',
   exercisePreferences: 'preferências de exercício (favoritos/notas)',
   exerciseSubstitutions: 'substituições de exercício',
+  userProfile: 'perfil',
 };
