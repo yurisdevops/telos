@@ -697,27 +697,32 @@ function RestTimerOverlay({
 
   const isDone = restRemaining <= 0;
 
-  // Pulsação lenta no estado "concluído" — só escala + opacidade (nunca cor:
-  // o native driver não anima backgroundColor/borderColor). ~900ms por
-  // meia-fase, ~1,8s por ciclo completo — devagar de propósito, nunca um
-  // flash/estrobo (risco de fotossensibilidade). Roda só enquanto isDone;
-  // para e reseta no cleanup do efeito, que dispara tanto na transição de
-  // volta pra "contando" quanto no desmonte do overlay inteiro.
-  const pulse = useRef(new Animated.Value(0)).current;
+  // "Respiração" de tom no estado "concluído" — o fundo fica accent sólido
+  // (tela inteira, não mais uma caixinha) e uma camada preta semi-transparente
+  // por cima pulsa de opacidade 0 a ~0,2, escurecendo levemente o accent e
+  // voltando — visualmente equivalente a variar entre accent e uma versão
+  // ~20% mais escura dele, sem precisar animar backgroundColor diretamente
+  // (que não é compatível com useNativeDriver: só transform/opacity são).
+  // ~1500ms por meia-fase, ~3s por ciclo completo — bem devagar, entre tons
+  // próximos, nunca um flash (risco de fotossensibilidade é o motivo). Roda
+  // só enquanto isDone; para e reseta no cleanup do efeito, que dispara
+  // tanto na transição de volta pra "contando" quanto no desmonte do overlay
+  // inteiro.
+  const breathe = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     if (!isDone) return;
 
     const loop = Animated.loop(
       Animated.sequence([
-        Animated.timing(pulse, {
+        Animated.timing(breathe, {
           toValue: 1,
-          duration: 900,
+          duration: 1500,
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
-        Animated.timing(pulse, {
+        Animated.timing(breathe, {
           toValue: 0,
-          duration: 900,
+          duration: 1500,
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
@@ -727,39 +732,48 @@ function RestTimerOverlay({
 
     return () => {
       loop.stop();
-      pulse.setValue(0);
+      breathe.setValue(0);
     };
-  }, [isDone, pulse]);
+  }, [isDone, breathe]);
 
-  const pulseScale = pulse.interpolate({ inputRange: [0, 1], outputRange: [1, 1.08] });
-  const pulseOpacity = pulse.interpolate({ inputRange: [0, 1], outputRange: [1, 0.75] });
+  const breatheOpacity = breathe.interpolate({ inputRange: [0, 1], outputRange: [0, 0.2] });
 
   return (
     <Modal transparent animationType="fade" statusBarTranslucent onRequestClose={onDismiss}>
       <View
         className="flex-1 items-center justify-center px-8"
-        style={{ backgroundColor: 'rgba(20,20,20,0.94)' }}
+        style={{ backgroundColor: isDone ? colors.accent : 'rgba(20,20,20,0.94)' }}
       >
-        <Label>{isDone ? 'Descanso concluído' : 'Descanso'}</Label>
+        {isDone && (
+          // pointerEvents="none": é só uma camada visual por cima do fundo,
+          // não pode interceptar o toque no botão "Fechar" logo abaixo.
+          <Animated.View
+            pointerEvents="none"
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: '#000000',
+              opacity: breatheOpacity,
+            }}
+          />
+        )}
+
+        {!isDone && <Label>Descanso</Label>}
 
         {isDone ? (
-          <Animated.View
-            style={{
-              marginVertical: 24,
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: 8,
-              borderWidth: 2,
-              borderColor: colors.accent,
-              backgroundColor: colors.surface,
-              paddingHorizontal: 40,
-              paddingVertical: 32,
-              transform: [{ scale: pulseScale }],
-              opacity: pulseOpacity,
-            }}
-          >
-            <Ionicons name="checkmark-circle" size={72} color={colors.accent} />
-          </Animated.View>
+          <View className="my-6 items-center justify-center">
+            <Ionicons name="checkmark-circle" size={112} color="#FFFFFF" />
+            <Text
+              className="mt-4 text-center font-display text-6xl uppercase text-white"
+              numberOfLines={2}
+              adjustsFontSizeToFit
+            >
+              Descanso concluído
+            </Text>
+          </View>
         ) : (
           <View className="my-6 items-center justify-center rounded-lg border-2 border-accent bg-surface px-10 py-8">
             <Text
@@ -785,8 +799,10 @@ function RestTimerOverlay({
 
         <Pressable
           onPress={onDismiss}
-          className="w-full max-w-xs rounded border border-accent py-4">
-          <Text className="text-center font-label uppercase text-accent">Fechar</Text>
+          className={`w-full max-w-xs rounded border py-4 ${isDone ? 'border-white' : 'border-accent'}`}>
+          <Text className={`text-center font-label uppercase ${isDone ? 'text-white' : 'text-accent'}`}>
+            Fechar
+          </Text>
         </Pressable>
       </View>
     </Modal>
