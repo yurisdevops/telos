@@ -83,6 +83,18 @@ export default function TabsLayout() {
           tabPress: guardedTabPress(navigation, route.name),
         })}
       />
+      <Tabs.Screen
+        name="perfil"
+        options={{
+          title: 'Perfil',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person-outline" color={color} size={size} />
+          ),
+        }}
+        listeners={({ navigation, route }) => ({
+          tabPress: guardedTabPress(navigation, route.name),
+        })}
+      />
     </Tabs>
   );
 }

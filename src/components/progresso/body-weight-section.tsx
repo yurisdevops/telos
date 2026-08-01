@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
 import { Alert, Text, View } from 'react-native';
-import { eq } from 'drizzle-orm';
 import { BarChart } from 'react-native-gifted-charts';
 
 import { Button } from '@/components/ui/button';
@@ -9,7 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { db } from '@/db';
 import { bodyWeightLogs } from '@/db/schema';
-import { formatDayMonthLabel, getTodayDateString, parseLocalIsoDate } from '@/lib/date';
+import { upsertBodyWeightToday } from '@/db/body-weight';
+import { formatDayMonthLabel, parseLocalIsoDate } from '@/lib/date';
 import { chooseNiceStep, formatNumberPtBr } from '@/lib/format';
 import { useDbQuery } from '@/lib/use-db-query';
 import { colors } from '@/theme/tokens';
@@ -50,13 +50,7 @@ export function BodyWeightSection() {
     if (!value || value <= 0) return;
 
     try {
-      const today = getTodayDateString();
-      const existing = (rows ?? []).find((row) => row.data === today);
-      if (existing) {
-        await db.update(bodyWeightLogs).set({ pesoKg: value }).where(eq(bodyWeightLogs.id, existing.id));
-      } else {
-        await db.insert(bodyWeightLogs).values({ data: today, pesoKg: value });
-      }
+      await upsertBodyWeightToday(value);
       setPeso('');
     } catch (err) {
       console.error('Falha ao registrar peso corporal:', err);
