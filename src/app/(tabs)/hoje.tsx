@@ -433,7 +433,14 @@ function SessionExecution({ session }: { session: Session }) {
     try {
       await db
         .update(sessions)
-        .set({ concluida: true, horaFim: Date.now(), restTimerStartedAt: null })
+        .set({
+          concluida: true,
+          restTimerStartedAt: null,
+          // Só grava horaFim na primeira conclusão — reconcluir um treino
+          // reaberto preserva o horário original, senão a duração fica
+          // inflada pelo tempo que a sessão ficou reaberta parada.
+          ...(session.horaFim == null ? { horaFim: Date.now() } : {}),
+        })
         .where(eq(sessions.id, session.id));
       await cancelRestEndNotification();
     } catch (err) {
@@ -860,15 +867,24 @@ const ExerciseSessionCard = memo(
     const isComplete = completedCount === item.seriesAlvo;
     const isStarted = completedCount > 0;
 
-    // Collapse é manual apenas (nunca automático por mudança de dados): só o
-    // Pressable do cabeçalho abaixo alterna. Colapsar automaticamente ao
-    // completar já causou um bug sério (fechava no meio do preenchimento da
-    // última série) — não reintroduzir isso.
-    const [collapsed, setCollapsed] = useState(false);
+    // Colapso automático quando o exercício completa (todas as séries
+    // preenchidas) — só entra em jogo depois de pronto; enquanto incompleto,
+    // fica sempre expandido (nada muda pro fluxo de preenchimento em si). O
+    // botão de "Iniciar descanso" continua acessível no resumo colapsado
+    // (abaixo) — evitando repetir o bug antigo de esconder essa ação bem no
+    // momento em que ela aparece, ao preencher a última série.
+    const [manualExpanded, setManualExpanded] = useState(false);
+    const expanded = !isComplete || manualExpanded;
 
     const targetLabel = `${item.seriesAlvo}x${item.repsAlvo}${
       item.cargaAlvo != null ? ` · ${item.cargaAlvo}kg` : ''
     }`;
+
+    // Resumo do card colapsado (só relevante quando isComplete, mas o cálculo
+    // em si é barato e já vem de `logs`, sem query nova).
+    const maiorCarga = logs.length > 0 ? Math.max(...logs.map((log) => log.carga)) : 0;
+    const completedSummaryLabel =
+      maiorCarga > 0 ? `${item.seriesAlvo}× · ${maiorCarga}kg` : `${item.seriesAlvo}×`;
 
     if (item.skipped) {
       return (
@@ -903,22 +919,27 @@ const ExerciseSessionCard = memo(
             <Label className="mb-1 text-accent">{`Supersérie ${item.supersetGroup}`}</Label>
           )}
           <Pressable
-            onPress={() => setCollapsed((c) => !c)}
+            onPress={() => isComplete && setManualExpanded((v) => !v)}
             className="flex-row items-center justify-between">
             <Text className="flex-1 pr-2 font-card-title text-lg text-text" numberOfLines={1}>
               {item.exerciseNome}
             </Text>
           <View className="flex-row items-center gap-2">
             {isComplete ? (
-              <Ionicons name="checkmark-circle" size={20} color={colors.accent} />
+              <>
+                <Ionicons name="checkmark-circle" size={20} color={colors.accent} />
+                {!expanded && <Label className="text-accent">{completedSummaryLabel}</Label>}
+              </>
             ) : isStarted ? (
               <Label>{`${completedCount}/${item.seriesAlvo}`}</Label>
             ) : null}
-            <Ionicons
-              name={collapsed ? 'chevron-down' : 'chevron-up'}
-              size={18}
-              color={colors.muted}
-            />
+            {isComplete && (
+              <Ionicons
+                name={expanded ? 'chevron-up' : 'chevron-down'}
+                size={18}
+                color={colors.muted}
+              />
+            )}
           </View>
         </Pressable>
 
@@ -934,17 +955,15 @@ const ExerciseSessionCard = memo(
           </Pressable>
         )}
 
-        {collapsed ? (
-          <>
-            <Label className="mt-1">{targetLabel}</Label>
-            {nota && <Label className="mt-1 italic text-muted">{nota}</Label>}
-            {lastPerformanceLabel && (
-              <Label className="mt-1 text-muted">{`Última vez: ${lastPerformanceLabel}`}</Label>
-            )}
-            {loadSuggestionLabel && (
-              <Label className="mt-1 text-accent">{loadSuggestionLabel}</Label>
-            )}
-          </>
+        {!expanded ? (
+          item.isLastInSupersetGroup && (
+            <Pressable
+              onPress={handleRequestRest}
+              className="mt-3 flex-row items-center justify-center gap-2 rounded border border-accent py-3">
+              <Ionicons name="time-outline" size={22} color={colors.accent} />
+              <Text className="font-label uppercase text-accent">{`Iniciar descanso · ${suggestedRestSeconds}s`}</Text>
+            </Pressable>
+          )
         ) : (
           <>
             <Label className="mt-1">{`Alvo: ${targetLabel}`}</Label>
