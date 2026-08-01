@@ -1,7 +1,9 @@
 import type { ReactNode } from 'react';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Alert, Pressable, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import { File } from 'expo-file-system';
+import { Image } from 'expo-image';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { Screen } from '@/components/screen';
@@ -14,7 +16,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ScreenTitle } from '@/components/ui/screen-title';
 import { getLatestBodyWeightKg, upsertBodyWeightToday } from '@/db/body-weight';
-import { updateUserProfile, useUserProfile } from '@/db/user-profile';
+import { pickAndSaveProfilePhoto, removeProfilePhoto, updateUserProfile, useUserProfile } from '@/db/user-profile';
 import { EXPERIENCE_OPTIONS, type AssistantExperience } from '@/lib/assistant-profile';
 import { formatNumberPtBr } from '@/lib/format';
 import { useDbQuery } from '@/lib/use-db-query';
@@ -28,6 +30,42 @@ function reportError(context: string, err: unknown) {
 export default function PerfilScreen() {
   const router = useRouter();
   const profile = useUserProfile();
+
+  // fotoUri pode apontar pra um arquivo que não existe mais (ex: restaurou
+  // backup de outro device — o arquivo nunca viaja, só o caminho). Checagem
+  // síncrona (`.exists` é propriedade, não precisa de await) e memoizada pra
+  // não rodar a cada tecla digitada em nome/altura/peso (que re-renderiza a
+  // tela inteira). onError cobre o resto (arquivo corrompido, sem permissão
+  // de leitura etc.) que `.exists` sozinho não pega.
+  const photoFileExists = useMemo(() => {
+    if (!profile?.fotoUri) return false;
+    try {
+      return new File(profile.fotoUri).exists;
+    } catch {
+      return false;
+    }
+  }, [profile?.fotoUri]);
+  const [photoLoadFailed, setPhotoLoadFailed] = useState(false);
+  useEffect(() => {
+    setPhotoLoadFailed(false);
+  }, [profile?.fotoUri]);
+  const showPhoto = !!profile?.fotoUri && photoFileExists && !photoLoadFailed;
+
+  const handlePickPhoto = async () => {
+    try {
+      await pickAndSaveProfilePhoto();
+    } catch (err) {
+      reportError('Erro ao escolher foto', err);
+    }
+  };
+
+  const handleRemovePhoto = async () => {
+    try {
+      await removeProfilePhoto();
+    } catch (err) {
+      reportError('Erro ao remover foto', err);
+    }
+  };
 
   // Mesmo padrão "draft ?? valor salvo" já usado na nota pessoal do exercício
   // (exercicio/[id].tsx): edita livremente sem gravar nada até apertar Salvar.
@@ -88,8 +126,29 @@ export default function PerfilScreen() {
       <ScreenTitle title="Perfil" />
 
       <Card className="mb-6 flex-row items-center gap-4">
-        <View className="h-16 w-16 items-center justify-center rounded-full border border-border bg-bg">
-          <Ionicons name="person-outline" size={32} color={colors.muted} />
+        <View className="relative">
+          <Pressable
+            onPress={handlePickPhoto}
+            className="h-16 w-16 items-center justify-center overflow-hidden rounded-full border border-border bg-bg">
+            {showPhoto ? (
+              <Image
+                source={profile!.fotoUri}
+                style={{ width: 64, height: 64 }}
+                contentFit="cover"
+                onError={() => setPhotoLoadFailed(true)}
+              />
+            ) : (
+              <Ionicons name="person-outline" size={32} color={colors.muted} />
+            )}
+          </Pressable>
+          {showPhoto && (
+            <Pressable
+              onPress={handleRemovePhoto}
+              hitSlop={8}
+              className="absolute -right-1 -top-1 h-6 w-6 items-center justify-center rounded-full border border-border bg-surface">
+              <Ionicons name="close" size={14} color={colors.muted} />
+            </Pressable>
+          )}
         </View>
         <Text className="flex-1 font-card-title text-xl text-text" numberOfLines={1}>
           {profile?.nome ? profile.nome : 'Adicionar nome'}
