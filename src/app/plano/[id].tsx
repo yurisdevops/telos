@@ -616,7 +616,7 @@ export default function PlanoDetailScreen() {
         <View className="mb-1 flex-row items-center gap-1">
           <Label>Supersérie</Label>
           <HelpIcon title="Supersérie">
-            Marca esse exercício como parte de um grupo (mesma letra = mesmo grupo). Na aba Hoje os
+            Marca esse exercício como parte de um grupo (mesma letra = mesmo grupo). Na aba Treinar os
             exercícios do grupo aparecem conectados visualmente e o botão de descanso só aparece
             depois do último exercício do grupo — não entre eles. Prefira o botão "Agrupar em
             supersérie" na lista do dia pra marcar vários exercícios de uma vez; este seletor aqui

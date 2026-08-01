@@ -441,6 +441,26 @@ function SessionExecution({ session }: { session: Session }) {
     }
   };
 
+  const handleReopen = () => {
+    Alert.alert(
+      'Reabrir treino?',
+      'O treino volta pro estado editável — você poderá corrigir séries, cargas e exercícios, e concluir de novo.',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Reabrir',
+          onPress: async () => {
+            try {
+              await db.update(sessions).set({ concluida: false }).where(eq(sessions.id, session.id));
+            } catch (err) {
+              reportError('Erro ao reabrir treino', err);
+            }
+          },
+        },
+      ]
+    );
+  };
+
   const handleCancel = () => {
     Alert.alert(
       'Cancelar sessão',
@@ -596,6 +616,12 @@ function SessionExecution({ session }: { session: Session }) {
             <Ionicons name="share-outline" size={18} color={colors.success} />
           </Pressable>
         </Card>
+      )}
+
+      {session.concluida && (
+        <Button variant="secondary" className="mb-4" onPress={handleReopen}>
+          Reabrir treino
+        </Button>
       )}
 
       <View className="mb-6 mt-4">
