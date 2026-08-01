@@ -1,9 +1,11 @@
 import type { ReactNode } from 'react';
 import { useState } from 'react';
-import { Alert, Text, View } from 'react-native';
+import { Alert, Pressable, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { Screen } from '@/components/screen';
+import { SummaryStatsSection } from '@/components/perfil/summary-stats-section';
 import { WorkoutHistorySection } from '@/components/perfil/workout-history-section';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -24,6 +26,7 @@ function reportError(context: string, err: unknown) {
 }
 
 export default function PerfilScreen() {
+  const router = useRouter();
   const profile = useUserProfile();
 
   // Mesmo padrão "draft ?? valor salvo" já usado na nota pessoal do exercício
@@ -93,6 +96,8 @@ export default function PerfilScreen() {
         </Text>
       </Card>
 
+      <SummaryStatsSection />
+
       <Section title="Dados pessoais">
         <Label className="mb-1">Nome</Label>
         <Input
@@ -148,6 +153,18 @@ export default function PerfilScreen() {
 
       <Section title="Histórico">
         <WorkoutHistorySection />
+      </Section>
+
+      <Section title="Dados">
+        <Pressable onPress={() => router.push('/backup')}>
+          <Card className="flex-row items-center justify-between">
+            <View>
+              <Text className="font-card-title text-lg text-text">Dados e backup</Text>
+              <Label className="mt-1">Exportar ou restaurar seus planos e histórico</Label>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color={colors.muted} />
+          </Card>
+        </Pressable>
       </Section>
     </Screen>
   );

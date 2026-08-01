@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { db } from '@/db';
 import { sessions } from '@/db/schema';
 import { computeWeekStreak } from '@/lib/date';
+import { computeTrainedDaysInMonth, getCurrentMonthPrefix } from '@/lib/stats';
 import { useDbQuery } from '@/lib/use-db-query';
 
 export function FrequencySection() {
@@ -23,15 +24,12 @@ export function FrequencySection() {
   const year = now.getFullYear();
   const month = now.getMonth();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const monthPrefix = `${year}-${String(month + 1).padStart(2, '0')}-`;
+  const monthPrefix = getCurrentMonthPrefix();
 
-  const trainedDays = useMemo(() => {
-    const set = new Set<number>();
-    for (const date of allDates) {
-      if (date.startsWith(monthPrefix)) set.add(Number(date.slice(8, 10)));
-    }
-    return set;
-  }, [allDates, monthPrefix]);
+  const trainedDays = useMemo(
+    () => computeTrainedDaysInMonth(allDates, monthPrefix),
+    [allDates, monthPrefix]
+  );
 
   const leadingOffset = (new Date(year, month, 1).getDay() + 6) % 7;
   const cells: Array<number | null> = [
