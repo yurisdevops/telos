@@ -4,6 +4,7 @@ import { Alert, Text, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { Screen } from '@/components/screen';
+import { WorkoutHistorySection } from '@/components/perfil/workout-history-section';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Chip } from '@/components/ui/chip';
@@ -143,6 +144,10 @@ export default function PerfilScreen() {
             Registrar hoje
           </Button>
         </View>
+      </Section>
+
+      <Section title="Histórico">
+        <WorkoutHistorySection />
       </Section>
     </Screen>
   );

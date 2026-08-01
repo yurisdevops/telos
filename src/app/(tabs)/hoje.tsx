@@ -70,7 +70,6 @@ function reportError(context: string, err: unknown) {
 }
 
 export default function HojeScreen() {
-  const router = useRouter();
   const todayStr = getTodayDateString();
   const today = new Date();
 
@@ -78,24 +77,6 @@ export default function HojeScreen() {
     db.select().from(sessions).where(eq(sessions.data, todayStr))
   );
   const todaySession = todaySessions?.[0];
-
-  const { data: historyRows } = useLiveQuery(
-    db
-      .select({
-        id: sessions.id,
-        data: sessions.data,
-        dayLabel: workoutDays.label,
-        horaInicio: sessions.horaInicio,
-        horaFim: sessions.horaFim,
-      })
-      .from(sessions)
-      .innerJoin(workoutDays, eq(sessions.workoutDayId, workoutDays.id))
-      .where(eq(sessions.concluida, true))
-  );
-
-  const sortedHistory = useMemo(() => {
-    return [...(historyRows ?? [])].sort((a, b) => b.data.localeCompare(a.data)).slice(0, 10);
-  }, [historyRows]);
 
   const handleStartDay = async (dayId: number) => {
     try {
@@ -122,29 +103,6 @@ export default function HojeScreen() {
       ) : (
         <DayPicker onStart={handleStartDay} todayStr={todayStr} />
       )}
-
-      <View className="mb-8 mt-8">
-        <Text className="mb-3 font-card-title text-lg text-text">Histórico</Text>
-        {sortedHistory.length === 0 ? (
-          <Text className="font-body text-muted">Nenhuma sessão concluída ainda.</Text>
-        ) : (
-          sortedHistory.map((item) => (
-            <Pressable
-              key={item.id}
-              onPress={() => router.push({ pathname: '/sessao/[id]', params: { id: String(item.id) } })}>
-              <Card className="mb-2">
-                <Text className="font-card-title text-lg text-text">{item.dayLabel}</Text>
-                <View className="mt-1 flex-row items-center justify-between">
-                  <Label>{formatShortDateLabel(item.data)}</Label>
-                  {item.horaInicio != null && item.horaFim != null && (
-                    <Label>{formatElapsed(item.horaFim - item.horaInicio)}</Label>
-                  )}
-                </View>
-              </Card>
-            </Pressable>
-          ))
-        )}
-      </View>
     </Screen>
   );
 }
