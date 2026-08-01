@@ -8,6 +8,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { Screen } from '@/components/screen';
 import { SummaryStatsSection } from '@/components/perfil/summary-stats-section';
+import { VolumeAnalysisSection } from '@/components/perfil/volume-analysis-section';
 import { WorkoutHistorySection } from '@/components/perfil/workout-history-section';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -156,6 +157,8 @@ export default function PerfilScreen() {
       </Card>
 
       <SummaryStatsSection />
+
+      <VolumeAnalysisSection />
 
       <Section title="Dados pessoais">
         <Label className="mb-1">Nome</Label>
