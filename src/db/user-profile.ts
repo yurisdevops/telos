@@ -27,13 +27,32 @@ export function useUserProfile() {
   return data?.[0];
 }
 
-export type UserProfilePatch = Partial<Pick<UserProfile, 'nome' | 'alturaCm' | 'experiencia' | 'fotoUri'>>;
+export type UserProfilePatch = Partial<
+  Pick<UserProfile, 'nome' | 'alturaCm' | 'experiencia' | 'fotoUri' | 'lastSeenChangelogVersion'>
+>;
 
 /** Grava só os campos passados na linha id=1 — nunca cria uma linha nova
  * (ensureUserProfileRow já garante que ela existe). */
 export async function updateUserProfile(patch: UserProfilePatch): Promise<void> {
   if (Object.keys(patch).length === 0) return;
   await db.update(userProfile).set(patch).where(eq(userProfile.id, USER_PROFILE_ID));
+}
+
+/** Maior versão do changelog (src/lib/changelog.ts) já vista pelo usuário —
+ * `null` se a coluna ainda não foi preenchida (linha existente de antes
+ * dessa feature, ou migração ainda não rodou). Quem consome trata `null`
+ * como `0` (ver getUnseenChangelog), nunca como "já viu tudo". */
+export async function getLastSeenChangelogVersion(): Promise<number | null> {
+  const rows = await db
+    .select({ value: userProfile.lastSeenChangelogVersion })
+    .from(userProfile)
+    .where(eq(userProfile.id, USER_PROFILE_ID));
+  return rows[0]?.value ?? null;
+}
+
+/** Grava a versão mais alta do changelog já vista. */
+export async function markChangelogSeen(version: number): Promise<void> {
+  await updateUserProfile({ lastSeenChangelogVersion: version });
 }
 
 const PROFILE_PHOTO_BASENAME = 'profile-photo';

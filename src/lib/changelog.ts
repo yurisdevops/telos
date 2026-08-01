@@ -1,0 +1,64 @@
+export type ChangelogEntry = {
+  version: number;
+  title: string;
+  items: { titulo: string; descricao: string }[];
+};
+
+// Versão mais recente definida abaixo — o que o usuário já viu (persistido em
+// user_profile.lastSeenChangelogVersion) é comparado contra o `version` de
+// cada entrada, não contra essa constante diretamente (getUnseenChangelog).
+export const CURRENT_CHANGELOG_VERSION = 1;
+
+// Lista crescente de levas — nunca editar uma entrada já publicada (quem já
+// viu não deve ver de novo com conteúdo diferente); só adicionar novas com
+// `version` maior que a anterior.
+export const CHANGELOG_ENTRIES: ChangelogEntry[] = [
+  {
+    version: 1,
+    title: 'Novidades',
+    items: [
+      {
+        titulo: 'Reabra um treino concluído',
+        descricao:
+          'Terminou o treino mas errou uma carga ou esqueceu uma série? Agora dá pra reabrir, corrigir e concluir de novo.',
+      },
+      {
+        titulo: 'Exercícios de peso corporal',
+        descricao: 'Barra fixa, paralela, flexão: registre a série sem precisar inventar um número de carga.',
+      },
+      {
+        titulo: 'Dica do exercício durante o treino',
+        descricao: 'A orientação técnica de cada exercício agora aparece na hora, sem sair pro catálogo.',
+      },
+      {
+        titulo: 'Exercício concluído se recolhe',
+        descricao: 'Quando você preenche todas as séries, o exercício minimiza e deixa a tela limpa pro próximo.',
+      },
+      {
+        titulo: 'Nova aba Perfil',
+        descricao: 'Sua foto, seus dados, seu histórico e o backup, tudo num lugar só.',
+      },
+      {
+        titulo: 'Análise de volume por músculo',
+        descricao:
+          'Veja quantas séries por semana cada grupo muscular recebe, com avisos quando algo está desequilibrado.',
+      },
+      {
+        titulo: 'Aviso de descanso mais visível',
+        descricao: 'Quando o descanso acaba, a tela toda avisa — impossível não ver, mesmo de longe.',
+      },
+    ],
+  },
+];
+
+/**
+ * Entradas com `version` maior que `lastSeen`, ordenadas da mais antiga pra
+ * mais nova (ordem de leitura natural quando várias levas se acumularam).
+ * `lastSeen === null` (usuário existente de antes desse campo existir, ou
+ * instalação em que a migração ainda não rodou) é tratado como `0` — ou
+ * seja, vê tudo que já foi publicado até agora, uma vez.
+ */
+export function getUnseenChangelog(lastSeen: number | null): ChangelogEntry[] {
+  const baseline = lastSeen ?? 0;
+  return CHANGELOG_ENTRIES.filter((entry) => entry.version > baseline).sort((a, b) => a.version - b.version);
+}

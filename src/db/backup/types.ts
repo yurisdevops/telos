@@ -116,6 +116,7 @@ export type BackupUserProfile = {
   alturaCm: number | null;
   experiencia: string | null;
   fotoUri: string | null;
+  lastSeenChangelogVersion: number | null;
 };
 
 export type BackupPayload = {

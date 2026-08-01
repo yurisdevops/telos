@@ -181,6 +181,11 @@ export const userProfile = sqliteTable('user_profile', {
   alturaCm: integer('altura_cm'),
   experiencia: text('experiencia'),
   fotoUri: text('foto_uri'),
+  // Maior versão do changelog (src/lib/changelog.ts) que o usuário já viu.
+  // Nullable de propósito: linhas existentes ficam NULL até a migração
+  // aditiva rodar — tratado como 0 na leitura (getLastSeenChangelogVersion),
+  // nunca como "já viu tudo".
+  lastSeenChangelogVersion: integer('last_seen_changelog_version'),
 });
 
 export type UserProfile = typeof userProfile.$inferSelect;

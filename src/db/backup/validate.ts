@@ -225,6 +225,8 @@ export function assertValidBackupPayload(json: unknown): BackupPayload {
     if (json.userProfile.experiencia === undefined) json.userProfile.experiencia = null;
     assertOptionalNullableString(json.userProfile.fotoUri, 'userProfile.fotoUri');
     if (json.userProfile.fotoUri === undefined) json.userProfile.fotoUri = null;
+    assertOptionalNullableNumber(json.userProfile.lastSeenChangelogVersion, 'userProfile.lastSeenChangelogVersion');
+    if (json.userProfile.lastSeenChangelogVersion === undefined) json.userProfile.lastSeenChangelogVersion = null;
   }
 
   return json as unknown as BackupPayload;

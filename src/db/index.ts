@@ -31,6 +31,7 @@ export const db = drizzle(expoDb, { schema });
 const MIGRATION_COLUMN_RECONCILE_CASES: { table: string; column: string; tag: string }[] = [
   { table: 'exercises', column: 'nivel', tag: '0006_violet_iron_lad' },
   { table: 'set_logs', column: 'peso_corporal', tag: '0007_cooing_thor' },
+  { table: 'user_profile', column: 'last_seen_changelog_version', tag: '0009_sparkling_silver_fox' },
 ];
 
 /**

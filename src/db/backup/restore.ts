@@ -501,6 +501,7 @@ function restoreUserProfile(tx: Tx, row: BackupUserProfile | null, summary: Impo
       alturaCm: row.alturaCm,
       experiencia: row.experiencia,
       fotoUri: row.fotoUri,
+      lastSeenChangelogVersion: row.lastSeenChangelogVersion,
     })
     .onConflictDoUpdate({
       target: userProfile.id,
@@ -509,6 +510,7 @@ function restoreUserProfile(tx: Tx, row: BackupUserProfile | null, summary: Impo
         alturaCm: row.alturaCm,
         experiencia: row.experiencia,
         fotoUri: row.fotoUri,
+        lastSeenChangelogVersion: row.lastSeenChangelogVersion,
       },
     })
     .run();

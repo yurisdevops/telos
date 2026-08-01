@@ -149,6 +149,7 @@ export async function buildBackupPayload(): Promise<BackupPayload> {
           alturaCm: profile.alturaCm,
           experiencia: profile.experiencia,
           fotoUri: profile.fotoUri,
+          lastSeenChangelogVersion: profile.lastSeenChangelogVersion,
         }
       : null,
   };

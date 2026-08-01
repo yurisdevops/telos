@@ -10,6 +10,7 @@ import m0005 from './0005_groovy_quicksilver.sql';
 import m0006 from './0006_violet_iron_lad.sql';
 import m0007 from './0007_cooing_thor.sql';
 import m0008 from './0008_little_maginty.sql';
+import m0009 from './0009_sparkling_silver_fox.sql';
 
   export default {
     journal,
@@ -22,7 +23,8 @@ m0004,
 m0005,
 m0006,
 m0007,
-m0008
+m0008,
+m0009
     }
   }
   
