@@ -80,7 +80,7 @@ async function computePeriodComparison(thisMonthPrefix: string, prevMonthPrefix:
     .select({ data: sessions.data, volume: sql<number>`sum(${setLogs.reps} * ${setLogs.carga})` })
     .from(setLogs)
     .innerJoin(sessions, eq(setLogs.sessionId, sessions.id))
-    .where(eq(sessions.concluida, true))
+    .where(and(eq(sessions.concluida, true), eq(setLogs.pesoCorporal, false)))
     .groupBy(sessions.data);
 
   let thisMonth = 0;

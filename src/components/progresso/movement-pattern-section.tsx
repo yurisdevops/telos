@@ -34,7 +34,9 @@ export function MovementPatternSection() {
         .from(setLogs)
         .innerJoin(sessions, eq(setLogs.sessionId, sessions.id))
         .innerJoin(exercises, eq(setLogs.exerciseId, exercises.id))
-        .where(and(eq(sessions.concluida, true), gte(sessions.data, cutoffIso)))
+        .where(
+          and(eq(sessions.concluida, true), gte(sessions.data, cutoffIso), eq(setLogs.pesoCorporal, false))
+        )
         .groupBy(setLogs.exerciseId),
     ['set_logs', 'sessions'],
     [cutoffIso]

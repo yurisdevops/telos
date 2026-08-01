@@ -53,8 +53,12 @@ export default function ExercicioDetailScreen() {
 
   const evolutionByDay = useMemo(() => {
     if (!history) return [];
+    // Peso corporal (carga 0 por convenção) sai do gráfico de evolução de
+    // carga — senão um dia só com séries de peso corporal afundaria o
+    // gráfico com um "0" que não representa carga nenhuma.
     const maxByDate = new Map<string, number>();
     for (const s of history.sets) {
+      if (s.pesoCorporal) continue;
       maxByDate.set(s.data, Math.max(maxByDate.get(s.data) ?? -Infinity, s.carga));
     }
     return [...maxByDate.entries()]
@@ -333,7 +337,7 @@ export default function ExercicioDetailScreen() {
                     <View key={set.numeroSerie} className="flex-row items-center justify-between py-1">
                       <Label>{`Série ${set.numeroSerie}`}</Label>
                       <Text className="font-body-medium text-sm text-text">
-                        {`${set.reps} reps · ${set.carga}kg`}
+                        {`${set.reps} reps · ${set.pesoCorporal ? 'PC' : `${set.carga}kg`}`}
                         {set.rpe != null && <Text className="text-muted">{`  · RPE ${set.rpe}`}</Text>}
                       </Text>
                     </View>

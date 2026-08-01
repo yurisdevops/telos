@@ -378,6 +378,7 @@ function restoreSetLogs(
         reps: row.reps,
         carga: row.carga,
         rpe: row.rpe,
+        pesoCorporal: row.pesoCorporal,
       })
       .run();
     summary.inserted.setLogs += 1;

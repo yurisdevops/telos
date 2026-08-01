@@ -1,5 +1,5 @@
 import { Text, View } from 'react-native';
-import { eq, sql } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 
 import { HelpIcon } from '@/components/help-icon';
 import { Card } from '@/components/ui/card';
@@ -27,7 +27,7 @@ async function computeStagnation(): Promise<StagnationRow[]> {
     .from(setLogs)
     .innerJoin(sessions, eq(setLogs.sessionId, sessions.id))
     .innerJoin(exercises, eq(setLogs.exerciseId, exercises.id))
-    .where(eq(sessions.concluida, true))
+    .where(and(eq(sessions.concluida, true), eq(setLogs.pesoCorporal, false)))
     .groupBy(setLogs.exerciseId, sessions.data);
 
   const byExercise = new Map<number, { nome: string; points: { data: string; maxCarga: number }[] }>();

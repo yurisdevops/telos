@@ -4,7 +4,7 @@ import { db } from '@/db';
 import { sessions, setLogs } from '@/db/schema';
 import { useDbQuery } from '@/lib/use-db-query';
 
-type LastPerformanceSet = { numeroSerie: number; reps: number; carga: number };
+type LastPerformanceSet = { numeroSerie: number; reps: number; carga: number; pesoCorporal: boolean };
 
 /** Séries do último treino concluído em que esse exercício apareceu (exclui a
  * sessão atual, já que ela ainda não está concluída ao ser exibida). */
@@ -32,7 +32,12 @@ export function useLastPerformance(
       if (lastSessionId === undefined) return [];
 
       return db
-        .select({ numeroSerie: setLogs.numeroSerie, reps: setLogs.reps, carga: setLogs.carga })
+        .select({
+          numeroSerie: setLogs.numeroSerie,
+          reps: setLogs.reps,
+          carga: setLogs.carga,
+          pesoCorporal: setLogs.pesoCorporal,
+        })
         .from(setLogs)
         .where(and(eq(setLogs.exerciseId, exerciseId), eq(setLogs.sessionId, lastSessionId)))
         .orderBy(setLogs.numeroSerie);
@@ -43,16 +48,21 @@ export function useLastPerformance(
 }
 
 /** [{reps:12,carga:55}, {reps:12,carga:55}] -> "3x12 · 55kg"; séries
- * variadas -> "55kg×12 / 50kg×10". */
+ * variadas -> "55kg×12 / 50kg×10". Peso corporal grava carga 0 por convenção
+ * — nunca mostra "0kg" (enganoso, parece uma carga real), mostra "PC". */
 export function formatLastPerformance(sets: LastPerformanceSet[]): string | null {
   if (sets.length === 0) return null;
 
+  const formatCarga = (s: LastPerformanceSet) => (s.pesoCorporal ? 'PC' : `${s.carga}kg`);
+
   const [first, ...rest] = sets;
-  const uniform = rest.every((s) => s.reps === first.reps && s.carga === first.carga);
+  const uniform = rest.every(
+    (s) => s.reps === first.reps && s.carga === first.carga && s.pesoCorporal === first.pesoCorporal
+  );
 
   if (uniform) {
-    return `${sets.length}x${first.reps} · ${first.carga}kg`;
+    return `${sets.length}x${first.reps} · ${formatCarga(first)}`;
   }
 
-  return sets.map((s) => `${s.carga}kg×${s.reps}`).join(' / ');
+  return sets.map((s) => `${formatCarga(s)}×${s.reps}`).join(' / ');
 }

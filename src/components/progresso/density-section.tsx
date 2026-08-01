@@ -28,7 +28,14 @@ async function computeSessionDensities(): Promise<{ data: string; densidade: num
     })
     .from(setLogs)
     .innerJoin(sessions, eq(setLogs.sessionId, sessions.id))
-    .where(and(eq(sessions.concluida, true), isNotNull(sessions.horaInicio), isNotNull(sessions.horaFim)))
+    .where(
+      and(
+        eq(sessions.concluida, true),
+        isNotNull(sessions.horaInicio),
+        isNotNull(sessions.horaFim),
+        eq(setLogs.pesoCorporal, false)
+      )
+    )
     .groupBy(sessions.id);
 
   return rows

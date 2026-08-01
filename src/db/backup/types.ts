@@ -69,6 +69,9 @@ export type BackupSetLog = {
   // normalizado para `null` após a validação — mesmo em arquivos de antes
   // dessa feature.
   rpe: number | null;
+  // Peso corporal: sempre presente e normalizado para `false` em backups
+  // antigos, de antes dessa feature existir.
+  pesoCorporal: boolean;
 };
 
 // Onda 4 — tabelas standalone, sem FK nenhuma (não referenciam nem são

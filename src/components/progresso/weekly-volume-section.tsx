@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
-import { eq, sql } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import { BarChart } from 'react-native-gifted-charts';
 
 import { HelpIcon } from '@/components/help-icon';
@@ -25,7 +25,7 @@ export function WeeklyVolumeSection() {
         .select({ data: sessions.data, volume: sql<number>`sum(${setLogs.reps} * ${setLogs.carga})` })
         .from(setLogs)
         .innerJoin(sessions, eq(setLogs.sessionId, sessions.id))
-        .where(eq(sessions.concluida, true))
+        .where(and(eq(sessions.concluida, true), eq(setLogs.pesoCorporal, false)))
         .groupBy(sessions.data),
     ['set_logs', 'sessions'],
     []

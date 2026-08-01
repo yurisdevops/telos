@@ -19,7 +19,7 @@ export function buildSessionShareText(params: {
   items: {
     exerciseNome: string;
     skipped: boolean;
-    sets: { numeroSerie: number; reps: number; carga: number; rpe: number | null }[];
+    sets: { numeroSerie: number; reps: number; carga: number; rpe: number | null; pesoCorporal: boolean }[];
   }[];
 }): string {
   const lines: string[] = [];
@@ -39,7 +39,8 @@ export function buildSessionShareText(params: {
     } else {
       for (const set of item.sets) {
         const rpeSuffix = set.rpe != null ? ` · RPE ${set.rpe}` : '';
-        lines.push(`  Série ${set.numeroSerie}: ${set.reps} reps · ${set.carga}kg${rpeSuffix}`);
+        const cargaLabel = set.pesoCorporal ? 'PC' : `${set.carga}kg`;
+        lines.push(`  Série ${set.numeroSerie}: ${set.reps} reps · ${cargaLabel}${rpeSuffix}`);
       }
     }
     lines.push('');

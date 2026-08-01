@@ -9,6 +9,7 @@ export type ExerciseHistorySet = {
   reps: number;
   carga: number;
   rpe: number | null;
+  pesoCorporal: boolean;
   exerciseWgerId: number;
   exerciseNome: string;
 };
@@ -115,6 +116,7 @@ export async function fetchCombinedExerciseHistory(currentExerciseId: number): P
         reps: setLogs.reps,
         carga: setLogs.carga,
         rpe: setLogs.rpe,
+        pesoCorporal: setLogs.pesoCorporal,
       })
       .from(setLogs)
       .innerJoin(sessions, eq(setLogs.sessionId, sessions.id))

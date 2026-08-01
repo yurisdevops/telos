@@ -51,6 +51,14 @@ function assertOptionalNullableNumber(
   if (value !== undefined && value !== null) assertNumber(value, field);
 }
 
+// Campo opcional (aceita ausência, pra backups gerados antes dessa feature
+// existir) — normalizado explicitamente pra `false` logo depois de validado,
+// nunca deixado como `undefined`. Mesmo padrão de assertOptionalNullableNumber,
+// usado hoje pra `rpe`.
+function assertOptionalBoolean(value: unknown, field: string): asserts value is boolean | undefined {
+  if (value !== undefined) assertBoolean(value, field);
+}
+
 /** Validação estrutural pura (sem tocar no banco). Lança BackupValidationError
  * com mensagem clara em caso de arquivo inválido — nunca escreve nada. */
 export function assertValidBackupPayload(json: unknown): BackupPayload {
@@ -161,6 +169,8 @@ export function assertValidBackupPayload(json: unknown): BackupPayload {
     assertNumber(row.carga, `setLogs[${index}].carga`);
     assertOptionalNullableNumber(row.rpe, `setLogs[${index}].rpe`);
     if (row.rpe === undefined) row.rpe = null;
+    assertOptionalBoolean(row.pesoCorporal, `setLogs[${index}].pesoCorporal`);
+    if (row.pesoCorporal === undefined) row.pesoCorporal = false;
   });
 
   json.bodyWeightLogs.forEach((row, index) => {

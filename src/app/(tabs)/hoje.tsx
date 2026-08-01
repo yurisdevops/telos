@@ -223,7 +223,14 @@ function DayPicker({ onStart, todayStr }: { onStart: (dayId: number) => void; to
   );
 }
 
-type LogEntry = { id: number; numeroSerie: number; reps: number; carga: number; rpe: number | null };
+type LogEntry = {
+  id: number;
+  numeroSerie: number;
+  reps: number;
+  carga: number;
+  rpe: number | null;
+  pesoCorporal: boolean;
+};
 
 type SessionExerciseItem = {
   kind: 'plano' | 'avulso';
@@ -241,6 +248,7 @@ type SessionExerciseItem = {
   isFirstInSupersetGroup: boolean;
   isLastInSupersetGroup: boolean;
   equipamento: string; // JSON serializado, tipo '["Barra"]' — parseado sob demanda
+  dica: string | null;
 };
 
 function itemsEqual(a: SessionExerciseItem, b: SessionExerciseItem) {
@@ -259,7 +267,8 @@ function itemsEqual(a: SessionExerciseItem, b: SessionExerciseItem) {
     a.supersetGroup === b.supersetGroup &&
     a.isFirstInSupersetGroup === b.isFirstInSupersetGroup &&
     a.isLastInSupersetGroup === b.isLastInSupersetGroup &&
-    a.equipamento === b.equipamento
+    a.equipamento === b.equipamento &&
+    a.dica === b.dica
   );
 }
 
@@ -287,6 +296,7 @@ function SessionExecution({ session }: { session: Session }) {
         exerciseWgerId: exercises.wgerId,
         categoria: exercises.categoria,
         equipamento: exercises.equipamento,
+        dica: exercises.dica,
       })
       .from(workoutDayExercises)
       .innerJoin(exercises, eq(workoutDayExercises.exerciseId, exercises.id))
@@ -307,6 +317,7 @@ function SessionExecution({ session }: { session: Session }) {
         exerciseWgerId: exercises.wgerId,
         categoria: exercises.categoria,
         equipamento: exercises.equipamento,
+        dica: exercises.dica,
       })
       .from(sessionExtraExercises)
       .innerJoin(exercises, eq(sessionExtraExercises.exerciseId, exercises.id))
@@ -332,7 +343,14 @@ function SessionExecution({ session }: { session: Session }) {
     const map = new Map<number, LogEntry[]>();
     for (const log of logs ?? []) {
       const list = map.get(log.exerciseId) ?? [];
-      list.push({ id: log.id, numeroSerie: log.numeroSerie, reps: log.reps, carga: log.carga, rpe: log.rpe });
+      list.push({
+        id: log.id,
+        numeroSerie: log.numeroSerie,
+        reps: log.reps,
+        carga: log.carga,
+        rpe: log.rpe,
+        pesoCorporal: log.pesoCorporal,
+      });
       map.set(log.exerciseId, list);
     }
     return map;
@@ -377,6 +395,7 @@ function SessionExecution({ session }: { session: Session }) {
         isFirstInSupersetGroup: ex.supersetGroup == null ? true : ex.ordem === groupMinOrdem.get(ex.supersetGroup),
         isLastInSupersetGroup: ex.supersetGroup == null ? true : ex.ordem === groupMaxOrdem.get(ex.supersetGroup),
         equipamento: ex.equipamento,
+        dica: ex.dica,
       };
     });
     const extraItems: SessionExerciseItem[] = (extraExerciseRows ?? []).map((ex) => ({
@@ -395,6 +414,7 @@ function SessionExecution({ session }: { session: Session }) {
       isFirstInSupersetGroup: true,
       isLastInSupersetGroup: true,
       equipamento: ex.equipamento,
+      dica: ex.dica,
     }));
     return [...planItems, ...extraItems];
   }, [dayExerciseRows, extraExerciseRows, skipByDayExerciseId]);
@@ -413,7 +433,13 @@ function SessionExecution({ session }: { session: Session }) {
       sets: (logsByExercise.get(item.exerciseId) ?? [])
         .slice()
         .sort((a, b) => a.numeroSerie - b.numeroSerie)
-        .map((log) => ({ numeroSerie: log.numeroSerie, reps: log.reps, carga: log.carga, rpe: log.rpe })),
+        .map((log) => ({
+          numeroSerie: log.numeroSerie,
+          reps: log.reps,
+          carga: log.carga,
+          rpe: log.rpe,
+          pesoCorporal: log.pesoCorporal,
+        })),
     }));
     const durationLabel =
       session.horaInicio != null && session.horaFim != null
@@ -769,7 +795,8 @@ function logsAreEqual(a: LogEntry[], b: LogEntry[]) {
       match.id !== log.id ||
       match.reps !== log.reps ||
       match.carga !== log.carga ||
-      match.rpe !== log.rpe
+      match.rpe !== log.rpe ||
+      match.pesoCorporal !== log.pesoCorporal
     ) {
       return false;
     }
@@ -881,10 +908,18 @@ const ExerciseSessionCard = memo(
     }`;
 
     // Resumo do card colapsado (só relevante quando isComplete, mas o cálculo
-    // em si é barato e já vem de `logs`, sem query nova).
-    const maiorCarga = logs.length > 0 ? Math.max(...logs.map((log) => log.carga)) : 0;
+    // em si é barato e já vem de `logs`, sem query nova). Peso corporal sai do
+    // cálculo de maior carga (é 0 por convenção, não uma carga real) — se
+    // TODAS as séries forem peso corporal, mostra "PC" em vez de "0kg".
+    const weightedLogs = logs.filter((log) => !log.pesoCorporal);
+    const maiorCarga = weightedLogs.length > 0 ? Math.max(...weightedLogs.map((log) => log.carga)) : 0;
+    const allPesoCorporal = logs.length > 0 && logs.every((log) => log.pesoCorporal);
     const completedSummaryLabel =
-      maiorCarga > 0 ? `${item.seriesAlvo}× · ${maiorCarga}kg` : `${item.seriesAlvo}×`;
+      maiorCarga > 0
+        ? `${item.seriesAlvo}× · ${maiorCarga}kg`
+        : allPesoCorporal
+          ? `${item.seriesAlvo}× · PC`
+          : `${item.seriesAlvo}×`;
 
     if (item.skipped) {
       return (
@@ -967,6 +1002,11 @@ const ExerciseSessionCard = memo(
         ) : (
           <>
             <Label className="mt-1">{`Alvo: ${targetLabel}`}</Label>
+            {item.dica && (
+              <Card className="mb-1 mt-2 border-l-4 border-l-accent">
+                <Text className="font-body text-sm text-text">{item.dica}</Text>
+              </Card>
+            )}
             {nota && <Label className="mt-1 italic text-muted">{nota}</Label>}
             <Label className="mt-1 text-muted">
               {lastPerformanceLabel ? `Última vez: ${lastPerformanceLabel}` : ' '}
@@ -1054,43 +1094,73 @@ function SetRow({
   setAdvance: (advance: { run: () => void; label: string }) => void;
 }) {
   const [reps, setReps] = useState(existing !== undefined ? String(existing.reps) : '');
-  const [carga, setCarga] = useState(existing !== undefined ? String(existing.carga) : '');
+  // Carga gravada como 0 (sentinela) numa série de peso corporal não é um
+  // texto útil de reexibir — nasce em branco tanto ao ligar o toggle quanto
+  // ao carregar uma série já salva assim, forçando reentrada explícita se o
+  // usuário desligar o peso corporal depois (nunca reaproveita o "0" antigo
+  // como se fosse uma carga real digitada).
+  const [carga, setCarga] = useState(
+    existing !== undefined && !existing.pesoCorporal ? String(existing.carga) : ''
+  );
+  const [pesoCorporal, setPesoCorporal] = useState(existing?.pesoCorporal ?? false);
   const [logId, setLogId] = useState<number | null>(existing?.id ?? null);
   const [rpe, setRpe] = useState<number | null>(existing?.rpe ?? null);
   const isFilled = logId !== null;
   const rpeCategory = rpeValueToCategory(rpe);
   const cargaInputRef = useRef<TextInput>(null);
 
-  const commit = async () => {
-    // reps and carga are NOT NULL columns, so a row can't be persisted with
-    // only one of them filled in. Wait until BOTH have real values before
-    // writing anything — otherwise blurring the first field (to move into
-    // the second) would write the still-empty one as a literal 0, which both
-    // shows up as a false "0" once the card collapses/reopens and prematurely
-    // counts this série as done.
-    if (reps.trim() === '' || carga.trim() === '') {
+  // Aceita um override explícito de pesoCorporal pro caso do toggle: como
+  // setState é assíncrono, o handler do toggle não pode confiar no valor de
+  // `pesoCorporal` já atualizado no mesmo tick — passa o valor novo direto.
+  const commit = async (pesoCorporalOverride?: boolean) => {
+    const effectivePesoCorporal = pesoCorporalOverride ?? pesoCorporal;
+
+    // reps and carga are NOT NULL columns, so a row can't be persisted
+    // without reps. Carga só é exigida quando NÃO é peso corporal — peso
+    // corporal sempre grava carga 0 (sentinela) sem exigir texto no campo,
+    // já que ele nem aparece nesse caso. Continua esperando as duas partes
+    // reais antes de gravar (senão a mesma condição de corrida de sempre:
+    // blurrar o primeiro campo gravaria o segundo, ainda vazio, como 0).
+    if (reps.trim() === '' || (!effectivePesoCorporal && carga.trim() === '')) {
       return;
     }
 
     const repsNum = Number(reps);
-    const cargaNum = Number(carga);
+    const cargaNum = effectivePesoCorporal ? 0 : Number(carga);
     if (!Number.isFinite(repsNum) || !Number.isFinite(cargaNum)) {
       return;
     }
 
     try {
       if (logId) {
-        await db.update(setLogs).set({ reps: repsNum, carga: cargaNum }).where(eq(setLogs.id, logId));
+        await db
+          .update(setLogs)
+          .set({ reps: repsNum, carga: cargaNum, pesoCorporal: effectivePesoCorporal })
+          .where(eq(setLogs.id, logId));
       } else {
         const [created] = await db
           .insert(setLogs)
-          .values({ sessionId, exerciseId, numeroSerie, reps: repsNum, carga: cargaNum })
+          .values({
+            sessionId,
+            exerciseId,
+            numeroSerie,
+            reps: repsNum,
+            carga: cargaNum,
+            pesoCorporal: effectivePesoCorporal,
+          })
           .returning();
         setLogId(created.id);
       }
     } catch (err) {
       reportError('Erro ao salvar série', err);
     }
+  };
+
+  const handleTogglePesoCorporal = () => {
+    const next = !pesoCorporal;
+    setPesoCorporal(next);
+    if (next) setCarga('');
+    commit(next);
   };
 
   // Avanço de foco disparado só por ação explícita do teclado (onSubmitEditing
@@ -1102,9 +1172,20 @@ function SetRow({
   // Mover o foco (reps -> carga) já dispara o blur do campo anterior sozinho,
   // então o commit() de sempre (no onBlur) continua sendo o único ponto que
   // escreve no banco — nada aqui grava dado diretamente.
+  // Com peso corporal ativo o campo de carga nem existe (vira um rótulo fixo,
+  // não-focável) — o avanço de reps precisa fazer sozinho o que a carga faria
+  // (fechar teclado na última série, ou focar a próxima), pulando a carga.
   const handleRepsSubmit = useCallback(() => {
-    cargaInputRef.current?.focus();
-  }, []);
+    if (pesoCorporal) {
+      if (isLastSerie) {
+        Keyboard.dismiss();
+      } else {
+        focusReps(numeroSerie + 1);
+      }
+    } else {
+      cargaInputRef.current?.focus();
+    }
+  }, [pesoCorporal, isLastSerie, focusReps, numeroSerie]);
 
   const handleCargaSubmit = useCallback(() => {
     if (isLastSerie) {
@@ -1144,32 +1225,50 @@ function SetRow({
             ref={setRepsInputRef}
             value={reps}
             onChangeText={setReps}
-            onBlur={commit}
-            onFocus={() => setAdvance({ run: handleRepsSubmit, label: 'Próximo' })}
+            onBlur={() => commit()}
+            onFocus={() =>
+              setAdvance({
+                run: handleRepsSubmit,
+                label: pesoCorporal && isLastSerie ? 'Concluir' : 'Próximo',
+              })
+            }
             onSubmitEditing={handleRepsSubmit}
-            returnKeyType="next"
+            returnKeyType={pesoCorporal && isLastSerie ? 'done' : 'next'}
             inputAccessoryViewID={accessoryViewId}
             keyboardType="number-pad"
             placeholder="0"
             className="text-center font-display text-2xl"
           />
         </View>
-        <View className="flex-1">
-          <Input
-            ref={cargaInputRef}
-            value={carga}
-            onChangeText={setCarga}
-            onBlur={commit}
-            onFocus={() =>
-              setAdvance({ run: handleCargaSubmit, label: isLastSerie ? 'Concluir' : 'Próximo' })
-            }
-            onSubmitEditing={handleCargaSubmit}
-            returnKeyType={isLastSerie ? 'done' : 'next'}
-            inputAccessoryViewID={accessoryViewId}
-            keyboardType="decimal-pad"
-            placeholder="0"
-            className="text-center font-display text-2xl"
-          />
+        <View className="flex-1 flex-row items-center gap-1">
+          {pesoCorporal ? (
+            <View className="flex-1 items-center justify-center rounded border border-accent bg-surface py-3">
+              <Text className="font-display text-2xl text-accent">PC</Text>
+            </View>
+          ) : (
+            <Input
+              ref={cargaInputRef}
+              value={carga}
+              onChangeText={setCarga}
+              onBlur={() => commit()}
+              onFocus={() =>
+                setAdvance({ run: handleCargaSubmit, label: isLastSerie ? 'Concluir' : 'Próximo' })
+              }
+              onSubmitEditing={handleCargaSubmit}
+              returnKeyType={isLastSerie ? 'done' : 'next'}
+              inputAccessoryViewID={accessoryViewId}
+              keyboardType="decimal-pad"
+              placeholder="0"
+              className="flex-1 text-center font-display text-2xl"
+            />
+          )}
+          <Pressable
+            onPress={handleTogglePesoCorporal}
+            hitSlop={8}
+            className="p-1"
+            accessibilityLabel="Marcar série como peso corporal">
+            <Ionicons name="body-outline" size={20} color={pesoCorporal ? colors.accent : colors.muted} />
+          </Pressable>
         </View>
       </View>
 

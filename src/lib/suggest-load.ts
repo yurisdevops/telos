@@ -28,24 +28,29 @@ export type LoadSuggestion = {
   motivo: string;
 };
 
-type SetPerformance = { numeroSerie: number; reps: number; carga: number };
+type SetPerformance = { numeroSerie: number; reps: number; carga: number; pesoCorporal: boolean };
 
 /** Progressão dupla simples: se todas as séries da última vez bateram ou
  * superaram o alvo de reps, sugere o menor incremento praticável pra esse
  * equipamento; senão sugere manter a carga. Nunca preenche nada sozinho —
- * é só informativo, o usuário decide. */
+ * é só informativo, o usuário decide. Séries de peso corporal (carga 0 por
+ * convenção) saem do cálculo de maior carga/meta batida — senão uma sessão
+ * toda em peso corporal derrubaria a sugestão pra 0kg. `motivo` continua
+ * citando a sessão inteira (inclusive peso corporal), já que é só texto
+ * informativo do que foi feito, não conta pro número sugerido. */
 export function suggestNextLoad(
   lastSets: SetPerformance[],
   repsAlvo: number,
   equipamento: string[]
 ): LoadSuggestion | null {
-  if (lastSets.length === 0) return null;
+  const weightedSets = lastSets.filter((s) => !s.pesoCorporal);
+  if (weightedSets.length === 0) return null;
 
   const increment = getLoadIncrement(equipamento);
   if (increment === null) return null;
 
-  const maxCarga = Math.max(...lastSets.map((s) => s.carga));
-  const allMetTarget = lastSets.every((s) => s.reps >= repsAlvo);
+  const maxCarga = Math.max(...weightedSets.map((s) => s.carga));
+  const allMetTarget = weightedSets.every((s) => s.reps >= repsAlvo);
   const formatted = formatLastPerformance(lastSets);
   const motivo = formatted ? `você fez ${formatted}` : '';
 
