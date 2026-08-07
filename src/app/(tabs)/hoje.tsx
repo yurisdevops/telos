@@ -1190,19 +1190,62 @@ function SetRow({
     commit(next);
   };
 
-  // Avanço de foco disparado só por ação explícita do teclado (onSubmitEditing
-  // — "next"/"done" no Android, ou o botão da barra acima do teclado no iOS),
-  // nunca por debounce/tempo parado digitando. Um debounce arriscaria repetir
-  // o bug antigo do colapso automático (fechava o card no meio da digitação e
-  // gravava um "0" fantasma) — um evento de submit explícito não tem esse
-  // risco, porque só dispara quando o usuário decide que terminou o campo.
-  // Mover o foco (reps -> carga) já dispara o blur do campo anterior sozinho,
-  // então o commit() de sempre (no onBlur) continua sendo o único ponto que
-  // escreve no banco — nada aqui grava dado diretamente.
-  // Com peso corporal ativo o campo de carga nem existe (vira um rótulo fixo,
-  // não-focável) — o avanço de reps precisa fazer sozinho o que a carga faria
-  // (fechar teclado na última série, ou focar a próxima), pulando a carga.
-  const handleRepsSubmit = useCallback(() => {
+  // Realce de RPE + descanso ao concluir a série normalmente (ver abaixo) —
+  // acende suave e desvanece sozinho, ou some no primeiro toque em RPE/
+  // descanso. Nunca um flash rápido (mesmo cuidado do overlay de fim de
+  // descanso): ~700ms pra acender, ~1,2s de espera, ~900ms pra desvanecer.
+  const [highlightActive, setHighlightActive] = useState(false);
+  const highlightOpacity = useRef(new Animated.Value(0)).current;
+
+  const triggerHighlight = useCallback(() => setHighlightActive(true), []);
+  const clearHighlight = useCallback(() => setHighlightActive(false), []);
+
+  useEffect(() => {
+    if (!highlightActive) {
+      highlightOpacity.setValue(0);
+      return;
+    }
+    const sequence = Animated.sequence([
+      Animated.timing(highlightOpacity, {
+        toValue: 1,
+        duration: 700,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }),
+      Animated.delay(1200),
+      Animated.timing(highlightOpacity, {
+        toValue: 0,
+        duration: 900,
+        easing: Easing.in(Easing.ease),
+        useNativeDriver: true,
+      }),
+    ]);
+    sequence.start(({ finished }) => {
+      if (finished) setHighlightActive(false);
+    });
+    return () => {
+      sequence.stop();
+      highlightOpacity.setValue(0);
+    };
+  }, [highlightActive, highlightOpacity]);
+
+  // Dois gatilhos, dois papéis — não são a mesma ação disfarçada:
+  //
+  // - *AdvanceShortcut (ligado ao botão da barra do teclado via setAdvance,
+  //   iOS): atalho de velocidade, preserva o comportamento antigo (pula pra
+  //   próxima série). É a ÚNICA forma de "submeter" um campo number-pad/
+  //   decimal-pad no iOS — esses teclados não têm tecla de retorno nativa lá,
+  //   então esse botão manual é o único jeito de sair do campo continuando o
+  //   fluxo rápido.
+  // - *Done (ligado a onSubmitEditing, dispara com a tecla "next"/"done" do
+  //   teclado nativo — só existe de fato no Android, já que o iOS nunca gera
+  //   esse evento pra esses teclados): fluxo novo, fecha o teclado e conduz
+  //   ao RPE/descanso em vez de pular direto pra próxima série.
+  //
+  // Como as duas plataformas nunca dividem o mesmo caminho físico (no iOS só
+  // o toque na barra existe; no Android só a tecla nativa existe), não há
+  // conflito real entre elas — são handlers diferentes.
+  const handleRepsAdvanceShortcut = useCallback(() => {
     if (pesoCorporal) {
       if (isLastSerie) {
         Keyboard.dismiss();
@@ -1214,13 +1257,30 @@ function SetRow({
     }
   }, [pesoCorporal, isLastSerie, focusReps, numeroSerie]);
 
-  const handleCargaSubmit = useCallback(() => {
+  // Com peso corporal ativo, reps é o último campo focável da linha (carga
+  // vira um rótulo fixo "PC", não-focável) — então é aqui, não na carga, que
+  // o fluxo novo se aplica.
+  const handleRepsDone = useCallback(() => {
+    if (pesoCorporal) {
+      Keyboard.dismiss();
+      triggerHighlight();
+    } else {
+      cargaInputRef.current?.focus();
+    }
+  }, [pesoCorporal, triggerHighlight]);
+
+  const handleCargaAdvanceShortcut = useCallback(() => {
     if (isLastSerie) {
       Keyboard.dismiss();
     } else {
       focusReps(numeroSerie + 1);
     }
   }, [isLastSerie, focusReps, numeroSerie]);
+
+  const handleCargaDone = useCallback(() => {
+    Keyboard.dismiss();
+    triggerHighlight();
+  }, [triggerHighlight]);
 
   // Ref estável (não uma arrow function inline) — senão React desregistraria
   // e reregistraria o input no Map do card pai a cada re-render (ou seja, a
@@ -1255,12 +1315,12 @@ function SetRow({
             onBlur={() => commit()}
             onFocus={() =>
               setAdvance({
-                run: handleRepsSubmit,
+                run: handleRepsAdvanceShortcut,
                 label: pesoCorporal && isLastSerie ? 'Concluir' : 'Próximo',
               })
             }
-            onSubmitEditing={handleRepsSubmit}
-            returnKeyType={pesoCorporal && isLastSerie ? 'done' : 'next'}
+            onSubmitEditing={handleRepsDone}
+            returnKeyType={pesoCorporal ? 'done' : 'next'}
             inputAccessoryViewID={accessoryViewId}
             keyboardType="number-pad"
             placeholder="0"
@@ -1279,10 +1339,10 @@ function SetRow({
               onChangeText={setCarga}
               onBlur={() => commit()}
               onFocus={() =>
-                setAdvance({ run: handleCargaSubmit, label: isLastSerie ? 'Concluir' : 'Próximo' })
+                setAdvance({ run: handleCargaAdvanceShortcut, label: isLastSerie ? 'Concluir' : 'Próximo' })
               }
-              onSubmitEditing={handleCargaSubmit}
-              returnKeyType={isLastSerie ? 'done' : 'next'}
+              onSubmitEditing={handleCargaDone}
+              returnKeyType="done"
               inputAccessoryViewID={accessoryViewId}
               keyboardType="decimal-pad"
               placeholder="0"
@@ -1300,26 +1360,62 @@ function SetRow({
       </View>
 
       {isFilled && showRestButton && (
-        <Pressable
-          onPress={onRequestRest}
-          className="mt-2 ml-16 flex-row items-center justify-center gap-2 rounded border border-accent py-3">
-          <Ionicons name="time-outline" size={22} color={colors.accent} />
-          <Text className="font-label uppercase text-accent">{`Iniciar descanso · ${suggestedRestSeconds}s`}</Text>
-        </Pressable>
+        <View className="relative mt-2 ml-16">
+          {highlightActive && <HighlightRing opacity={highlightOpacity} />}
+          <Pressable
+            onPress={() => {
+              clearHighlight();
+              onRequestRest();
+            }}
+            className="flex-row items-center justify-center gap-2 rounded border border-accent py-3">
+            <Ionicons name="time-outline" size={22} color={colors.accent} />
+            <Text className="font-label uppercase text-accent">{`Iniciar descanso · ${suggestedRestSeconds}s`}</Text>
+          </Pressable>
+        </View>
       )}
 
       {isFilled && (
-        <View className="ml-16 mt-2 flex-row gap-2">
-          {RPE_CATEGORY_ORDER.map((category) => (
-            <Chip
-              key={category}
-              label={RPE_CATEGORY_LABEL[category]}
-              selected={rpeCategory === category}
-              onPress={() => handleSetRpe(category)}
-            />
-          ))}
+        <View className="relative ml-16 mt-2">
+          {highlightActive && <HighlightRing opacity={highlightOpacity} />}
+          <View className="flex-row gap-2">
+            {RPE_CATEGORY_ORDER.map((category) => (
+              <Chip
+                key={category}
+                label={RPE_CATEGORY_LABEL[category]}
+                selected={rpeCategory === category}
+                onPress={() => {
+                  clearHighlight();
+                  handleSetRpe(category);
+                }}
+              />
+            ))}
+          </View>
         </View>
       )}
     </View>
+  );
+}
+
+// Anel de realce (glow) sobreposto — chama atenção pro RPE/descanso sem
+// obscurecer o conteúdo embaixo: só uma borda accent que acende e desvanece
+// via opacity (transform/opacity são o que useNativeDriver anima; nunca cor).
+// pointerEvents="none" pra nunca capturar o toque que deveria ir pro chip ou
+// pro botão logo abaixo dela na pilha.
+function HighlightRing({ opacity }: { opacity: Animated.Value }) {
+  return (
+    <Animated.View
+      pointerEvents="none"
+      style={{
+        position: 'absolute',
+        top: -4,
+        left: -4,
+        right: -4,
+        bottom: -4,
+        borderRadius: 10,
+        borderWidth: 2,
+        borderColor: colors.accent,
+        opacity,
+      }}
+    />
   );
 }
