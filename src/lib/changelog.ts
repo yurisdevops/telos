@@ -7,7 +7,7 @@ export type ChangelogEntry = {
 // Versão mais recente definida abaixo — o que o usuário já viu (persistido em
 // user_profile.lastSeenChangelogVersion) é comparado contra o `version` de
 // cada entrada, não contra essa constante diretamente (getUnseenChangelog).
-export const CURRENT_CHANGELOG_VERSION = 1;
+export const CURRENT_CHANGELOG_VERSION = 2;
 
 // Lista crescente de levas — nunca editar uma entrada já publicada (quem já
 // viu não deve ver de novo com conteúdo diferente); só adicionar novas com
@@ -46,6 +46,31 @@ export const CHANGELOG_ENTRIES: ChangelogEntry[] = [
       {
         titulo: 'Aviso de descanso mais visível',
         descricao: 'Quando o descanso acaba, a tela toda avisa — impossível não ver, mesmo de longe.',
+      },
+    ],
+  },
+  {
+    version: 2,
+    title: 'Novidades',
+    items: [
+      {
+        titulo: 'Treinos prontos pra começar na hora',
+        descricao:
+          'Escolha um treino montado ("Quadríceps Monstro", "Peitoral & Tríceps" e mais) e comece a treinar num toque, sem configurar nada.',
+      },
+      {
+        titulo: 'Assistente mais inteligente',
+        descricao:
+          'Agora o objetivo que você escolhe muda o treino de verdade: força, hipertrofia, emagrecimento e condicionamento geram séries, repetições e descanso diferentes.',
+      },
+      {
+        titulo: 'Fim do descanso impossível de ignorar',
+        descricao: 'Quando o descanso acaba, a tela toda avisa em destaque, visível mesmo de longe na academia.',
+      },
+      {
+        titulo: 'Registro de série mais guiado',
+        descricao:
+          'Ao terminar uma série, o nível de esforço e o descanso ganham destaque, conduzindo você pelo treino.',
       },
     ],
   },
