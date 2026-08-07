@@ -88,6 +88,7 @@ export default function AssistenteScreen() {
   const [draftDays, setDraftDays] = useState<GeneratedDay[]>([]);
   const [avisos, setAvisos] = useState<string[]>([]);
   const [trocas, setTrocas] = useState<ExerciseSwap[]>([]);
+  const [descansoSugerido, setDescansoSugerido] = useState<number | null>(null);
 
   const [editingTarget, setEditingTarget] = useState<ExerciseTarget | null>(null);
   const [editSeries, setEditSeries] = useState('');
@@ -128,6 +129,7 @@ export default function AssistenteScreen() {
     setDraftDays(plan.dias.map((dia) => ({ label: dia.label, exercises: [...dia.exercises] })));
     setAvisos(plan.avisos);
     setTrocas(plan.trocas);
+    setDescansoSugerido(plan.descansoSugeridoSegundos);
     setReviewOpen(true);
   };
 
@@ -308,6 +310,16 @@ export default function AssistenteScreen() {
           onChangeText={setPlanName}
           className="mb-4 rounded border border-border bg-surface px-4 py-3 font-body text-base text-text"
         />
+
+        {descansoSugerido != null && (
+          <View className="mb-4 rounded border-l-4 border-l-accent bg-surface px-3 py-2">
+            <Text className="font-body text-sm text-muted">
+              {`Descanso sugerido entre séries: ~${descansoSugerido}s (adequado ao objetivo ${
+                GOAL_OPTIONS.find((o) => o.value === profile?.objetivo)?.label.toLowerCase() ?? ''
+              }).`}
+            </Text>
+          </View>
+        )}
 
         {avisos.map((aviso, index) => (
           <View key={index} className="mb-2 rounded border-l-4 border-l-warning bg-surface px-3 py-2">

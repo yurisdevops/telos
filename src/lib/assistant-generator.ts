@@ -34,6 +34,10 @@ export type GeneratedPlan = {
    * exercício removido por falta de substituto de nível). */
   avisos: string[];
   trocas: ExerciseSwap[];
+  /** Descanso sugerido entre séries (segundos), por objetivo — só pra exibir
+   * na revisão. Não é gravado no banco nem alimenta o timer real do treino
+   * (que continua usando suggestRestSeconds por padrão de movimento). */
+  descansoSugeridoSegundos: number;
 };
 
 const GOAL_LABEL: Record<AssistantGoal, string> = {
@@ -142,26 +146,91 @@ function parseMuscles(json: string): string[] {
 
 /** 3 séries pro iniciante, 4 pro avançado; intermediário fica no meio (a
  * faixa "3-4" pedida) diferenciando composto (4) de acessório (3) — mesmo
- * corte de composto/isolado já usado pro volume de reps abaixo. */
-function seriesForExperience(experiencia: AssistantExperience, isCompound: boolean): number {
+ * corte de composto/isolado já usado pro volume de reps abaixo. Ponto de
+ * partida ANTES do ajuste por objetivo em `seriesForGoalAndExperience`. */
+function baseSeriesForExperience(experiencia: AssistantExperience, isCompound: boolean): number {
   if (experiencia === 'iniciante') return 3;
   if (experiencia === 'avancado') return 4;
   return isCompound ? 4 : 3;
 }
 
+const MIN_SERIES = 2;
+const MAX_SERIES = 5;
+
+/**
+ * Série é a segunda alavanca do objetivo (a primeira é reps, em
+ * `repsForGoal`) — sem isso, dois objetivos com a mesma experiência geravam
+ * o mesmo número de séries, reforçando o bug de "treino igual".
+ *
+ * Ajuste sobre a base de `baseSeriesForExperience`:
+ * - força: ênfase no composto principal (+1 série) às custas do acessório
+ *   (-1) — mais volume onde a força é testada, menos onde é só suporte.
+ * - hipertrofia: mantém a base — é o ponto de equilíbrio entre os objetivos,
+ *   não pende pra nenhum lado.
+ * - emagrecimento/condicionamento: isolados descem pro teto de 3 séries — o
+ *   objetivo aqui é densidade/repetição (reps altas, descanso curto), não
+ *   acumular volume de série em acessório.
+ *
+ * Sempre limitado a [MIN_SERIES, MAX_SERIES] no fim — nenhuma combinação
+ * gera um número absurdo (0, 1 ou acima de 5).
+ */
+function seriesForGoalAndExperience(
+  objetivo: AssistantGoal,
+  experiencia: AssistantExperience,
+  isCompound: boolean
+): number {
+  const base = baseSeriesForExperience(experiencia, isCompound);
+  let adjusted = base;
+
+  if (objetivo === 'forca') {
+    adjusted = isCompound ? base + 1 : base - 1;
+  } else if ((objetivo === 'emagrecimento' || objetivo === 'condicionamento') && !isCompound) {
+    adjusted = Math.min(base, 3);
+  }
+  // hipertrofia: sem ajuste, fica na base.
+
+  return Math.min(MAX_SERIES, Math.max(MIN_SERIES, adjusted));
+}
+
+/**
+ * Faixas de reps por objetivo × composto/isolado — ancoradas nas faixas de
+ * literatura de treino mais comuns pra cada objetivo (força: baixas reps,
+ * carga alta; hipertrofia: intermediárias; emagrecimento/condicionamento:
+ * altas, mais densidade). Antes, emagrecimento e condicionamento retornavam
+ * o mesmo valor sempre e força/hipertrofia só diferiam em compostos — daí o
+ * bug de "objetivo não muda o treino". Agora os 4 têm faixa própria nos dois
+ * casos (composto e isolado).
+ */
 function repsForGoal(objetivo: AssistantGoal, isCompound: boolean): string {
   switch (objetivo) {
+    case 'forca':
+      return isCompound ? '3-5' : '6-8';
     case 'hipertrofia':
       return isCompound ? '6-10' : '8-12';
-    case 'forca':
-      return isCompound ? '4-6' : '8-12';
     case 'emagrecimento':
-      return '10-15';
+      return isCompound ? '8-12' : '12-15';
     case 'condicionamento':
-      return '10-15';
+      return isCompound ? '12-15' : '15-20';
     default:
       return '10-15';
   }
+}
+
+// Descanso sugerido entre séries, por objetivo — só exibido na revisão do
+// Assistente (nível do plano inteiro, não por exercício: mais simples, e o
+// timer real do treino continua usando suggestRestSeconds por padrão de
+// movimento, sem mudança). Ancorado no senso comum de treino: força pede
+// recuperação quase completa (carga alta, poucas reps), condicionamento
+// pede descanso curto (o próprio ponto é manter a frequência cardíaca alta).
+const REST_SECONDS_BY_GOAL: Record<AssistantGoal, number> = {
+  forca: 180,
+  hipertrofia: 90,
+  emagrecimento: 60,
+  condicionamento: 45,
+};
+
+function restSecondsForGoal(objetivo: AssistantGoal): number {
+  return REST_SECONDS_BY_GOAL[objetivo] ?? 90;
 }
 
 /** Séries/reps que o gerador aplicaria a `exercise` dentro de `profile` — usado
@@ -174,7 +243,7 @@ export function computeTargets(
   const pattern = classifyMovementPattern(exercise);
   const isCompound = pattern !== null && pattern !== 'isolado';
   return {
-    seriesAlvo: seriesForExperience(profile.experiencia, isCompound),
+    seriesAlvo: seriesForGoalAndExperience(profile.objetivo, profile.experiencia, isCompound),
     repsAlvo: repsForGoal(profile.objetivo, isCompound),
   };
 }
@@ -428,7 +497,7 @@ function buildDay(
     resultExercises.push({
       wgerId: exercise.wgerId,
       nome: exercise.nome,
-      seriesAlvo: seriesForExperience(profile.experiencia, isCompound),
+      seriesAlvo: seriesForGoalAndExperience(profile.objetivo, profile.experiencia, isCompound),
       repsAlvo: repsForGoal(profile.objetivo, isCompound),
       cargaAlvo: null,
     });
@@ -460,5 +529,6 @@ export function generateWorkout(profile: AssistantProfile, catalog: Exercise[]):
     dias,
     avisos,
     trocas,
+    descansoSugeridoSegundos: restSecondsForGoal(profile.objetivo),
   };
 }
