@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { FlatList, Pressable, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { eq, sql } from 'drizzle-orm';
+import { eq, ne, sql } from 'drizzle-orm';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
@@ -16,7 +16,14 @@ import { colors } from '@/theme/tokens';
 
 export default function PlanilhasScreen() {
   const router = useRouter();
-  const { data: plans } = useLiveQuery(db.select().from(workoutPlans));
+  // 'Treino pronto' são os planos efêmeros criados por "treinar agora" (ver
+  // src/db/ready-workouts.ts) — nunca deveriam poluir a lista de planilhas,
+  // mas continuam existindo de verdade no banco: sessões, histórico e
+  // métricas (Perfil/Progresso) não filtram por tipo em lugar nenhum, então
+  // nada disso deixa de contar esses treinos. Só esta lista esconde.
+  const { data: plans } = useLiveQuery(
+    db.select().from(workoutPlans).where(ne(workoutPlans.tipo, 'Treino pronto'))
+  );
   const { data: days } = useLiveQuery(db.select().from(workoutDays));
 
   const { data: dayExerciseRows } = useLiveQuery(
@@ -63,6 +70,17 @@ export default function PlanilhasScreen() {
             <Label className="mt-1">
               Responda 5 perguntas rápidas e receba uma sugestão de ponto de partida
             </Label>
+          </View>
+          <Ionicons name="chevron-forward" size={20} color={colors.muted} />
+        </Card>
+      </Pressable>
+
+      <Pressable onPress={() => router.push('/treinos-prontos')} className="mb-4">
+        <Card className="flex-row items-center gap-3 border-l-4 border-l-accent">
+          <Ionicons name="flash-outline" size={26} color={colors.accent} />
+          <View className="flex-1">
+            <Text className="font-card-title text-lg text-text">Treinos prontos</Text>
+            <Label className="mt-1">Escolha um treino e comece agora</Label>
           </View>
           <Ionicons name="chevron-forward" size={20} color={colors.muted} />
         </Card>
