@@ -2,7 +2,7 @@
   "expo": {
     "name": "Telos",
     "slug": "telos",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "telos",
@@ -37,6 +37,14 @@
       "expo-sqlite",
       "expo-sharing",
       "expo-notifications",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "O Telos usa sua galeria pra você escolher uma foto de perfil.",
+          "cameraPermission": "O Telos usa a câmera pra você tirar uma foto de perfil.",
+          "microphonePermission": false
+        }
+      ],
       [
         "expo-build-properties",
         {
