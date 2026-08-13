@@ -18,8 +18,15 @@ import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { useRouter } from 'expo-router';
 import { useKeepAwake } from 'expo-keep-awake';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import Svg from 'react-native-svg';
 
 import { Screen } from '@/components/screen';
+import {
+  SHARE_CARD_HEIGHT,
+  SHARE_CARD_WIDTH,
+  WorkoutShareCard,
+  type WorkoutShareMetrics,
+} from '@/components/share/workout-share-card';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Chip } from '@/components/ui/chip';
@@ -55,7 +62,7 @@ import {
 import { RPE_CATEGORY_LABEL, RPE_CATEGORY_ORDER, RPE_CATEGORY_VALUE, rpeValueToCategory, type RpeCategory } from '@/lib/rpe';
 import { suggestNextLoad } from '@/lib/suggest-load';
 import { suggestRestSeconds } from '@/lib/suggest-rest';
-import { buildSessionShareText, shareText } from '@/lib/share-text';
+import { shareWorkoutImage } from '@/lib/share-image';
 import { formatLastPerformance, useLastPerformance } from '@/lib/use-last-performance';
 import { colors } from '@/theme/tokens';
 
@@ -386,34 +393,45 @@ function SessionExecution({ session }: { session: Session }) {
     0
   );
 
-  const handleShareSession = useCallback(async () => {
-    const shareItems = items.map((item) => ({
-      exerciseNome: item.exerciseNome,
-      skipped: item.skipped,
-      sets: (logsByExercise.get(item.exerciseId) ?? [])
-        .slice()
-        .sort((a, b) => a.numeroSerie - b.numeroSerie)
-        .map((log) => ({
-          numeroSerie: log.numeroSerie,
-          reps: log.reps,
-          carga: log.carga,
-          rpe: log.rpe,
-          pesoCorporal: log.pesoCorporal,
-        })),
-    }));
-    const durationLabel =
-      session.horaInicio != null && session.horaFim != null
-        ? formatElapsed(session.horaFim - session.horaInicio)
-        : null;
-    await shareText(
-      buildSessionShareText({
-        dayLabel,
-        dateLabel: formatShortDateLabel(session.data),
-        durationLabel,
-        items: shareItems,
-      })
-    );
-  }, [items, logsByExercise, dayLabel, session.data, session.horaInicio, session.horaFim]);
+  // Volume total em kg (Σ reps×carga), excluindo peso corporal — mesma regra
+  // já aplicada nos cálculos de Progresso (carga 0 por convenção não é carga
+  // real). `logs` já é a query única de set_logs da sessão, sem query nova.
+  const volumeKg = useMemo(
+    () =>
+      Math.round(
+        (logs ?? []).filter((log) => !log.pesoCorporal).reduce((sum, log) => sum + log.reps * log.carga, 0)
+      ),
+    [logs]
+  );
+
+  // Métricas do card de compartilhamento — tudo já em memória (nenhuma query
+  // nova): duração igual ao Label visível acima, séries reaproveita
+  // `completedSeries` (o mesmo número já mostrado na barra de progresso, pra
+  // nunca divergir do que a tela exibe), exercícios conta só os ativos
+  // (não pulados).
+  const shareMetrics: WorkoutShareMetrics = useMemo(
+    () => ({
+      dayLabel,
+      dateLabel: formatShortDateLabel(session.data),
+      durationLabel:
+        session.horaInicio != null && session.horaFim != null
+          ? formatElapsed(session.horaFim - session.horaInicio)
+          : null,
+      volumeKg,
+      totalSeries: completedSeries,
+      totalExercises: activeItems.length,
+    }),
+    [dayLabel, session.data, session.horaInicio, session.horaFim, volumeKg, completedSeries, activeItems.length]
+  );
+
+  // O card SVG fica sempre montado (fora da tela, ver render abaixo) desde
+  // que a sessão existe, recalculando as métricas a cada mudança — assim,
+  // quando o usuário toca em compartilhar, o <Svg> já está desenhado há muito
+  // tempo (nenhuma corrida de "renderizou a tempo?" pra resolver aqui).
+  const shareCardRef = useRef<Svg>(null);
+  const handleShareImage = useCallback(async () => {
+    await shareWorkoutImage(shareCardRef, SHARE_CARD_WIDTH, SHARE_CARD_HEIGHT);
+  }, []);
 
   const handleComplete = async () => {
     try {
@@ -589,6 +607,15 @@ function SessionExecution({ session }: { session: Session }) {
 
   return (
     <View>
+      {/* Fora da tela de propósito (não é pra aparecer pro usuário) — só
+          existe pra o toDataURL ter o que rasterizar quando o botão de
+          compartilhar for tocado. */}
+      <WorkoutShareCard
+        ref={shareCardRef}
+        metrics={shareMetrics}
+        style={{ position: 'absolute', left: -9999, top: 0 }}
+      />
+
       <Text className="mb-1 font-display text-5xl uppercase text-text" numberOfLines={1}>
         {dayLabel}
       </Text>
@@ -605,7 +632,7 @@ function SessionExecution({ session }: { session: Session }) {
         <Card className="mb-4 mt-3 flex-row items-center justify-between border-l-4 border-l-success">
           <View className="w-6" />
           <Text className="flex-1 text-center font-label uppercase text-success">Treino concluído</Text>
-          <Pressable onPress={handleShareSession} hitSlop={8} className="w-6 items-end p-1">
+          <Pressable onPress={handleShareImage} hitSlop={8} className="w-6 items-end p-1">
             <Ionicons name="share-outline" size={18} color={colors.success} />
           </Pressable>
         </Card>
