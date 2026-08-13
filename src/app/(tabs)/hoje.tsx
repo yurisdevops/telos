@@ -629,18 +629,23 @@ function SessionExecution({ session }: { session: Session }) {
       )}
 
       {session.concluida && (
-        <Card className="mb-4 mt-3 flex-row items-center justify-between border-l-4 border-l-success">
-          <View className="w-6" />
-          <Text className="flex-1 text-center font-label uppercase text-success">Treino concluído</Text>
-          <Pressable onPress={handleShareImage} hitSlop={8} className="w-6 items-end p-1">
-            <Ionicons name="share-outline" size={18} color={colors.success} />
-          </Pressable>
+        <Card className="mb-4 mt-3 border-l-4 border-l-success">
+          <Text className="text-center font-label uppercase text-success">Treino concluído</Text>
         </Card>
       )}
 
       {session.concluida && (
-        <Button variant="secondary" className="mb-4" onPress={handleReopen}>
+        <Button variant="secondary" className="mb-3" onPress={handleReopen}>
           Reabrir treino
+        </Button>
+      )}
+
+      {session.concluida && (
+        <Button className="mb-4" onPress={handleShareImage}>
+          <View className="flex-row items-center gap-2">
+            <Ionicons name="share-outline" size={18} color="#fff" />
+            <Text className="font-label text-sm uppercase tracking-wide text-white">Compartilhar treino</Text>
+          </View>
         </Button>
       )}
 
