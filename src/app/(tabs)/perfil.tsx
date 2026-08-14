@@ -59,12 +59,30 @@ export default function PerfilScreen() {
   }, [profile?.fotoUri]);
   const showPhoto = !!profile?.fotoUri && photoFileExists && !photoLoadFailed;
 
-  const handlePickPhoto = async () => {
-    try {
-      await pickAndSaveProfilePhoto();
-    } catch (err) {
-      reportError('Erro ao escolher foto', err);
-    }
+  const handlePickPhoto = () => {
+    Alert.alert('Foto de perfil', undefined, [
+      {
+        text: 'Galeria',
+        onPress: async () => {
+          try {
+            await pickAndSaveProfilePhoto('library');
+          } catch (err) {
+            reportError('Erro ao escolher foto', err);
+          }
+        },
+      },
+      {
+        text: 'Câmera',
+        onPress: async () => {
+          try {
+            await pickAndSaveProfilePhoto('camera');
+          } catch (err) {
+            reportError('Erro ao escolher foto', err);
+          }
+        },
+      },
+      { text: 'Cancelar', style: 'cancel' },
+    ]);
   };
 
   const handleRemovePhoto = async () => {

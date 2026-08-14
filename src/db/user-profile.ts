@@ -1,6 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { File, Paths } from 'expo-file-system';
+import * as ImagePicker from 'expo-image-picker';
 
 import { db } from './index';
 import { userProfile, type UserProfile } from './schema';
@@ -75,28 +76,59 @@ function cleanupOldProfilePhotos(exceptFileName?: string) {
   }
 }
 
-/**
- * Abre o seletor de arquivo do sistema filtrado por imagem — via
- * `File.pickFileAsync` do `expo-file-system` (já instalado), não
- * `expo-image-picker` (exigiria módulo nativo novo e rebuild). Cancelamento
- * é tratado como no-op silencioso.
- *
- * A foto escolhida é copiada pra `Paths.document` — o diretório persistente
- * ("safe from being deleted by the system"), nunca `Paths.cache` (que o
- * sistema pode limpar sozinho, o que apagaria a foto sem aviso). Nome ÚNICO
- * a cada troca (`profile-photo-<timestamp><extensão>`), não fixo: o
- * `expo-image` cacheia por URI, e um nome fixo faz a URI ficar idêntica
- * quando a extensão não muda — a tela então mostra a foto antiga do cache,
- * mesmo com o arquivo já sobrescrito no disco. Nome único garante que toda
- * troca produz uma URI genuinamente nova, então o cache nunca serve a antiga.
- */
-export async function pickAndSaveProfilePhoto(): Promise<void> {
-  const pick = await File.pickFileAsync({ mimeTypes: 'image/*' });
-  if (pick.canceled) return;
+export type ProfilePhotoSource = 'library' | 'camera';
 
-  const picked = pick.result;
-  const destination = new File(Paths.document, `${PROFILE_PHOTO_BASENAME}-${Date.now()}${picked.extension}`);
-  await picked.copy(destination, { overwrite: true });
+/** Extensão do arquivo escolhido, preferindo `fileName` (mais confiável que
+ * `uri`, que em alguns Android pode vir sem extensão clara) — cai pra
+ * `.jpg` (formato padrão de câmera/galeria) se nenhum dos dois tiver uma. */
+function extensionFromAsset(asset: ImagePicker.ImagePickerAsset): string {
+  const match = (asset.fileName ?? asset.uri).match(/\.[a-zA-Z0-9]+$/);
+  return match ? match[0] : '.jpg';
+}
+
+async function requestPickerPermission(source: ProfilePhotoSource): Promise<boolean> {
+  const response =
+    source === 'library'
+      ? await ImagePicker.requestMediaLibraryPermissionsAsync()
+      : await ImagePicker.requestCameraPermissionsAsync();
+  return response.granted;
+}
+
+/**
+ * Abre a galeria de fotos ou a câmera nativa (via `expo-image-picker`) e
+ * salva a foto escolhida como foto de perfil. Cancelamento é tratado como
+ * no-op silencioso; permissão negada lança um erro com mensagem amigável
+ * (capturado e exibido pelo `reportError` de quem chama, mesmo padrão do
+ * resto do app — não duplica lógica de alerta aqui).
+ *
+ * A partir daqui o pipeline é IDÊNTICO ao que já existia com
+ * `File.pickFileAsync`: copia pra `Paths.document` (diretório persistente,
+ * nunca `Paths.cache`, que o sistema pode limpar sozinho) com nome ÚNICO
+ * (`profile-photo-<timestamp><extensão>`) — necessário porque o `expo-image`
+ * cacheia por URI, e um nome fixo faria a tela mostrar a foto antiga do
+ * cache mesmo com o arquivo já sobrescrito no disco.
+ */
+export async function pickAndSaveProfilePhoto(source: ProfilePhotoSource): Promise<void> {
+  const granted = await requestPickerPermission(source);
+  if (!granted) {
+    throw new Error(
+      source === 'library'
+        ? 'Permita o acesso à galeria nas configurações do aparelho pra escolher uma foto.'
+        : 'Permita o acesso à câmera nas configurações do aparelho pra tirar uma foto.'
+    );
+  }
+
+  const result =
+    source === 'library'
+      ? await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], quality: 0.8 })
+      : await ImagePicker.launchCameraAsync({ mediaTypes: ['images'], quality: 0.8 });
+  if (result.canceled) return;
+
+  const picked = result.assets[0];
+  if (!picked) return;
+
+  const destination = new File(Paths.document, `${PROFILE_PHOTO_BASENAME}-${Date.now()}${extensionFromAsset(picked)}`);
+  await new File(picked.uri).copy(destination, { overwrite: true });
 
   // Grava o caminho novo ANTES de limpar o(s) antigo(s): se algo falhar entre
   // os dois passos, o perfil aponta pro arquivo novo (válido) — nunca fica

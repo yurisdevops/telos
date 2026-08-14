@@ -18,7 +18,6 @@ import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { useRouter } from 'expo-router';
 import { useKeepAwake } from 'expo-keep-awake';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import Svg from 'react-native-svg';
 
 import { Screen } from '@/components/screen';
 import {
@@ -424,11 +423,15 @@ function SessionExecution({ session }: { session: Session }) {
     [dayLabel, session.data, session.horaInicio, session.horaFim, volumeKg, completedSeries, activeItems.length]
   );
 
-  // O card SVG fica sempre montado (fora da tela, ver render abaixo) desde
-  // que a sessão existe, recalculando as métricas a cada mudança — assim,
-  // quando o usuário toca em compartilhar, o <Svg> já está desenhado há muito
-  // tempo (nenhuma corrida de "renderizou a tempo?" pra resolver aqui).
-  const shareCardRef = useRef<Svg>(null);
+  // O card fica sempre montado (fora da tela, ver render abaixo) desde que a
+  // sessão existe, recalculando as métricas a cada mudança. Mesmo assim,
+  // `captureRef` (view-shot) espera pelo menos um onLayout antes da view
+  // estar pronta pra captura — `cardReady` (setado no onLayout do card)
+  // desabilita o botão de compartilhar até lá, então nunca dá pra tocar
+  // antes da hora (na prática isso já é verdade antes do primeiro render do
+  // próprio botão, já que ele só aparece quando session.concluida).
+  const shareCardRef = useRef<View>(null);
+  const [cardReady, setCardReady] = useState(false);
   const handleShareImage = useCallback(async () => {
     await shareWorkoutImage(shareCardRef, SHARE_CARD_WIDTH, SHARE_CARD_HEIGHT);
   }, []);
@@ -608,11 +611,12 @@ function SessionExecution({ session }: { session: Session }) {
   return (
     <View>
       {/* Fora da tela de propósito (não é pra aparecer pro usuário) — só
-          existe pra o toDataURL ter o que rasterizar quando o botão de
+          existe pra o captureRef ter o que rasterizar quando o botão de
           compartilhar for tocado. */}
       <WorkoutShareCard
         ref={shareCardRef}
         metrics={shareMetrics}
+        onLayout={() => setCardReady(true)}
         style={{ position: 'absolute', left: -9999, top: 0 }}
       />
 
@@ -641,7 +645,7 @@ function SessionExecution({ session }: { session: Session }) {
       )}
 
       {session.concluida && (
-        <Button className="mb-4" onPress={handleShareImage}>
+        <Button className="mb-4" disabled={!cardReady} onPress={handleShareImage}>
           <View className="flex-row items-center gap-2">
             <Ionicons name="share-outline" size={18} color="#fff" />
             <Text className="font-label text-sm uppercase tracking-wide text-white">Compartilhar treino</Text>
