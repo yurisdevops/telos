@@ -2,22 +2,28 @@ import { forwardRef } from 'react';
 import { Text, View, type LayoutChangeEvent, type StyleProp, type ViewStyle } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
+import { formatNumberPtBr } from '@/lib/format';
 import { colors } from '@/theme/tokens';
 
 // Resolução final do PNG (passada como `width`/`height` de resize pro
-// `captureRef` em share-image.ts) — 4:5, cabe bem em stories/status
-// (retrato) e no feed. Não é o tamanho de layout do card em si (ver
-// CARD_WIDTH/CARD_HEIGHT abaixo): captureRef captura na resolução nativa do
-// dispositivo e REDIMENSIONA pro valor pedido, então o card pode (e deve)
-// ter um tamanho de layout modesto em pontos.
+// `captureRef` em share-image.ts) — precisa manter a MESMA proporção de
+// CARD_WIDTH/CARD_HEIGHT abaixo (senão o resize distorce a imagem). Não é o
+// tamanho de layout do card em si: captureRef captura na resolução nativa do
+// dispositivo e REDIMENSIONA pro valor pedido, então o card pode (e deve) ter
+// um tamanho de layout modesto em pontos.
 export const SHARE_CARD_WIDTH = 1080;
-export const SHARE_CARD_HEIGHT = 1350;
+export const SHARE_CARD_HEIGHT = 1680;
 
-// Tamanho do layout em pontos (não pixels) — mesma proporção 4:5. Um card
-// do tamanho de uma tela de celular é suficiente; capturar em 1080x1350 via
-// resize dá um PNG nítido independente do pixelRatio do aparelho de teste.
+// Tamanho do layout em pontos (não pixels) — mesma proporção de
+// SHARE_CARD_WIDTH/HEIGHT acima (360:560 === 1080:1680). Mais alto que um
+// 4:5 "puro" de propósito: com grupos musculares + faixa de PR + marcador de
+// semana somados aos 4 números, 450pt de altura ficava curto demais e o
+// conteúdo se sobrepunha (uma seção "flex-1" tentando absorver espaço
+// negativo). Nada aqui usa flex-1/justify-center pra "esticar" mais — cada
+// seção tem seu tamanho natural, e o `justify-between` do container só
+// distribui o que sobra como respiro, nunca aperta.
 const CARD_WIDTH = 360;
-const CARD_HEIGHT = 450;
+const CARD_HEIGHT = 560;
 
 export type WorkoutShareMetrics = {
   dayLabel: string;
@@ -99,11 +105,13 @@ export const WorkoutShareCard = forwardRef<
 
       <View className="h-px bg-border" />
 
-      {/* Miolo: 4 números em destaque, 2x2 */}
-      <View className="flex-1 justify-center gap-8">
+      {/* Miolo: 4 números em destaque, 2x2 — tamanho NATURAL (sem flex-1),
+          pra nunca ser espremida por outras seções quando o conteúdo total
+          crescer (grupos/PR/semana). */}
+      <View className="gap-6">
         <View className="flex-row">
           <StatCell value={metrics.durationLabel ?? '—'} label="DURAÇÃO" />
-          <StatCell value={String(metrics.volumeKg)} label="VOLUME (KG)" />
+          <StatCell value={formatNumberPtBr(metrics.volumeKg)} label="VOLUME (KG)" />
         </View>
         <View className="flex-row">
           <StatCell value={String(metrics.totalSeries)} label="SÉRIES" />
@@ -112,16 +120,24 @@ export const WorkoutShareCard = forwardRef<
       </View>
 
       {/* Faixa de PR — só existe quando há recorde; sem espaço reservado
-          quando não há (justify-between do container redistribui sozinho). */}
+          quando não há (justify-between do container redistribui sozinho).
+          "Novo recorde" fica numa linha curta e fixa; o nome do exercício +
+          carga (variável, pode ser longo) tem sua PRÓPRIA linha com até 2
+          linhas + auto-encolhe, pra nunca estourar a largura do card. */}
       {metrics.prDestaque && (
-        <View className="flex-row items-center justify-center gap-2">
-          <Ionicons name="trophy" size={16} color={colors.accent} />
+        <View className="items-center">
+          <View className="flex-row items-center gap-2">
+            <Ionicons name="trophy" size={16} color={colors.accent} />
+            <Text className="font-label uppercase text-accent" style={{ fontSize: 12, letterSpacing: 1 }}>
+              Novo recorde
+            </Text>
+          </View>
           <Text
-            numberOfLines={1}
+            numberOfLines={2}
             adjustsFontSizeToFit
-            className="font-label uppercase text-accent"
-            style={{ fontSize: 13, letterSpacing: 1 }}>
-            {`Novo recorde · ${metrics.prDestaque.exerciseNome} ${metrics.prDestaque.cargaNova}kg`}
+            className="mt-1 text-center font-body-medium text-accent"
+            style={{ fontSize: 14 }}>
+            {`${metrics.prDestaque.exerciseNome} · ${metrics.prDestaque.cargaNova}kg`}
           </Text>
         </View>
       )}
