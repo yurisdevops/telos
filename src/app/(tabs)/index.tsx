@@ -21,7 +21,7 @@ export default function CatalogoScreen() {
   return (
     <Screen edges={['top', 'left', 'right']}>
       <ScreenTitle
-        title="Catálogo — OTA TESTE 1"
+        title="Catálogo"
         subtitle={totalCount !== null ? `${totalCount} exercícios` : undefined}
         action={
           <Pressable onPress={() => router.push('/sobre')} hitSlop={8} className="p-1">

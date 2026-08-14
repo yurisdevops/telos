@@ -34,7 +34,15 @@ export type WorkoutShareMetrics = {
    * ver pickHighlightPr em lib/personal-records.ts) — null = nenhum PR
    * batido, omite a faixa inteira. */
   prDestaque: { exerciseNome: string; cargaNova: number } | null;
+  /** Dias com sessão concluída na semana atual (segunda-domingo) — índice 0
+   * = segunda ... 6 = domingo, ver computeTrainedDaysInWeek em lib/stats.ts. */
+  diasSemana: boolean[];
+  /** Índice (0-6, segunda-domingo) do dia de hoje dentro de `diasSemana`,
+   * pra destacar o dia atual no marcador. */
+  indiceHoje: number;
 };
+
+const WEEKDAY_LABELS = ['S', 'T', 'Q', 'Q', 'S', 'S', 'D']; // segunda .. domingo
 
 /**
  * Card de resumo do treino — componente RN comum (View/Text, NativeWind),
@@ -118,6 +126,23 @@ export const WorkoutShareCard = forwardRef<
         </View>
       )}
 
+      {/* Marcador da semana — 7 dias, segunda a domingo */}
+      <View className="items-center">
+        <Text className="mb-2 font-label uppercase text-muted" style={{ fontSize: 11, letterSpacing: 1 }}>
+          Esta semana
+        </Text>
+        <View className="w-full flex-row justify-between">
+          {metrics.diasSemana.map((trained, index) => (
+            <WeekdayDot
+              key={index}
+              label={WEEKDAY_LABELS[index]}
+              trained={trained}
+              isToday={index === metrics.indiceHoje}
+            />
+          ))}
+        </View>
+      </View>
+
       {/* Rodapé: assinatura */}
       <View className="items-center">
         <View className="mb-3 h-px w-12 bg-border" />
@@ -128,6 +153,35 @@ export const WorkoutShareCard = forwardRef<
     </View>
   );
 });
+
+function WeekdayDot({ label, trained, isToday }: { label: string; trained: boolean; isToday: boolean }) {
+  // Treinado: círculo cheio em accent (com check). Não treinado: círculo
+  // vazio, contorno muted — ou accent (sem preencher) se for hoje, pra
+  // localizar o dia atual mesmo antes de ele ter sido treinado. Hoje
+  // normalmente aparece cheio de qualquer jeito (é o treino que está sendo
+  // compartilhado), mas a borda mais grossa reforça qual é o dia atual.
+  const borderColor = trained || isToday ? colors.accent : colors.border;
+  return (
+    <View className="items-center" style={{ width: 32 }}>
+      <View
+        className="items-center justify-center rounded-full"
+        style={{
+          width: 24,
+          height: 24,
+          borderWidth: isToday ? 2 : 1,
+          borderColor,
+          backgroundColor: trained ? colors.accent : 'transparent',
+        }}>
+        {trained && <Ionicons name="checkmark" size={14} color="#fff" />}
+      </View>
+      <Text
+        className="mt-1 font-label uppercase"
+        style={{ fontSize: 10, color: trained || isToday ? colors.text : colors.muted }}>
+        {label}
+      </Text>
+    </View>
+  );
+}
 
 function StatCell({ value, label }: { value: string; label: string }) {
   return (

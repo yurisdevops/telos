@@ -52,6 +52,7 @@ import {
   formatShortDateLabel,
   getTodayDateString,
   getWeekdayLabel,
+  getWeekStartIso,
 } from '@/lib/date';
 import { formatCountdown, formatElapsed, useNow } from '@/lib/duration';
 import {
@@ -64,6 +65,7 @@ import { suggestNextLoad } from '@/lib/suggest-load';
 import { suggestRestSeconds } from '@/lib/suggest-rest';
 import { shareWorkoutImage } from '@/lib/share-image';
 import { findSessionPrs, pickHighlightPr } from '@/lib/personal-records';
+import { computeTrainedDaysInWeek } from '@/lib/stats';
 import { formatLastPerformance, useLastPerformance } from '@/lib/use-last-performance';
 import { colors } from '@/theme/tokens';
 
@@ -475,6 +477,22 @@ function SessionExecution({ session }: { session: Session }) {
     };
   }, [session.concluida, session.id]);
 
+  // Marcador "esta semana" — dias com sessão concluída (segunda-domingo).
+  // Query enxuta e reativa (mesmo padrão de summary-stats-section.tsx: só
+  // `sessions.data` de sessões concluídas, sem join) — SessionExecution só
+  // tem dados escopados à sessão atual até aqui, essa é a única nova.
+  const { data: concludedSessionRows } = useLiveQuery(
+    db.select({ data: sessions.data }).from(sessions).where(eq(sessions.concluida, true))
+  );
+  const diasSemana = useMemo(() => {
+    const weekStartIso = getWeekStartIso(getTodayDateString());
+    return computeTrainedDaysInWeek((concludedSessionRows ?? []).map((row) => row.data), weekStartIso);
+  }, [concludedSessionRows]);
+  const indiceHoje = useMemo(
+    () => daysBetween(getWeekStartIso(getTodayDateString()), getTodayDateString()),
+    []
+  );
+
   // Métricas do card de compartilhamento — tudo já em memória (nenhuma query
   // nova pras métricas síncronas): duração igual ao Label visível acima,
   // séries reaproveita `completedSeries` (o mesmo número já mostrado na
@@ -494,6 +512,8 @@ function SessionExecution({ session }: { session: Session }) {
       totalExercises: activeItems.length,
       grupos,
       prDestaque,
+      diasSemana,
+      indiceHoje,
     }),
     [
       dayLabel,
@@ -505,6 +525,8 @@ function SessionExecution({ session }: { session: Session }) {
       activeItems.length,
       grupos,
       prDestaque,
+      diasSemana,
+      indiceHoje,
     ]
   );
 
