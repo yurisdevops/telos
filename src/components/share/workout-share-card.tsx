@@ -1,5 +1,8 @@
 import { forwardRef } from 'react';
 import { Text, View, type LayoutChangeEvent, type StyleProp, type ViewStyle } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
+
+import { colors } from '@/theme/tokens';
 
 // Resolução final do PNG (passada como `width`/`height` de resize pro
 // `captureRef` em share-image.ts) — 4:5, cabe bem em stories/status
@@ -23,6 +26,14 @@ export type WorkoutShareMetrics = {
   volumeKg: number;
   totalSeries: number;
   totalExercises: number;
+  /** Top grupos musculares treinados, já ordenados por relevância (mais
+   * séries primeiro) e já limitados (ver hoje.tsx) — o card só junta com
+   * " · " e mostra, sem lógica de ordenar/cortar aqui. Vazio = omite a linha. */
+  grupos: string[];
+  /** PR em destaque desta sessão (já escolhido por quem monta as métricas,
+   * ver pickHighlightPr em lib/personal-records.ts) — null = nenhum PR
+   * batido, omite a faixa inteira. */
+  prDestaque: { exerciseNome: string; cargaNova: number } | null;
 };
 
 /**
@@ -67,6 +78,15 @@ export const WorkoutShareCard = forwardRef<
         <Text className="mt-1 font-label uppercase text-muted" style={{ fontSize: 12, letterSpacing: 1 }}>
           {metrics.dateLabel}
         </Text>
+        {metrics.grupos.length > 0 && (
+          <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            className="mt-2 text-center font-label uppercase text-text"
+            style={{ fontSize: 13, letterSpacing: 1 }}>
+            {metrics.grupos.join(' · ')}
+          </Text>
+        )}
       </View>
 
       <View className="h-px bg-border" />
@@ -82,6 +102,21 @@ export const WorkoutShareCard = forwardRef<
           <StatCell value={String(metrics.totalExercises)} label="EXERCÍCIOS" />
         </View>
       </View>
+
+      {/* Faixa de PR — só existe quando há recorde; sem espaço reservado
+          quando não há (justify-between do container redistribui sozinho). */}
+      {metrics.prDestaque && (
+        <View className="flex-row items-center justify-center gap-2">
+          <Ionicons name="trophy" size={16} color={colors.accent} />
+          <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            className="font-label uppercase text-accent"
+            style={{ fontSize: 13, letterSpacing: 1 }}>
+            {`Novo recorde · ${metrics.prDestaque.exerciseNome} ${metrics.prDestaque.cargaNova}kg`}
+          </Text>
+        </View>
+      )}
 
       {/* Rodapé: assinatura */}
       <View className="items-center">

@@ -63,6 +63,7 @@ import { RPE_CATEGORY_LABEL, RPE_CATEGORY_ORDER, RPE_CATEGORY_VALUE, rpeValueToC
 import { suggestNextLoad } from '@/lib/suggest-load';
 import { suggestRestSeconds } from '@/lib/suggest-rest';
 import { shareWorkoutImage } from '@/lib/share-image';
+import { findSessionPrs, pickHighlightPr } from '@/lib/personal-records';
 import { formatLastPerformance, useLastPerformance } from '@/lib/use-last-performance';
 import { colors } from '@/theme/tokens';
 
@@ -216,6 +217,7 @@ type SessionExerciseItem = {
   isLastInSupersetGroup: boolean;
   equipamento: string; // JSON serializado, tipo '["Barra"]' — parseado sob demanda
   dica: string | null;
+  musculos: string; // JSON serializado, tipo '["Peitoral","Deltoide anterior"]' — parseado sob demanda
 };
 
 function itemsEqual(a: SessionExerciseItem, b: SessionExerciseItem) {
@@ -235,7 +237,8 @@ function itemsEqual(a: SessionExerciseItem, b: SessionExerciseItem) {
     a.isFirstInSupersetGroup === b.isFirstInSupersetGroup &&
     a.isLastInSupersetGroup === b.isLastInSupersetGroup &&
     a.equipamento === b.equipamento &&
-    a.dica === b.dica
+    a.dica === b.dica &&
+    a.musculos === b.musculos
   );
 }
 
@@ -268,6 +271,7 @@ function SessionExecution({ session }: { session: Session }) {
         categoria: exercises.categoria,
         equipamento: exercises.equipamento,
         dica: exercises.dica,
+        musculos: exercises.musculos,
       })
       .from(workoutDayExercises)
       .innerJoin(exercises, eq(workoutDayExercises.exerciseId, exercises.id))
@@ -289,6 +293,7 @@ function SessionExecution({ session }: { session: Session }) {
         categoria: exercises.categoria,
         equipamento: exercises.equipamento,
         dica: exercises.dica,
+        musculos: exercises.musculos,
       })
       .from(sessionExtraExercises)
       .innerJoin(exercises, eq(sessionExtraExercises.exerciseId, exercises.id))
@@ -367,6 +372,7 @@ function SessionExecution({ session }: { session: Session }) {
         isLastInSupersetGroup: ex.supersetGroup == null ? true : ex.ordem === groupMaxOrdem.get(ex.supersetGroup),
         equipamento: ex.equipamento,
         dica: ex.dica,
+        musculos: ex.musculos,
       };
     });
     const extraItems: SessionExerciseItem[] = (extraExerciseRows ?? []).map((ex) => ({
@@ -386,6 +392,7 @@ function SessionExecution({ session }: { session: Session }) {
       isLastInSupersetGroup: true,
       equipamento: ex.equipamento,
       dica: ex.dica,
+      musculos: ex.musculos,
     }));
     return [...planItems, ...extraItems];
   }, [dayExerciseRows, extraExerciseRows, skipByDayExerciseId]);
@@ -408,11 +415,72 @@ function SessionExecution({ session }: { session: Session }) {
     [logs]
   );
 
+  // Grupos musculares treinados — soma séries FEITAS (não alvo) por músculo,
+  // pra cada exercício ativo, e ordena por relevância (mais séries primeiro).
+  // Tudo já em memória (items + logsByExercise), sem query nova. Top 4 pra
+  // não poluir o card — um full body facilmente passa disso.
+  const grupos = useMemo(() => {
+    const seriesByMuscle = new Map<string, number>();
+    for (const item of activeItems) {
+      const seriesFeitas = logsByExercise.get(item.exerciseId)?.length ?? 0;
+      if (seriesFeitas === 0) continue;
+      let musculosList: string[];
+      try {
+        musculosList = JSON.parse(item.musculos);
+      } catch {
+        musculosList = [];
+      }
+      for (const musculo of musculosList) {
+        seriesByMuscle.set(musculo, (seriesByMuscle.get(musculo) ?? 0) + seriesFeitas);
+      }
+    }
+    return [...seriesByMuscle.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 4)
+      .map(([label]) => label);
+  }, [activeItems, logsByExercise]);
+
+  // PR da sessão: cálculo assíncrono (findSessionPrs consulta o banco), então
+  // não dá pra fazer num useMemo síncrono como o resto das métricas. Roda
+  // sempre que a sessão é concluída (ou reconcluída, depois de reabrir) e
+  // guarda o resultado em estado — pelo tempo em que isso resolve, o usuário
+  // ainda não teria como ter tocado no botão de compartilhar (só aparece com
+  // session.concluida), mas o botão também fica desabilitado até `prReady`
+  // por garantia (mesma lógica de `cardReady` abaixo, unidas no disabled).
+  const [prDestaque, setPrDestaque] = useState<{ exerciseNome: string; cargaNova: number } | null>(null);
+  const [prReady, setPrReady] = useState(false);
+  useEffect(() => {
+    if (!session.concluida) {
+      setPrReady(false);
+      return;
+    }
+    let cancelled = false;
+    setPrReady(false);
+    findSessionPrs(session.id)
+      .then((prs) => {
+        if (cancelled) return;
+        const best = pickHighlightPr(prs);
+        setPrDestaque(best ? { exerciseNome: best.exerciseNome, cargaNova: best.cargaNova } : null);
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        console.error('Falha ao calcular recorde da sessão:', err);
+        setPrDestaque(null);
+      })
+      .finally(() => {
+        if (!cancelled) setPrReady(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [session.concluida, session.id]);
+
   // Métricas do card de compartilhamento — tudo já em memória (nenhuma query
-  // nova): duração igual ao Label visível acima, séries reaproveita
-  // `completedSeries` (o mesmo número já mostrado na barra de progresso, pra
-  // nunca divergir do que a tela exibe), exercícios conta só os ativos
-  // (não pulados).
+  // nova pras métricas síncronas): duração igual ao Label visível acima,
+  // séries reaproveita `completedSeries` (o mesmo número já mostrado na
+  // barra de progresso, pra nunca divergir do que a tela exibe), exercícios
+  // conta só os ativos (não pulados). `prDestaque` vem do estado assíncrono
+  // acima, já resolvido pelo momento em que o botão libera (ver `prReady`).
   const shareMetrics: WorkoutShareMetrics = useMemo(
     () => ({
       dayLabel,
@@ -424,8 +492,20 @@ function SessionExecution({ session }: { session: Session }) {
       volumeKg,
       totalSeries: completedSeries,
       totalExercises: activeItems.length,
+      grupos,
+      prDestaque,
     }),
-    [dayLabel, session.data, session.horaInicio, session.horaFim, volumeKg, completedSeries, activeItems.length]
+    [
+      dayLabel,
+      session.data,
+      session.horaInicio,
+      session.horaFim,
+      volumeKg,
+      completedSeries,
+      activeItems.length,
+      grupos,
+      prDestaque,
+    ]
   );
 
   // O card fica sempre montado (fora da tela, ver render abaixo) desde que a
@@ -434,7 +514,8 @@ function SessionExecution({ session }: { session: Session }) {
   // estar pronta pra captura — `cardReady` (setado no onLayout do card)
   // desabilita o botão de compartilhar até lá, então nunca dá pra tocar
   // antes da hora (na prática isso já é verdade antes do primeiro render do
-  // próprio botão, já que ele só aparece quando session.concluida).
+  // próprio botão, já que ele só aparece quando session.concluida). `prReady`
+  // soma a mesma trava pro cálculo assíncrono do PR (ver acima).
   const shareCardRef = useRef<View>(null);
   const [cardReady, setCardReady] = useState(false);
   const handleShareImage = useCallback(async () => {
@@ -669,7 +750,7 @@ function SessionExecution({ session }: { session: Session }) {
       )}
 
       {session.concluida && (
-        <Button className="mb-4" disabled={!cardReady} onPress={handleShareImage}>
+        <Button className="mb-4" disabled={!cardReady || !prReady} onPress={handleShareImage}>
           <View className="flex-row items-center gap-2">
             <Ionicons name="share-outline" size={18} color="#fff" />
             <Text className="font-label text-sm uppercase tracking-wide text-white">Compartilhar treino</Text>
