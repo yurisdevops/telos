@@ -12,6 +12,7 @@ import {
   TextInput,
   Vibration,
   View,
+  useWindowDimensions,
 } from 'react-native';
 import { eq, sql } from 'drizzle-orm';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
@@ -241,6 +242,10 @@ function itemsEqual(a: SessionExerciseItem, b: SessionExerciseItem) {
 function SessionExecution({ session }: { session: Session }) {
   const router = useRouter();
   const now = useNow(1000);
+  // Cobertura do card de compartilhamento escondido (ver render abaixo) —
+  // tamanho de tela real, sempre maior que o card, sem precisar sincronizar
+  // com as dimensões internas de WorkoutShareCard.
+  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
 
   const { data: dayRows } = useLiveQuery(
     db.select({ label: workoutDays.label }).from(workoutDays).where(eq(workoutDays.id, session.workoutDayId)),
@@ -610,15 +615,34 @@ function SessionExecution({ session }: { session: Session }) {
 
   return (
     <View>
-      {/* Fora da tela de propósito (não é pra aparecer pro usuário) — só
-          existe pra o captureRef ter o que rasterizar quando o botão de
-          compartilhar for tocado. */}
-      <WorkoutShareCard
-        ref={shareCardRef}
-        metrics={shareMetrics}
-        onLayout={() => setCardReady(true)}
-        style={{ position: 'absolute', left: -9999, top: 0 }}
-      />
+      {/* Escondido do usuário, mas DENTRO dos limites da tela — não a
+          -9999pt de distância (o Android pula a pintura de views longe
+          demais de qualquer viewport real, o que gerava PNG válido só que
+          vazio/preto no captureRef). Aqui o card fica em (0,0) de verdade,
+          só que coberto por cima por uma View opaca do tamanho da tela
+          inteira — visualmente invisível pro usuário, mas realmente pintado
+          pelo Android, então o captureRef captura o conteúdo de verdade.
+          pointerEvents="none" no wrapper garante que nada aqui dentro
+          intercepta toque — os controles reais da tela continuam abaixo. */}
+      <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0 }}>
+        <WorkoutShareCard
+          ref={shareCardRef}
+          metrics={shareMetrics}
+          onLayout={() => setCardReady(true)}
+          style={{ position: 'absolute', top: 0, left: 0 }}
+        />
+        <View
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: windowWidth,
+            height: windowHeight,
+            zIndex: 1,
+            backgroundColor: colors.bg,
+          }}
+        />
+      </View>
 
       <Text className="mb-1 font-display text-5xl uppercase text-text" numberOfLines={1}>
         {dayLabel}
