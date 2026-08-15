@@ -242,6 +242,44 @@ export function criarESalvar(readyWorkoutKey: string): number {
 export type TreinarAgoraResult = { status: 'started'; sessionId: number } | { status: 'already_has_session_today' };
 
 /**
+ * Apaga planos `tipo: 'Treino pronto'` cujo dia ficou órfão — nenhuma sessão
+ * (de nenhuma data, concluída ou não) referencia mais o `workoutDayId` deles.
+ * Isso só acontece quando o usuário cancela a sessão de um treino pronto
+ * (handleCancel em hoje.tsx apaga a linha de `sessions`, mas nunca o plano/
+ * dia que ela apontava). Cada plano de treino pronto tem exatamente 1 dia
+ * (ver `applyReadyWorkout`), então checar o dia órfão basta.
+ *
+ * Deliberadamente NÃO apaga planos cuja sessão ainda existe (concluída ou em
+ * andamento): o histórico (WorkoutHistorySection) faz `innerJoin` de
+ * `sessions` com `workoutDays` pra mostrar o label — apagar o dia de uma
+ * sessão concluída quebraria essa sessão no histórico. Esses continuam no
+ * banco de propósito; só não aparecem mais no seletor da aba Treinar (ver
+ * filtro em hoje.tsx `DayPicker`).
+ */
+function limparTreinosProntosOrfaos(tx: Tx) {
+  const referencedDayIds = new Set(tx.select({ id: sessions.workoutDayId }).from(sessions).all().map((r) => r.id));
+
+  const candidateDays = tx
+    .select({ dayId: workoutDays.id, planId: workoutDays.planId })
+    .from(workoutDays)
+    .innerJoin(workoutPlans, eq(workoutDays.planId, workoutPlans.id))
+    .where(eq(workoutPlans.tipo, 'Treino pronto'))
+    .all();
+
+  for (const { dayId, planId } of candidateDays) {
+    if (referencedDayIds.has(dayId)) continue; // sessão ainda existe (concluída ou não) — não mexe
+
+    // Ordem segura de FK (mesma de wipeUserData em backup/restore.ts): filhos
+    // antes dos pais. sessionSkips não entra aqui — como não há sessão
+    // referenciando esse dia, não pode haver skip pendente pra ele (handleCancel
+    // sempre apaga os skips da sessão antes de apagar a sessão em si).
+    tx.delete(workoutDayExercises).where(eq(workoutDayExercises.dayId, dayId)).run();
+    tx.delete(workoutDays).where(eq(workoutDays.id, dayId)).run();
+    tx.delete(workoutPlans).where(eq(workoutPlans.id, planId)).run();
+  }
+}
+
+/**
  * Cria o plano + dia (`tipo: 'Treino pronto'` — filtrado da lista de
  * Planilhas, ver planilhas.tsx) e já inicia a sessão de hoje. A checagem de
  * "já existe sessão hoje" roda DENTRO da mesma transação, antes de criar
@@ -260,6 +298,8 @@ export function treinarAgora(readyWorkoutKey: string): TreinarAgoraResult {
     if (existingToday.length > 0) {
       return { status: 'already_has_session_today' };
     }
+
+    limparTreinosProntosOrfaos(tx);
 
     const plan = tx
       .insert(workoutPlans)

@@ -14,7 +14,7 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import { eq, sql } from 'drizzle-orm';
+import { eq, ne, sql } from 'drizzle-orm';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { useRouter } from 'expo-router';
 import { useKeepAwake } from 'expo-keep-awake';
@@ -120,6 +120,13 @@ export default function HojeScreen() {
 }
 
 function DayPicker({ onStart, todayStr }: { onStart: (dayId: number) => void; todayStr: string }) {
+  // 'Treino pronto' são os planos efêmeros do "treinar agora" (ver
+  // src/db/ready-workouts.ts) — depois de concluídos, o plano/dia continuam no
+  // banco (a sessão feita precisa deles pro histórico), mas não podem oferecer
+  // reinício aqui. Mesmo filtro já usado em planilhas.tsx pra escondê-los da
+  // lista de planilhas; aqui esconde do seletor de "começar treino". Não afeta
+  // WorkoutHistorySection nem métricas — nenhuma delas faz join com
+  // workoutPlans, então continuam mostrando a sessão normalmente.
   const { data: days } = useLiveQuery(
     db
       .select({
@@ -129,6 +136,7 @@ function DayPicker({ onStart, todayStr }: { onStart: (dayId: number) => void; to
       })
       .from(workoutDays)
       .innerJoin(workoutPlans, eq(workoutDays.planId, workoutPlans.id))
+      .where(ne(workoutPlans.tipo, 'Treino pronto'))
   );
 
   const { data: exerciseCountRows } = useLiveQuery(
