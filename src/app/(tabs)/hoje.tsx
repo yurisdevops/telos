@@ -20,6 +20,7 @@ import { useRouter } from 'expo-router';
 import { useKeepAwake } from 'expo-keep-awake';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
+import { PrCelebrationOverlay } from '@/components/celebration/pr-celebration-overlay';
 import { Screen } from '@/components/screen';
 import {
   SHARE_CARD_HEIGHT,
@@ -64,7 +65,7 @@ import { RPE_CATEGORY_LABEL, RPE_CATEGORY_ORDER, RPE_CATEGORY_VALUE, rpeValueToC
 import { suggestNextLoad } from '@/lib/suggest-load';
 import { suggestRestSeconds } from '@/lib/suggest-rest';
 import { shareWorkoutImage } from '@/lib/share-image';
-import { findSessionPrs, pickHighlightPr } from '@/lib/personal-records';
+import { findSessionPrs, pickHighlightPr, type SessionPr } from '@/lib/personal-records';
 import { computeTrainedDaysInWeek } from '@/lib/stats';
 import { formatLastPerformance, useLastPerformance } from '@/lib/use-last-performance';
 import { colors } from '@/theme/tokens';
@@ -457,6 +458,10 @@ function SessionExecution({ session }: { session: Session }) {
   // ainda não teria como ter tocado no botão de compartilhar (só aparece com
   // session.concluida), mas o botão também fica desabilitado até `prReady`
   // por garantia (mesma lógica de `cardReady` abaixo, unidas no disabled).
+  // `sessionPrs` guarda a lista INTEIRA (não só o destaque) — é a mesma
+  // chamada de sempre, só não descarta o resto do array; alimenta a
+  // celebração de PR logo abaixo, sem consultar o banco de novo.
+  const [sessionPrs, setSessionPrs] = useState<SessionPr[]>([]);
   const [prDestaque, setPrDestaque] = useState<{ exerciseNome: string; cargaNova: number } | null>(null);
   const [prReady, setPrReady] = useState(false);
   useEffect(() => {
@@ -469,12 +474,14 @@ function SessionExecution({ session }: { session: Session }) {
     findSessionPrs(session.id)
       .then((prs) => {
         if (cancelled) return;
+        setSessionPrs(prs);
         const best = pickHighlightPr(prs);
         setPrDestaque(best ? { exerciseNome: best.exerciseNome, cargaNova: best.cargaNova } : null);
       })
       .catch((err) => {
         if (cancelled) return;
         console.error('Falha ao calcular recorde da sessão:', err);
+        setSessionPrs([]);
         setPrDestaque(null);
       })
       .finally(() => {
@@ -484,6 +491,30 @@ function SessionExecution({ session }: { session: Session }) {
       cancelled = true;
     };
   }, [session.concluida, session.id]);
+
+  // Celebração de PR: dispara quando o cálculo assíncrono acima FICA PRONTO
+  // pra uma sessão recém-concluída (reage a `prReady`, não ao toque em
+  // "Concluir treino" — o resultado só existe depois que a consulta volta).
+  // `celebrationShown` é o guard de "uma celebração por evento de conclusão":
+  // um segundo efeito reseta esse guard sempre que a sessão SAI do estado
+  // concluído (handleReopen) — então reabrir e concluir de novo libera uma
+  // nova celebração (com PR novo ou não: se não houver PR na reconclusão,
+  // `sessionPrs` fica vazio e o efeito abaixo simplesmente não dispara).
+  // Sessão fora-da-academia já vem coberta de graça: `findSessionPrs` retorna
+  // `[]` pra ela (ver personal-records.ts), então `sessionPrs.length === 0` e
+  // a celebração nunca abre, sem checagem extra aqui.
+  const [celebrationShown, setCelebrationShown] = useState(false);
+  const [celebrationVisible, setCelebrationVisible] = useState(false);
+  useEffect(() => {
+    if (!session.concluida) setCelebrationShown(false);
+  }, [session.concluida]);
+  useEffect(() => {
+    if (!session.concluida || !prReady || celebrationShown) return;
+    if (sessionPrs.length === 0) return;
+    setCelebrationVisible(true);
+    setCelebrationShown(true);
+  }, [session.concluida, prReady, celebrationShown, sessionPrs]);
+  const handleDismissCelebration = useCallback(() => setCelebrationVisible(false), []);
 
   // Marcador "esta semana" — dias com sessão concluída (segunda-domingo).
   // Query enxuta e reativa (mesmo padrão de summary-stats-section.tsx: só
@@ -841,6 +872,8 @@ function SessionExecution({ session }: { session: Session }) {
           onDismiss={cancelRestTimer}
         />
       )}
+
+      {celebrationVisible && <PrCelebrationOverlay prs={sessionPrs} onDismiss={handleDismissCelebration} />}
 
       {items.map((item) => (
         <ExerciseSessionCard
