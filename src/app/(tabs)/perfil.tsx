@@ -51,6 +51,20 @@ export default function PerfilScreen() {
   const [resetPhase, setResetPhase] = useState<'create-pin' | 'verify-pin' | null>(null);
   const sessionCount = useSessionCount();
 
+  // resetHistory() apaga sessions/set_logs com DELETE sem WHERE — o SQLite
+  // pula a "truncate optimization" no update_hook nesse caso (comportamento
+  // documentado: sqlite3_update_hook NÃO dispara pra DELETE sem WHERE), então
+  // NENHUM listener nativo é notificado — nem useLiveQuery (WorkoutHistorySection)
+  // nem useDbQuery (SummaryStatsSection/VolumeAnalysisSection), que usam o
+  // mesmo addDatabaseChangeListener por baixo. A transação continua intacta
+  // (atomicidade não muda); aqui só forçamos as 3 seções afetadas a REMONTAR
+  // depois de um reset bem-sucedido — um remonte sempre refaz a query do zero
+  // (independe do listener nativo ter disparado ou não), igual a reabrir o
+  // app. `key` em cada componente individualmente (não um wrapper por cima de
+  // tudo) — não arrisca resetar os drafts de "Dados pessoais", que ficam
+  // fisicamente entre SummaryStats/VolumeAnalysis e WorkoutHistorySection.
+  const [statsResetKey, setStatsResetKey] = useState(0);
+
   const handleResetPress = () => {
     Alert.alert(
       'Resetar histórico de treinos?',
@@ -90,6 +104,10 @@ export default function PerfilScreen() {
   const performReset = () => {
     try {
       resetHistory();
+      // Só DEPOIS do commit ter dado certo — remonta as seções que dependem
+      // de sessions/set_logs pra refletir o estado vazio na hora (ver
+      // comentário em statsResetKey acima).
+      setStatsResetKey((k) => k + 1);
       Alert.alert('Histórico apagado', 'Todo o seu histórico de treinos foi removido.');
     } catch (err) {
       reportError('Erro ao resetar histórico', err);
@@ -238,9 +256,9 @@ export default function PerfilScreen() {
         </Text>
       </Card>
 
-      <SummaryStatsSection />
+      <SummaryStatsSection key={statsResetKey} />
 
-      <VolumeAnalysisSection />
+      <VolumeAnalysisSection key={statsResetKey} />
 
       <Section title="Dados pessoais">
         <Label className="mb-1">Nome</Label>
@@ -296,7 +314,7 @@ export default function PerfilScreen() {
       </Section>
 
       <Section title="Histórico">
-        <WorkoutHistorySection />
+        <WorkoutHistorySection key={statsResetKey} />
       </Section>
 
       <Section title="Dados">
