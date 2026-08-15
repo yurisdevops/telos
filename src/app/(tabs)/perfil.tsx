@@ -7,6 +7,8 @@ import { Image } from 'expo-image';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { ChangelogModal } from '@/components/changelog-modal';
+import { CreatePinFlow } from '@/components/pin/create-pin-flow';
+import { VerifyPinFlow } from '@/components/pin/verify-pin-flow';
 import { Screen } from '@/components/screen';
 import { SummaryStatsSection } from '@/components/perfil/summary-stats-section';
 import { VolumeAnalysisSection } from '@/components/perfil/volume-analysis-section';
@@ -18,6 +20,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ScreenTitle } from '@/components/ui/screen-title';
 import { getLatestBodyWeightKg, upsertBodyWeightToday } from '@/db/body-weight';
+import { hasPin } from '@/db/pin';
 import { pickAndSaveProfilePhoto, removeProfilePhoto, updateUserProfile, useUserProfile } from '@/db/user-profile';
 import { EXPERIENCE_OPTIONS, type AssistantExperience } from '@/lib/assistant-profile';
 import { CHANGELOG_ENTRIES } from '@/lib/changelog';
@@ -38,6 +41,20 @@ export default function PerfilScreen() {
   // que mudou", não "o que há de novo") e só fecha ao dispensar; nunca chama
   // markChangelogSeen (isso é papel exclusivo do modal do boot).
   const [changelogModalVisible, setChangelogModalVisible] = useState(false);
+
+  // TEMPORÁRIO (Etapa B da feature de reset com PIN) — só pra validar o
+  // sistema de PIN isoladamente antes de ligar no reset de verdade (Etapa
+  // C). Remove este botão e este bloco de estado quando o reset estiver
+  // pronto; CreatePinFlow/VerifyPinFlow continuam (viram parte do reset).
+  const [pinTestFlow, setPinTestFlow] = useState<'create' | 'verify' | null>(null);
+  const handleTestPin = async () => {
+    try {
+      const exists = await hasPin();
+      setPinTestFlow(exists ? 'verify' : 'create');
+    } catch (err) {
+      reportError('Erro ao checar PIN', err);
+    }
+  };
 
   // fotoUri pode apontar pra um arquivo que não existe mais (ex: restaurou
   // backup de outro device — o arquivo nunca viaja, só o caminho). Checagem
@@ -253,7 +270,7 @@ export default function PerfilScreen() {
           </Card>
         </Pressable>
 
-        <Pressable onPress={() => setChangelogModalVisible(true)}>
+        <Pressable onPress={() => setChangelogModalVisible(true)} className="mb-3">
           <Card className="flex-row items-center justify-between">
             <View>
               <Text className="font-card-title text-lg text-text">Novidades</Text>
@@ -262,7 +279,35 @@ export default function PerfilScreen() {
             <Ionicons name="chevron-forward" size={20} color={colors.muted} />
           </Card>
         </Pressable>
+
+        {/* TEMPORÁRIO — ver comentário junto de pinTestFlow acima. */}
+        <Pressable onPress={handleTestPin}>
+          <Card className="flex-row items-center justify-between border-l-4 border-l-warning">
+            <View>
+              <Text className="font-card-title text-lg text-text">TESTE PIN (temporário)</Text>
+              <Label className="mt-1">Só pra validar o mecanismo — sai na Etapa C</Label>
+            </View>
+            <Ionicons name="key-outline" size={20} color={colors.warning} />
+          </Card>
+        </Pressable>
       </Section>
+
+      <CreatePinFlow
+        visible={pinTestFlow === 'create'}
+        onCreated={() => {
+          setPinTestFlow(null);
+          Alert.alert('PIN criado!', 'Toque em "TESTE PIN" de novo pra verificar.');
+        }}
+        onCancel={() => setPinTestFlow(null)}
+      />
+      <VerifyPinFlow
+        visible={pinTestFlow === 'verify'}
+        onVerified={() => {
+          setPinTestFlow(null);
+          Alert.alert('PIN correto!');
+        }}
+        onCancel={() => setPinTestFlow(null)}
+      />
 
       <ChangelogModal
         visible={changelogModalVisible}
