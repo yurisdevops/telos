@@ -16,6 +16,7 @@ import { WorkoutHistorySection } from '@/components/perfil/workout-history-secti
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Chip } from '@/components/ui/chip';
+import { CollapsibleSection } from '@/components/ui/collapsible-section';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ScreenTitle } from '@/components/ui/screen-title';
@@ -258,7 +259,9 @@ export default function PerfilScreen() {
 
       <SummaryStatsSection key={statsResetKey} />
 
-      <VolumeAnalysisSection key={statsResetKey} />
+      <CollapsibleSection title="Análise de volume">
+        <VolumeAnalysisSection key={statsResetKey} />
+      </CollapsibleSection>
 
       <Section title="Dados pessoais">
         <Label className="mb-1">Nome</Label>
@@ -313,9 +316,15 @@ export default function PerfilScreen() {
         </View>
       </Section>
 
-      <Section title="Histórico">
-        <WorkoutHistorySection key={statsResetKey} />
-      </Section>
+      {/* mt-6: a "Section" acima (Dados pessoais) só empurra o que vem antes
+          dela (margem no topo), não o que vem depois — sem isso o
+          CollapsibleSection (que só tem mb-6, mesmo padrão do Card usado no
+          resto da tela) ficaria colado nela. */}
+      <View className="mt-6">
+        <CollapsibleSection title="Histórico de treinos">
+          <WorkoutHistorySection key={statsResetKey} />
+        </CollapsibleSection>
+      </View>
 
       <Section title="Dados">
         <Pressable onPress={() => router.push('/backup')} className="mb-3">

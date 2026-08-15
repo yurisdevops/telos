@@ -1,7 +1,6 @@
-import { useMemo } from 'react';
+import { Fragment, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
-import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { computeWeeklyMuscleSeries, computeWeeklyPushPull } from '@/db/analysis';
 import { useDbQuery } from '@/lib/use-db-query';
@@ -111,8 +110,7 @@ export function VolumeAnalysisSection() {
   const pushPullTotal = pushPull ? pushPull.empurrarPorSemana + pushPull.puxarPorSemana : 0;
 
   return (
-    <Card className="mb-6">
-      <Text className="mb-1 font-card-title text-lg text-text">Análise de volume</Text>
+    <Fragment>
       <Label className="mb-4">Séries diretas por grupo muscular · média das últimas 4 semanas completas</Label>
 
       <View className="mb-4 rounded border-l-4 border-l-accent bg-surface px-3 py-2">
@@ -208,6 +206,6 @@ export function VolumeAnalysisSection() {
           )}
         </>
       )}
-    </Card>
+    </Fragment>
   );
 }
