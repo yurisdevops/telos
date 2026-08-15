@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ReactNode, RefObject } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, View, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -18,6 +18,9 @@ type ScreenProps = {
   scrollable?: boolean;
   edges?: Edge[];
   style?: ViewStyle;
+  // Só tem efeito com `scrollable` — deixa quem usa a tela controlar o
+  // scroll de fora (ex: rolar pro topo depois de um evento específico).
+  scrollRef?: RefObject<ScrollView | null>;
 };
 
 export function Screen({
@@ -26,6 +29,7 @@ export function Screen({
   scrollable = false,
   edges = ALL_EDGES,
   style,
+  scrollRef,
 }: ScreenProps) {
   const insets = useSafeAreaInsets();
   const router = useRouter();
@@ -57,6 +61,7 @@ export function Screen({
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           keyboardVerticalOffset={showBack ? HEADER_CONTENT_HEIGHT : 0}>
           <ScrollView
+            ref={scrollRef}
             className="flex-1"
             contentContainerStyle={{
               paddingHorizontal: CONTENT_HORIZONTAL_PADDING,

@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState, type RefObject } from 'react';
 import {
   Alert,
   Animated,
@@ -8,6 +8,7 @@ import {
   Modal,
   Platform,
   Pressable,
+  ScrollView,
   Text,
   TextInput,
   Vibration,
@@ -85,6 +86,7 @@ function reportError(context: string, err: unknown) {
 export default function HojeScreen() {
   const todayStr = getTodayDateString();
   const today = new Date();
+  const scrollRef = useRef<ScrollView>(null);
 
   const { data: todaySessions } = useLiveQuery(
     db.select().from(sessions).where(eq(sessions.data, todayStr))
@@ -105,14 +107,14 @@ export default function HojeScreen() {
   };
 
   return (
-    <Screen edges={['top', 'left', 'right']} scrollable>
+    <Screen edges={['top', 'left', 'right']} scrollable scrollRef={scrollRef}>
       <View className="pb-4 pt-2">
         <Label>{getWeekdayLabel(today)}</Label>
         <Text className="font-display text-4xl uppercase text-text">{formatDateNoWeekday(today)}</Text>
       </View>
 
       {todaySession ? (
-        <SessionExecution session={todaySession} />
+        <SessionExecution session={todaySession} scrollRef={scrollRef} />
       ) : (
         <DayPicker onStart={handleStartDay} todayStr={todayStr} />
       )}
@@ -253,13 +255,37 @@ function itemsEqual(a: SessionExerciseItem, b: SessionExerciseItem) {
   );
 }
 
-function SessionExecution({ session }: { session: Session }) {
+function SessionExecution({
+  session,
+  scrollRef,
+}: {
+  session: Session;
+  scrollRef: RefObject<ScrollView | null>;
+}) {
   const router = useRouter();
   const now = useNow(1000);
   // Cobertura do card de compartilhamento escondido (ver render abaixo) —
   // tamanho de tela real, sempre maior que o card, sem precisar sincronizar
   // com as dimensões internas de WorkoutShareCard.
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
+
+  // Rola pro topo só na TRANSIÇÃO false→true (o momento exato de concluir) —
+  // nunca ao montar já concluída (reabrir o app/voltar pra aba com o treino
+  // de hoje já feito não deve empurrar o scroll) nem ao reabrir (`concluida`
+  // volta pra false, a condição abaixo não bate). `prevConcluidaRef` guarda o
+  // valor anterior fora do ciclo de render pra distinguir "acabou de mudar"
+  // de "já chegou assim". Independente da celebração de PR (efeito
+  // separado): o scroll anima o conteúdo por baixo, o overlay (se houver)
+  // aparece por cima — quando o usuário fecha a celebração, a tela já está
+  // no topo mostrando o card "Treino concluído".
+  const prevConcluidaRef = useRef(session.concluida);
+  useEffect(() => {
+    const wasConcluida = prevConcluidaRef.current;
+    prevConcluidaRef.current = session.concluida;
+    if (!wasConcluida && session.concluida) {
+      scrollRef.current?.scrollTo({ y: 0, animated: true });
+    }
+  }, [session.concluida, scrollRef]);
 
   const { data: dayRows } = useLiveQuery(
     db.select({ label: workoutDays.label }).from(workoutDays).where(eq(workoutDays.id, session.workoutDayId)),
