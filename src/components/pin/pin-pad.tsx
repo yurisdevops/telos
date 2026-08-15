@@ -54,35 +54,43 @@ export function PinPad({ title, error, onComplete }: PinPadProps) {
   const handleBackspace = () => setDigits((prev) => prev.slice(0, -1));
 
   return (
-    <View className="items-center">
-      <Text className="mb-4 text-center font-card-title text-xl text-text">{title}</Text>
+    <View className="w-full items-center">
+      <Text className="mb-5 text-center font-card-title text-2xl text-text">{title}</Text>
 
-      <View className="mb-2 flex-row gap-4">
+      <View className="mb-3 flex-row gap-6">
         {Array.from({ length: PIN_LENGTH }, (_, i) => (
           <View
             key={i}
-            className={`h-4 w-4 rounded-full border ${
+            className={`h-7 w-7 rounded-full border-2 ${
               i < digits.length ? 'border-accent bg-accent' : 'border-border bg-transparent'
             }`}
           />
         ))}
       </View>
 
-      <Label className="mb-4 h-4 text-center text-accent">{error ?? ''}</Label>
+      <Label className="mb-5 h-5 text-center text-base text-accent">{error ?? ''}</Label>
 
-      <View className="w-full max-w-xs">
+      {/* Grade proporcional, não em px fixo: cada tecla é `flex-1` com
+          `aspectRatio: 1` (quadrada, então `rounded-full` continua um
+          círculo perfeito em qualquer tamanho computado), então a largura
+          de toque cresce/encolhe com a largura disponível do modal — cabe
+          igual numa tela pequena (~320pt) ou numa tela grande, sem cortar.
+          `max-w-sm` só existe pra não deixar as teclas enormes/desproporcionais
+          num tablet; `w-full` faz o grid usar toda a largura que tiver até lá. */}
+      <View className="w-full max-w-sm">
         {KEYPAD_ROWS.map((row, rowIndex) => (
-          <View key={rowIndex} className="mb-3 flex-row justify-between">
+          <View key={rowIndex} className="mb-4 flex-row gap-4">
             {row.map((key, keyIndex) => {
-              if (key === null) return <View key={keyIndex} className="h-16 w-16" />;
+              if (key === null) return <View key={keyIndex} className="flex-1" style={{ aspectRatio: 1 }} />;
               if (key === 'backspace') {
                 return (
                   <Pressable
                     key={keyIndex}
                     onPress={handleBackspace}
                     hitSlop={8}
-                    className="h-16 w-16 items-center justify-center rounded-full">
-                    <Ionicons name="backspace-outline" size={24} color={colors.muted} />
+                    className="flex-1 items-center justify-center rounded-full"
+                    style={{ aspectRatio: 1 }}>
+                    <Ionicons name="backspace-outline" size={32} color={colors.muted} />
                   </Pressable>
                 );
               }
@@ -90,8 +98,9 @@ export function PinPad({ title, error, onComplete }: PinPadProps) {
                 <Pressable
                   key={keyIndex}
                   onPress={() => handlePressDigit(key)}
-                  className="h-16 w-16 items-center justify-center rounded-full border border-border">
-                  <Text className="font-display text-3xl text-text">{key}</Text>
+                  className="flex-1 items-center justify-center rounded-full border-2 border-border"
+                  style={{ aspectRatio: 1 }}>
+                  <Text className="font-display text-4xl text-text">{key}</Text>
                 </Pressable>
               );
             })}
