@@ -38,6 +38,10 @@ export type BackupSession = {
   horaFim: number | null;
   restTimerStartedAt: number | null;
   restTimerDurationSeconds: number | null;
+  // Fora da academia (fundação da feature — filtro de cálculo vem depois):
+  // sempre presente e normalizado para `false` em backups antigos, de antes
+  // dessa coluna existir. Mesmo padrão de `pesoCorporal` em BackupSetLog.
+  foraDaAcademia: boolean;
 };
 
 export type BackupSessionExtraExercise = {

@@ -247,6 +247,7 @@ function restoreSessions(
         horaFim: row.horaFim,
         restTimerStartedAt: row.restTimerStartedAt,
         restTimerDurationSeconds: row.restTimerDurationSeconds,
+        foraDaAcademia: row.foraDaAcademia,
       })
       .returning()
       .get();

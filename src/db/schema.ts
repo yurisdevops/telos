@@ -68,6 +68,11 @@ export const sessions = sqliteTable('sessions', {
   horaFim: integer('hora_fim'),
   restTimerStartedAt: integer('rest_timer_started_at'),
   restTimerDurationSeconds: integer('rest_timer_duration_seconds'),
+  // Sessão inteira marcada como fora da rotina de academia (ex: treino de
+  // viagem) — cargas dela saem de sugestão/recordes/PR/estagnação (Etapa B),
+  // mas continuam contando em volume/séries/histórico/frequência. Binário,
+  // sem nomear onde — só sinaliza "não é comparável".
+  foraDaAcademia: integer('fora_da_academia', { mode: 'boolean' }).notNull().default(false),
 });
 
 export type Session = typeof sessions.$inferSelect;

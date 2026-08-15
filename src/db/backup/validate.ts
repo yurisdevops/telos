@@ -144,6 +144,8 @@ export function assertValidBackupPayload(json: unknown): BackupPayload {
     assertNullableNumber(row.horaFim, `sessions[${index}].horaFim`);
     assertNullableNumber(row.restTimerStartedAt, `sessions[${index}].restTimerStartedAt`);
     assertNullableNumber(row.restTimerDurationSeconds, `sessions[${index}].restTimerDurationSeconds`);
+    assertOptionalBoolean(row.foraDaAcademia, `sessions[${index}].foraDaAcademia`);
+    if (row.foraDaAcademia === undefined) row.foraDaAcademia = false;
   });
 
   json.sessionExtraExercises.forEach((row, index) => {

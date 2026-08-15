@@ -1,0 +1,1 @@
+ALTER TABLE `sessions` ADD `fora_da_academia` integer DEFAULT false NOT NULL;

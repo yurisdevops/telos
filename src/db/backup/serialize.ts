@@ -93,6 +93,7 @@ export async function buildBackupPayload(): Promise<BackupPayload> {
       horaFim: s.horaFim,
       restTimerStartedAt: s.restTimerStartedAt,
       restTimerDurationSeconds: s.restTimerDurationSeconds,
+      foraDaAcademia: s.foraDaAcademia,
     })),
     sessionExtraExercises: extraExercises.map((se) => {
       const ex = resolveExercise(se.exerciseId);
