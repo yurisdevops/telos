@@ -29,8 +29,19 @@ export function useUserProfile() {
 }
 
 export type UserProfilePatch = Partial<
-  Pick<UserProfile, 'nome' | 'alturaCm' | 'experiencia' | 'fotoUri' | 'lastSeenChangelogVersion'>
+  Pick<UserProfile, 'nome' | 'alturaCm' | 'experiencia' | 'fotoUri' | 'lastSeenChangelogVersion' | 'sexo'>
 >;
+
+// Fundação do boneco 2D (Fase 2, futura) — mesmo padrão de AssistantExperience
+// (assistant-profile.ts): união de strings, sem enum nativo no SQLite. Nullable
+// na coluna (ver schema.ts) — usuário pode nunca escolher; o boneco pede
+// depois, não é forçado agora.
+export type Sexo = 'masculino' | 'feminino';
+
+export const SEXO_OPTIONS: { value: Sexo; label: string }[] = [
+  { value: 'masculino', label: 'Masculino' },
+  { value: 'feminino', label: 'Feminino' },
+];
 
 /** Grava só os campos passados na linha id=1 — nunca cria uma linha nova
  * (ensureUserProfileRow já garante que ela existe). */

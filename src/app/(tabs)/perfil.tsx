@@ -23,7 +23,14 @@ import { ScreenTitle } from '@/components/ui/screen-title';
 import { getLatestBodyWeightKg, upsertBodyWeightToday } from '@/db/body-weight';
 import { hasPin } from '@/db/pin';
 import { resetHistory, useSessionCount } from '@/db/reset-history';
-import { pickAndSaveProfilePhoto, removeProfilePhoto, updateUserProfile, useUserProfile } from '@/db/user-profile';
+import {
+  pickAndSaveProfilePhoto,
+  removeProfilePhoto,
+  SEXO_OPTIONS,
+  updateUserProfile,
+  useUserProfile,
+  type Sexo,
+} from '@/db/user-profile';
 import { EXPERIENCE_OPTIONS, type AssistantExperience } from '@/lib/assistant-profile';
 import { CHANGELOG_ENTRIES } from '@/lib/changelog';
 import { formatNumberPtBr } from '@/lib/format';
@@ -210,6 +217,17 @@ export default function PerfilScreen() {
     }
   };
 
+  // Sexo: mesma mecânica do chip de experiência — aplica na hora. Nullable
+  // (fundação do boneco 2D, Fase 2) — tocar no já selecionado desmarca
+  // (`toggle`), já que ninguém é obrigado a escolher agora.
+  const handleSetSexo = async (value: Sexo) => {
+    try {
+      await updateUserProfile({ sexo: profile?.sexo === value ? null : value });
+    } catch (err) {
+      reportError('Erro ao salvar sexo', err);
+    }
+  };
+
   const handleRegisterPeso = async () => {
     const normalized = pesoDraft.trim().replace(',', '.');
     const value = Number(normalized);
@@ -293,6 +311,20 @@ export default function PerfilScreen() {
               label={option.label}
               selected={profile?.experiencia === option.value}
               onPress={() => handleSetExperiencia(option.value)}
+            />
+          ))}
+        </View>
+
+        {/* Nullable de propósito — fundação do boneco 2D (Fase 2), que ainda
+            não existe. Tocar no já selecionado desmarca (handleSetSexo). */}
+        <Label className="mb-2 mt-6">Sexo</Label>
+        <View className="flex-row flex-wrap gap-2">
+          {SEXO_OPTIONS.map((option) => (
+            <Chip
+              key={option.value}
+              label={option.label}
+              selected={profile?.sexo === option.value}
+              onPress={() => handleSetSexo(option.value)}
             />
           ))}
         </View>
