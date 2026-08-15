@@ -29,6 +29,15 @@ export type SessionPr = {
  * contexto de SessionExecution.
  */
 export async function findSessionPrs(sessionId: number): Promise<SessionPr[]> {
+  // Sessão fora da academia nunca gera PR — não faz sentido bater recorde
+  // num aparelho/carga que não é o padrão comparável.
+  const sessionRow = await db
+    .select({ foraDaAcademia: sessions.foraDaAcademia })
+    .from(sessions)
+    .where(eq(sessions.id, sessionId))
+    .limit(1);
+  if (sessionRow[0]?.foraDaAcademia) return [];
+
   const sessionMaxRows = await db
     .select({ exerciseId: setLogs.exerciseId, maxCarga: sql<number>`max(${setLogs.carga})` })
     .from(setLogs)
@@ -41,7 +50,14 @@ export async function findSessionPrs(sessionId: number): Promise<SessionPr[]> {
     .select({ exerciseId: setLogs.exerciseId, maxCarga: sql<number>`max(${setLogs.carga})` })
     .from(setLogs)
     .innerJoin(sessions, eq(setLogs.sessionId, sessions.id))
-    .where(and(eq(sessions.concluida, true), eq(setLogs.pesoCorporal, false), ne(sessions.id, sessionId)))
+    .where(
+      and(
+        eq(sessions.concluida, true),
+        eq(setLogs.pesoCorporal, false),
+        eq(sessions.foraDaAcademia, false),
+        ne(sessions.id, sessionId)
+      )
+    )
     .groupBy(setLogs.exerciseId);
   const historicalMaxByExercise = new Map(historicalMaxRows.map((row) => [row.exerciseId, row.maxCarga]));
 

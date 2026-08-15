@@ -27,7 +27,9 @@ async function computeStagnation(): Promise<StagnationRow[]> {
     .from(setLogs)
     .innerJoin(sessions, eq(setLogs.sessionId, sessions.id))
     .innerJoin(exercises, eq(setLogs.exerciseId, exercises.id))
-    .where(and(eq(sessions.concluida, true), eq(setLogs.pesoCorporal, false)))
+    .where(
+      and(eq(sessions.concluida, true), eq(setLogs.pesoCorporal, false), eq(sessions.foraDaAcademia, false))
+    )
     .groupBy(setLogs.exerciseId, sessions.data);
 
   const byExercise = new Map<number, { nome: string; points: { data: string; maxCarga: number }[] }>();

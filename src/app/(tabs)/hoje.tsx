@@ -552,6 +552,21 @@ function SessionExecution({ session }: { session: Session }) {
     await shareWorkoutImage(shareCardRef, SHARE_CARD_WIDTH, SHARE_CARD_HEIGHT);
   }, []);
 
+  // Marcável/desmarcável a qualquer momento (durante o treino ou já
+  // concluído — o toggle no cabeçalho, abaixo, fica sempre visível e ativo
+  // nos dois estados, então não precisa de um segundo controle no card de
+  // conclusão). `session` vem de useLiveQuery, então a tela reflete na hora.
+  const handleToggleForaDaAcademia = async () => {
+    try {
+      await db
+        .update(sessions)
+        .set({ foraDaAcademia: !session.foraDaAcademia })
+        .where(eq(sessions.id, session.id));
+    } catch (err) {
+      reportError('Erro ao marcar sessão', err);
+    }
+  };
+
   const handleComplete = async () => {
     try {
       await db
@@ -764,6 +779,25 @@ function SessionExecution({ session }: { session: Session }) {
           {session.concluida && session.horaFim != null
             ? `Duração: ${formatElapsed(session.horaFim - session.horaInicio)}`
             : `Em andamento: ${formatElapsed(now - session.horaInicio)}`}
+        </Label>
+      )}
+
+      <Pressable
+        onPress={handleToggleForaDaAcademia}
+        className={`mb-1 mt-2 flex-row items-center gap-2 self-start rounded border px-3 py-1.5 ${
+          session.foraDaAcademia ? 'border-accent bg-accent' : 'border-border bg-transparent'
+        }`}>
+        <Ionicons name="location-outline" size={14} color={session.foraDaAcademia ? '#fff' : colors.muted} />
+        <Text
+          className={`font-label text-xs uppercase tracking-wide ${
+            session.foraDaAcademia ? 'text-white' : 'text-muted'
+          }`}>
+          Fora da minha academia
+        </Text>
+      </Pressable>
+      {session.foraDaAcademia && (
+        <Label className="mb-3 mt-1 text-muted">
+          As cargas sugeridas são da sua academia principal — esta sessão não entra nas comparações.
         </Label>
       )}
 

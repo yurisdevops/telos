@@ -22,6 +22,7 @@ export function useLastPerformance(
           and(
             eq(setLogs.exerciseId, exerciseId),
             eq(sessions.concluida, true),
+            eq(sessions.foraDaAcademia, false),
             ne(sessions.id, excludeSessionId)
           )
         )

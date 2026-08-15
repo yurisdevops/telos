@@ -3,6 +3,7 @@ import { Pressable, Text, View } from 'react-native';
 import { eq } from 'drizzle-orm';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { useRouter } from 'expo-router';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -10,6 +11,7 @@ import { db } from '@/db';
 import { sessions, workoutDays } from '@/db/schema';
 import { formatShortDateLabel } from '@/lib/date';
 import { formatElapsed } from '@/lib/duration';
+import { colors } from '@/theme/tokens';
 
 // Extraído de hoje.tsx (Onda "Perfil", etapa 3) — mesma query, mesmo sort,
 // mesmo limite de 10. Sem título próprio: quem posiciona este componente
@@ -25,6 +27,7 @@ export function WorkoutHistorySection() {
         dayLabel: workoutDays.label,
         horaInicio: sessions.horaInicio,
         horaFim: sessions.horaFim,
+        foraDaAcademia: sessions.foraDaAcademia,
       })
       .from(sessions)
       .innerJoin(workoutDays, eq(sessions.workoutDayId, workoutDays.id))
@@ -48,7 +51,12 @@ export function WorkoutHistorySection() {
           key={item.id}
           onPress={() => router.push({ pathname: '/sessao/[id]', params: { id: String(item.id) } })}>
           <Card className="mb-2">
-            <Text className="font-card-title text-lg text-text">{item.dayLabel}</Text>
+            <View className="flex-row items-center gap-1.5">
+              <Text className="font-card-title text-lg text-text">{item.dayLabel}</Text>
+              {item.foraDaAcademia && (
+                <Ionicons name="location-outline" size={14} color={colors.muted} />
+              )}
+            </View>
             <View className="mt-1 flex-row items-center justify-between">
               <Label>{formatShortDateLabel(item.data)}</Label>
               {item.horaInicio != null && item.horaFim != null && (
