@@ -44,6 +44,20 @@ const MIGRATION_COLUMN_RECONCILE_CASES: { table: string; column: string; tag: st
   // mecanismo de reconcile.
   { table: 'user_profile', column: 'pin_hash', tag: '0011_moaning_the_initiative' },
   { table: 'user_profile', column: 'pin_salt', tag: '0012_hard_kronos' },
+  // sexo entra no MESMO tag/arquivo que a criação de body_measurements (ver
+  // MIGRATION_TABLE_RECONCILE_CASES abaixo) — diferente do caso pin_hash/
+  // pin_salt (2 arquivos separados), aqui as duas mudanças vivem num único
+  // 0013_green_saracen.sql. Isso é seguro porque SQLiteSyncDialect.migrate()
+  // (drizzle-orm/sqlite-core/dialect.js) envolve TODAS as migrações
+  // pendentes de um lote num único BEGIN/COMMIT — não por arquivo — então
+  // "tabela criada mas coluna não" não acontece pela via normal (erro em
+  // qualquer statement reverte o lote inteiro). Só sobra o mesmo risco
+  // teórico que o reconcile inteiro já existe pra cobrir (schema alterado
+  // fora do fluxo normal do migrate()). Bônus verificado: como as duas
+  // entradas compartilham o mesmo `tag` (mesmo `entry.when`), a 1ª que rodar
+  // já grava o bookkeeping desse tag; a 2ª reconhece "já em dia" e não
+  // duplica linha — uma só, igual a como o migrate() real registraria.
+  { table: 'user_profile', column: 'sexo', tag: '0013_green_saracen' },
 ];
 
 /**
@@ -57,6 +71,7 @@ const MIGRATION_COLUMN_RECONCILE_CASES: { table: string; column: string; tag: st
  */
 const MIGRATION_TABLE_RECONCILE_CASES: { table: string; tag: string }[] = [
   { table: 'user_profile', tag: '0008_little_maginty' },
+  { table: 'body_measurements', tag: '0013_green_saracen' },
 ];
 
 function tableExists(table: string): boolean {

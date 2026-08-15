@@ -7,7 +7,7 @@ export type ChangelogEntry = {
 // Versão mais recente definida abaixo — o que o usuário já viu (persistido em
 // user_profile.lastSeenChangelogVersion) é comparado contra o `version` de
 // cada entrada, não contra essa constante diretamente (getUnseenChangelog).
-export const CURRENT_CHANGELOG_VERSION = 2;
+export const CURRENT_CHANGELOG_VERSION = 3;
 
 // Lista crescente de levas — nunca editar uma entrada já publicada (quem já
 // viu não deve ver de novo com conteúdo diferente); só adicionar novas com
@@ -71,6 +71,42 @@ export const CHANGELOG_ENTRIES: ChangelogEntry[] = [
         titulo: 'Registro de série mais guiado',
         descricao:
           'Ao terminar uma série, o nível de esforço e o descanso ganham destaque, conduzindo você pelo treino.',
+      },
+    ],
+  },
+  {
+    version: 3,
+    title: 'Novidades',
+    items: [
+      {
+        titulo: 'Compartilhe seu treino',
+        descricao:
+          'Ao concluir, gere um card com suas métricas, grupos treinados e recordes pra postar onde quiser.',
+      },
+      {
+        titulo: 'Comemore seus recordes',
+        descricao: 'Bateu um novo recorde? O app te avisa com destaque ao terminar o treino.',
+      },
+      {
+        titulo: 'Treinos prontos',
+        descricao: 'Escolha um treino montado e comece na hora, sem configurar nada.',
+      },
+      {
+        titulo: 'Assistente mais inteligente',
+        descricao: 'O objetivo escolhido agora muda o treino de verdade: séries, repetições e descanso.',
+      },
+      {
+        titulo: 'Foto de perfil',
+        descricao: 'Escolha da galeria ou tire na hora pela câmera.',
+      },
+      {
+        titulo: 'Treino fora da sua academia',
+        descricao:
+          'Marque quando treinar em outro lugar, e as cargas diferentes não bagunçam seus recordes e sugestões.',
+      },
+      {
+        titulo: 'Resetar histórico',
+        descricao: 'Zere seus treinos com proteção por PIN, mantendo seus planos e perfil.',
       },
     ],
   },

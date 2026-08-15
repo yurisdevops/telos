@@ -91,6 +91,21 @@ export type BackupDeloadWeek = {
   weekStartIso: string;
 };
 
+// Fundação de medidas corporais (Fase 1A) — mesmo molde de
+// BackupBodyWeightLog: standalone, uma linha por data, ausente em backups
+// anteriores a essa feature (normalizado pra `[]` na validação). Todas as
+// medidas nullable — usuário registra só as que quiser.
+export type BackupBodyMeasurement = {
+  id: number;
+  data: string;
+  peitoCm: number | null;
+  cinturaCm: number | null;
+  quadrilCm: number | null;
+  bracoCm: number | null;
+  coxaCm: number | null;
+  panturrilhaCm: number | null;
+};
+
 // Onda 5 — também standalone: guardam só `wgerId` cru (nunca `exercises.id`),
 // então não precisam de resolução nenhuma na importação, nem de FK declarada.
 export type BackupExercisePreference = {
@@ -124,12 +139,16 @@ export type BackupExerciseSubstitution = {
 // `restoreUserProfile` (restore.ts) nunca os mencione no SET — o que
 // preserva o valor atual da coluna intacto (UPDATE só toca nas colunas
 // listadas, nunca vira REPLACE da linha inteira).
+//
+// `sexo` (fundação do boneco 2D, Fase 1A) é o oposto de pinHash/pinSalt: É
+// dado de perfil de verdade, não trava local — entra no backup normalmente.
 export type BackupUserProfile = {
   nome: string | null;
   alturaCm: number | null;
   experiencia: string | null;
   fotoUri: string | null;
   lastSeenChangelogVersion: number | null;
+  sexo: string | null;
 };
 
 export type BackupPayload = {
@@ -147,6 +166,9 @@ export type BackupPayload = {
   // validação, nunca `undefined`.
   bodyWeightLogs: BackupBodyWeightLog[];
   deloadWeeks: BackupDeloadWeek[];
+  // Fundação de medidas corporais (Fase 1A) — ausente em backups anteriores,
+  // mesma regra de normalização pra `[]`.
+  bodyMeasurements: BackupBodyMeasurement[];
   // Onda 5 — mesma regra: ausentes em backups anteriores, normalizado pra [].
   exercisePreferences: BackupExercisePreference[];
   exerciseSubstitutions: BackupExerciseSubstitution[];
@@ -169,7 +191,8 @@ export type TableKey =
   | 'deloadWeeks'
   | 'exercisePreferences'
   | 'exerciseSubstitutions'
-  | 'userProfile';
+  | 'userProfile'
+  | 'bodyMeasurements';
 
 export type SkippedOrphanExercise = {
   table: TableKey;
@@ -197,4 +220,5 @@ export const TABLE_LABELS: Record<TableKey, string> = {
   exercisePreferences: 'preferências de exercício (favoritos/notas)',
   exerciseSubstitutions: 'substituições de exercício',
   userProfile: 'perfil',
+  bodyMeasurements: 'medidas corporais',
 };

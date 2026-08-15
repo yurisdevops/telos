@@ -2,6 +2,7 @@ import { eq } from 'drizzle-orm';
 
 import { db } from '@/db';
 import {
+  bodyMeasurements,
   bodyWeightLogs,
   deloadWeeks,
   exercisePreferences,
@@ -38,6 +39,7 @@ export async function buildBackupPayload(): Promise<BackupPayload> {
     preferenceRows,
     substitutionRows,
     profileRows,
+    measurementRows,
   ] = await Promise.all([
     db.select().from(workoutPlans),
     db.select().from(workoutDays),
@@ -52,6 +54,7 @@ export async function buildBackupPayload(): Promise<BackupPayload> {
     db.select().from(exercisePreferences),
     db.select().from(exerciseSubstitutions),
     db.select().from(userProfile).where(eq(userProfile.id, USER_PROFILE_ID)),
+    db.select().from(bodyMeasurements),
   ]);
   const profile = profileRows[0];
 
@@ -129,6 +132,16 @@ export async function buildBackupPayload(): Promise<BackupPayload> {
     }),
     bodyWeightLogs: weightLogs.map((w) => ({ id: w.id, data: w.data, pesoKg: w.pesoKg })),
     deloadWeeks: deloadWeekRows.map((d) => ({ id: d.id, weekStartIso: d.weekStartIso })),
+    bodyMeasurements: measurementRows.map((m) => ({
+      id: m.id,
+      data: m.data,
+      peitoCm: m.peitoCm,
+      cinturaCm: m.cinturaCm,
+      quadrilCm: m.quadrilCm,
+      bracoCm: m.bracoCm,
+      coxaCm: m.coxaCm,
+      panturrilhaCm: m.panturrilhaCm,
+    })),
     exercisePreferences: preferenceRows.map((p) => ({
       id: p.id,
       exerciseWgerId: p.exerciseWgerId,
@@ -146,6 +159,7 @@ export async function buildBackupPayload(): Promise<BackupPayload> {
     })),
     // `profile.pinHash`/`profile.pinSalt` NUNCA entram aqui de propósito —
     // trava local ao device, ver comentário em BackupUserProfile (types.ts).
+    // `sexo` entra normalmente — é dado de perfil de verdade.
     userProfile: profile
       ? {
           nome: profile.nome,
@@ -153,6 +167,7 @@ export async function buildBackupPayload(): Promise<BackupPayload> {
           experiencia: profile.experiencia,
           fotoUri: profile.fotoUri,
           lastSeenChangelogVersion: profile.lastSeenChangelogVersion,
+          sexo: profile.sexo,
         }
       : null,
   };

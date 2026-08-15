@@ -2,6 +2,7 @@ import { eq, isNull } from 'drizzle-orm';
 
 import { db } from '@/db';
 import {
+  bodyMeasurements,
   bodyWeightLogs,
   deloadWeeks,
   exercisePreferences,
@@ -19,6 +20,7 @@ import {
 import { USER_PROFILE_ID } from '@/db/user-profile';
 
 import type {
+  BackupBodyMeasurement,
   BackupBodyWeightLog,
   BackupDeloadWeek,
   BackupExercisePreference,
@@ -53,6 +55,7 @@ function emptySummary(): ImportSummary {
     exercisePreferences: 0,
     exerciseSubstitutions: 0,
     userProfile: 0,
+    bodyMeasurements: 0,
   });
   return {
     inserted: zeroTable(),
@@ -80,6 +83,7 @@ function wipeUserData(tx: Tx) {
   tx.delete(deloadWeeks).run();
   tx.delete(exercisePreferences).run();
   tx.delete(exerciseSubstitutions).run();
+  tx.delete(bodyMeasurements).run();
 }
 
 function restorePlans(
@@ -409,6 +413,35 @@ function restoreBodyWeightLogs(tx: Tx, rows: BackupBodyWeightLog[], mode: Import
   }
 }
 
+// Fundação de medidas corporais (Fase 1A) — mesmo molde de
+// restoreBodyWeightLogs: standalone, merge por `data` (uma linha por dia).
+function restoreBodyMeasurements(tx: Tx, rows: BackupBodyMeasurement[], mode: ImportMode, summary: ImportSummary) {
+  const existing = mode === 'merge' ? tx.select().from(bodyMeasurements).all() : [];
+
+  for (const row of rows) {
+    if (mode === 'merge') {
+      const alreadyExists = existing.some((e) => e.data === row.data);
+      if (alreadyExists) {
+        summary.reused.bodyMeasurements += 1;
+        continue;
+      }
+    }
+
+    tx.insert(bodyMeasurements)
+      .values({
+        data: row.data,
+        peitoCm: row.peitoCm,
+        cinturaCm: row.cinturaCm,
+        quadrilCm: row.quadrilCm,
+        bracoCm: row.bracoCm,
+        coxaCm: row.coxaCm,
+        panturrilhaCm: row.panturrilhaCm,
+      })
+      .run();
+    summary.inserted.bodyMeasurements += 1;
+  }
+}
+
 function restoreDeloadWeeks(tx: Tx, rows: BackupDeloadWeek[], mode: ImportMode, summary: ImportSummary) {
   const existing = mode === 'merge' ? tx.select().from(deloadWeeks).all() : [];
 
@@ -509,6 +542,7 @@ function restoreUserProfile(tx: Tx, row: BackupUserProfile | null, summary: Impo
       experiencia: row.experiencia,
       fotoUri: row.fotoUri,
       lastSeenChangelogVersion: row.lastSeenChangelogVersion,
+      sexo: row.sexo,
     })
     .onConflictDoUpdate({
       target: userProfile.id,
@@ -518,6 +552,7 @@ function restoreUserProfile(tx: Tx, row: BackupUserProfile | null, summary: Impo
         experiencia: row.experiencia,
         fotoUri: row.fotoUri,
         lastSeenChangelogVersion: row.lastSeenChangelogVersion,
+        sexo: row.sexo,
       },
     })
     .run();
@@ -653,6 +688,7 @@ export function importBackupPayload(payload: BackupPayload, mode: ImportMode): I
     restoreExercisePreferences(tx, payload.exercisePreferences, mode, summary);
     restoreExerciseSubstitutions(tx, payload.exerciseSubstitutions, mode, summary);
     restoreUserProfile(tx, payload.userProfile, summary);
+    restoreBodyMeasurements(tx, payload.bodyMeasurements, mode, summary);
 
     validateNoOrphans(tx);
 

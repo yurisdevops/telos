@@ -91,6 +91,11 @@ export function assertValidBackupPayload(json: unknown): BackupPayload {
   assertArray(json.bodyWeightLogs, 'bodyWeightLogs');
   assertArray(json.deloadWeeks, 'deloadWeeks');
 
+  // Fundação de medidas corporais (Fase 1A) — ausente em backups anteriores
+  // a essa feature, mesma regra de ausência das tabelas acima.
+  if (json.bodyMeasurements === undefined) json.bodyMeasurements = [];
+  assertArray(json.bodyMeasurements, 'bodyMeasurements');
+
   // Tabelas da Onda 5 — mesma regra de ausência.
   if (json.exercisePreferences === undefined) json.exercisePreferences = [];
   if (json.exerciseSubstitutions === undefined) json.exerciseSubstitutions = [];
@@ -189,6 +194,24 @@ export function assertValidBackupPayload(json: unknown): BackupPayload {
     assertNumber(row.pesoKg, `bodyWeightLogs[${index}].pesoKg`);
   });
 
+  json.bodyMeasurements.forEach((row, index) => {
+    if (!isRecord(row)) throw new BackupValidationError(`bodyMeasurements[${index}] inválido.`);
+    assertNumber(row.id, `bodyMeasurements[${index}].id`);
+    assertString(row.data, `bodyMeasurements[${index}].data`);
+    assertOptionalNullableNumber(row.peitoCm, `bodyMeasurements[${index}].peitoCm`);
+    if (row.peitoCm === undefined) row.peitoCm = null;
+    assertOptionalNullableNumber(row.cinturaCm, `bodyMeasurements[${index}].cinturaCm`);
+    if (row.cinturaCm === undefined) row.cinturaCm = null;
+    assertOptionalNullableNumber(row.quadrilCm, `bodyMeasurements[${index}].quadrilCm`);
+    if (row.quadrilCm === undefined) row.quadrilCm = null;
+    assertOptionalNullableNumber(row.bracoCm, `bodyMeasurements[${index}].bracoCm`);
+    if (row.bracoCm === undefined) row.bracoCm = null;
+    assertOptionalNullableNumber(row.coxaCm, `bodyMeasurements[${index}].coxaCm`);
+    if (row.coxaCm === undefined) row.coxaCm = null;
+    assertOptionalNullableNumber(row.panturrilhaCm, `bodyMeasurements[${index}].panturrilhaCm`);
+    if (row.panturrilhaCm === undefined) row.panturrilhaCm = null;
+  });
+
   json.deloadWeeks.forEach((row, index) => {
     if (!isRecord(row)) throw new BackupValidationError(`deloadWeeks[${index}] inválido.`);
     assertNumber(row.id, `deloadWeeks[${index}].id`);
@@ -229,6 +252,10 @@ export function assertValidBackupPayload(json: unknown): BackupPayload {
     if (json.userProfile.fotoUri === undefined) json.userProfile.fotoUri = null;
     assertOptionalNullableNumber(json.userProfile.lastSeenChangelogVersion, 'userProfile.lastSeenChangelogVersion');
     if (json.userProfile.lastSeenChangelogVersion === undefined) json.userProfile.lastSeenChangelogVersion = null;
+    // sexo (fundação do boneco 2D) — ausente em backups anteriores a essa
+    // feature, mesma regra de normalização pra `null`.
+    assertOptionalNullableString(json.userProfile.sexo, 'userProfile.sexo');
+    if (json.userProfile.sexo === undefined) json.userProfile.sexo = null;
   }
 
   return json as unknown as BackupPayload;

@@ -144,6 +144,26 @@ export const bodyWeightLogs = sqliteTable('body_weight_logs', {
 export type BodyWeightLog = typeof bodyWeightLogs.$inferSelect;
 export type NewBodyWeightLog = typeof bodyWeightLogs.$inferInsert;
 
+// Fundação de medidas corporais (Fase 1A — pré-requisito do boneco 2D da
+// Fase 2). Mesmo molde de bodyWeightLogs: uma linha por data (`.unique()`
+// garante isso no banco, não só na aplicação), todas as medidas nullable —
+// o usuário registra só as que quiser, um upsert parcial por dia. Altura
+// (userProfile.alturaCm) e peso (bodyWeightLogs) não entram aqui de
+// propósito — já existem, reusados na leitura, nunca duplicados.
+export const bodyMeasurements = sqliteTable('body_measurements', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  data: text('data').notNull().unique(),
+  peitoCm: real('peito_cm'),
+  cinturaCm: real('cintura_cm'),
+  quadrilCm: real('quadril_cm'),
+  bracoCm: real('braco_cm'),
+  coxaCm: real('coxa_cm'),
+  panturrilhaCm: real('panturrilha_cm'),
+});
+
+export type BodyMeasurement = typeof bodyMeasurements.$inferSelect;
+export type NewBodyMeasurement = typeof bodyMeasurements.$inferInsert;
+
 export const deloadWeeks = sqliteTable('deload_weeks', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   weekStartIso: text('week_start_iso').notNull().unique(),
@@ -197,6 +217,10 @@ export const userProfile = sqliteTable('user_profile', {
   // propósito — nunca entra no backup (ver types.ts/serialize.ts/restore.ts).
   pinHash: text('pin_hash'),
   pinSalt: text('pin_salt'),
+  // Fundação do boneco 2D (Fase 2, futura) — 'masculino' | 'feminino' na
+  // aplicação; SQLite não tem enum nativo, então fica `text` livre aqui,
+  // mesmo tratamento de `experiencia`. Nullable: usuário pode nunca preencher.
+  sexo: text('sexo'),
 });
 
 export type UserProfile = typeof userProfile.$inferSelect;
