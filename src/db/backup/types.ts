@@ -115,6 +115,15 @@ export type BackupExerciseSubstitution = {
 // entra aqui de propósito: já vive em bodyWeightLogs. `fotoUri` é caminho de
 // arquivo local — pode não existir mais no dispositivo de destino ao
 // restaurar; a validação só confere que é string, sem tocar no arquivo.
+//
+// `pinHash`/`pinSalt` (coluna em user_profile, fundação do PIN de reset de
+// histórico) ficam FORA deste tipo DE PROPÓSITO — trava local ao device, não
+// um dado de usuário que deveria viajar. Restaurar um backup nunca deve
+// trazer nem substituir o PIN local: omitir os campos aqui já garante que
+// `buildBackupPayload` (serialize.ts) não os inclua, e que o upsert em
+// `restoreUserProfile` (restore.ts) nunca os mencione no SET — o que
+// preserva o valor atual da coluna intacto (UPDATE só toca nas colunas
+// listadas, nunca vira REPLACE da linha inteira).
 export type BackupUserProfile = {
   nome: string | null;
   alturaCm: number | null;

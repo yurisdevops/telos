@@ -33,6 +33,17 @@ const MIGRATION_COLUMN_RECONCILE_CASES: { table: string; column: string; tag: st
   { table: 'set_logs', column: 'peso_corporal', tag: '0007_cooing_thor' },
   { table: 'user_profile', column: 'last_seen_changelog_version', tag: '0009_sparkling_silver_fox' },
   { table: 'sessions', column: 'fora_da_academia', tag: '0010_eminent_doctor_faustus' },
+  // pin_hash e pin_salt são 2 migrações SEPARADAS (0011/0012), cada uma com
+  // sua própria coluna e tag — de propósito, não uma migração só com as duas
+  // ALTER. O reconcile abaixo checa 1 coluna por entrada e já marca o tag
+  // como aplicado assim que ESSA coluna existe; se as duas colunas vivessem
+  // sob o mesmo tag, a entrada de uma delas marcaria o tag inteiro como
+  // aplicado mesmo com a outra coluna ainda faltando (bookkeeping mentiria,
+  // e o migrate() real pularia a ALTER que criaria a coluna que falta).
+  // Manter 1 tag por coluna evita essa ambiguidade sem precisar alterar o
+  // mecanismo de reconcile.
+  { table: 'user_profile', column: 'pin_hash', tag: '0011_moaning_the_initiative' },
+  { table: 'user_profile', column: 'pin_salt', tag: '0012_hard_kronos' },
 ];
 
 /**

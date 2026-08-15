@@ -492,6 +492,12 @@ function restoreExerciseSubstitutions(
 // "outra linha" possível pra desambiguar contra. `fotoUri` é só uma string
 // de caminho — nenhuma verificação de existência do arquivo acontece aqui
 // (fica pra quando a etapa 5, de foto, for implementada).
+//
+// `pinHash`/`pinSalt` NUNCA aparecem em `values`/`set` abaixo, de propósito —
+// `BackupUserProfile` nem tem esses campos (ver types.ts). O `SET` do
+// `onConflictDoUpdate` só toca nas colunas listadas explicitamente; como
+// pinHash/pinSalt nunca são mencionados, o UPDATE nunca os zera — o PIN
+// local do device sobrevive intacto a qualquer restauração de backup.
 function restoreUserProfile(tx: Tx, row: BackupUserProfile | null, summary: ImportSummary) {
   if (!row) return;
 

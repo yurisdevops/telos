@@ -144,6 +144,8 @@ export async function buildBackupPayload(): Promise<BackupPayload> {
       newExerciseNomeSnapshot: resolveNomeByWgerId(s.newExerciseWgerId),
       substitutedAt: s.substitutedAt,
     })),
+    // `profile.pinHash`/`profile.pinSalt` NUNCA entram aqui de propósito —
+    // trava local ao device, ver comentário em BackupUserProfile (types.ts).
     userProfile: profile
       ? {
           nome: profile.nome,

@@ -12,6 +12,8 @@ import m0007 from './0007_cooing_thor.sql';
 import m0008 from './0008_little_maginty.sql';
 import m0009 from './0009_sparkling_silver_fox.sql';
 import m0010 from './0010_eminent_doctor_faustus.sql';
+import m0011 from './0011_moaning_the_initiative.sql';
+import m0012 from './0012_hard_kronos.sql';
 
   export default {
     journal,
@@ -26,7 +28,9 @@ m0006,
 m0007,
 m0008,
 m0009,
-m0010
+m0010,
+m0011,
+m0012
     }
   }
   

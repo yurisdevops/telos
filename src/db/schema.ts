@@ -191,6 +191,12 @@ export const userProfile = sqliteTable('user_profile', {
   // aditiva rodar — tratado como 0 na leitura (getLastSeenChangelogVersion),
   // nunca como "já viu tudo".
   lastSeenChangelogVersion: integer('last_seen_changelog_version'),
+  // PIN de reset de histórico (fundação — sistema de PIN em si vem depois).
+  // Hash SHA-256 + salt aleatório por device, nunca o PIN em texto. Nullable:
+  // `null` nos dois = usuário ainda não criou PIN. Trava LOCAL ao device de
+  // propósito — nunca entra no backup (ver types.ts/serialize.ts/restore.ts).
+  pinHash: text('pin_hash'),
+  pinSalt: text('pin_salt'),
 });
 
 export type UserProfile = typeof userProfile.$inferSelect;
