@@ -198,12 +198,32 @@ export function assertValidBackupPayload(json: unknown): BackupPayload {
     if (!isRecord(row)) throw new BackupValidationError(`bodyMeasurements[${index}] inválido.`);
     assertNumber(row.id, `bodyMeasurements[${index}].id`);
     assertString(row.data, `bodyMeasurements[${index}].data`);
+    assertOptionalNullableNumber(row.ombrosCm, `bodyMeasurements[${index}].ombrosCm`);
+    if (row.ombrosCm === undefined) row.ombrosCm = null;
     assertOptionalNullableNumber(row.peitoCm, `bodyMeasurements[${index}].peitoCm`);
     if (row.peitoCm === undefined) row.peitoCm = null;
     assertOptionalNullableNumber(row.cinturaCm, `bodyMeasurements[${index}].cinturaCm`);
     if (row.cinturaCm === undefined) row.cinturaCm = null;
     assertOptionalNullableNumber(row.quadrilCm, `bodyMeasurements[${index}].quadrilCm`);
     if (row.quadrilCm === undefined) row.quadrilCm = null;
+    assertOptionalNullableNumber(row.bracoEsqCm, `bodyMeasurements[${index}].bracoEsqCm`);
+    if (row.bracoEsqCm === undefined) row.bracoEsqCm = null;
+    assertOptionalNullableNumber(row.bracoDirCm, `bodyMeasurements[${index}].bracoDirCm`);
+    if (row.bracoDirCm === undefined) row.bracoDirCm = null;
+    assertOptionalNullableNumber(row.antebracoEsqCm, `bodyMeasurements[${index}].antebracoEsqCm`);
+    if (row.antebracoEsqCm === undefined) row.antebracoEsqCm = null;
+    assertOptionalNullableNumber(row.antebracoDirCm, `bodyMeasurements[${index}].antebracoDirCm`);
+    if (row.antebracoDirCm === undefined) row.antebracoDirCm = null;
+    assertOptionalNullableNumber(row.coxaEsqCm, `bodyMeasurements[${index}].coxaEsqCm`);
+    if (row.coxaEsqCm === undefined) row.coxaEsqCm = null;
+    assertOptionalNullableNumber(row.coxaDirCm, `bodyMeasurements[${index}].coxaDirCm`);
+    if (row.coxaDirCm === undefined) row.coxaDirCm = null;
+    assertOptionalNullableNumber(row.panturrilhaEsqCm, `bodyMeasurements[${index}].panturrilhaEsqCm`);
+    if (row.panturrilhaEsqCm === undefined) row.panturrilhaEsqCm = null;
+    assertOptionalNullableNumber(row.panturrilhaDirCm, `bodyMeasurements[${index}].panturrilhaDirCm`);
+    if (row.panturrilhaDirCm === undefined) row.panturrilhaDirCm = null;
+    // Legado (Fase 1B, lado único) — continua validado/aceito por
+    // compatibilidade, mesmo sem uso na aplicação daqui pra frente.
     assertOptionalNullableNumber(row.bracoCm, `bodyMeasurements[${index}].bracoCm`);
     if (row.bracoCm === undefined) row.bracoCm = null;
     assertOptionalNullableNumber(row.coxaCm, `bodyMeasurements[${index}].coxaCm`);

@@ -4,19 +4,56 @@ import { db } from './index';
 import { bodyMeasurements, type BodyMeasurement } from './schema';
 import { getTodayDateString } from '@/lib/date';
 
+// Conjunto definitivo (12 medidas) — expansão de tronco (lado único) +
+// membros (esquerdo/direito). As antigas de lado único (`bracoCm`, `coxaCm`,
+// `panturrilhaCm`) são LEGADO (Fase 1B) e saem do uso a partir daqui — ainda
+// existem no schema/backup, mas nenhuma função abaixo as lê ou escreve mais.
 export type MeasurementField =
+  | 'ombrosCm'
   | 'peitoCm'
   | 'cinturaCm'
   | 'quadrilCm'
-  | 'bracoCm'
-  | 'coxaCm'
-  | 'panturrilhaCm';
+  | 'bracoEsqCm'
+  | 'bracoDirCm'
+  | 'antebracoEsqCm'
+  | 'antebracoDirCm'
+  | 'coxaEsqCm'
+  | 'coxaDirCm'
+  | 'panturrilhaEsqCm'
+  | 'panturrilhaDirCm';
 
 export type MeasurementPatch = Partial<Record<MeasurementField, number>>;
 
+/** Tronco — lado único, mesma ordem anatômica de cima pra baixo. */
+export const TRUNK_MEASUREMENTS: { field: MeasurementField; label: string }[] = [
+  { field: 'ombrosCm', label: 'Ombros' },
+  { field: 'peitoCm', label: 'Peito' },
+  { field: 'cinturaCm', label: 'Cintura' },
+  { field: 'quadrilCm', label: 'Quadril' },
+];
+
+/**
+ * Membros — cada um é um PAR esquerdo/direito, agrupado por região
+ * ("Braços" junta braço+antebraço, "Pernas" junta coxa+panturrilha) pra
+ * exibição em blocos na UI. Fonte única de verdade pra quais campos têm
+ * lado — reusável por um futuro consumidor (boneco 2D, Fase 2) que precisa
+ * saber exatamente isso.
+ */
+export const PAIRED_MEASUREMENTS: {
+  region: 'Braços' | 'Pernas';
+  label: string;
+  esq: MeasurementField;
+  dir: MeasurementField;
+}[] = [
+  { region: 'Braços', label: 'Braço', esq: 'bracoEsqCm', dir: 'bracoDirCm' },
+  { region: 'Braços', label: 'Antebraço', esq: 'antebracoEsqCm', dir: 'antebracoDirCm' },
+  { region: 'Pernas', label: 'Coxa', esq: 'coxaEsqCm', dir: 'coxaDirCm' },
+  { region: 'Pernas', label: 'Panturrilha', esq: 'panturrilhaEsqCm', dir: 'panturrilhaDirCm' },
+];
+
 /**
  * Upsert por data (hoje) — mesmo padrão de upsertBodyWeightToday
- * (body-weight.ts). Diferença: peso é 1 campo obrigatório; medidas são 6
+ * (body-weight.ts). Diferença: peso é 1 campo obrigatório; medidas são 12
  * campos opcionais, então `patch` traz só os que o usuário preencheu AGORA.
  * `.set(patch)` num UPDATE só toca as colunas mencionadas — se hoje já tem
  * registro parcial (ex: peito registrado de manhã) e o usuário volta à

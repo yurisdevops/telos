@@ -150,12 +150,32 @@ export type NewBodyWeightLog = typeof bodyWeightLogs.$inferInsert;
 // o usuário registra só as que quiser, um upsert parcial por dia. Altura
 // (userProfile.alturaCm) e peso (bodyWeightLogs) não entram aqui de
 // propósito — já existem, reusados na leitura, nunca duplicados.
+//
+// `bracoCm`/`coxaCm`/`panturrilhaCm` (Fase 1B, lado único) são LEGADO desde
+// a expansão pro conjunto esquerdo/direito abaixo — a Opção A simplificada
+// foi escolhida (app recém-criado, sem dado real relevante em produção):
+// ficam no schema sem uso pela aplicação daqui pra frente (SQLite não
+// remove coluna fácil), mas continuam no backup pra não perder o que já foi
+// digitado durante os testes da Fase 1B. Nunca lidas/escritas por
+// body-measurements.ts nem pela UI a partir desta feature.
 export const bodyMeasurements = sqliteTable('body_measurements', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   data: text('data').notNull().unique(),
+  // Tronco (lado único).
+  ombrosCm: real('ombros_cm'),
   peitoCm: real('peito_cm'),
   cinturaCm: real('cintura_cm'),
   quadrilCm: real('quadril_cm'),
+  // Membros (esquerdo + direito).
+  bracoEsqCm: real('braco_esq_cm'),
+  bracoDirCm: real('braco_dir_cm'),
+  antebracoEsqCm: real('antebraco_esq_cm'),
+  antebracoDirCm: real('antebraco_dir_cm'),
+  coxaEsqCm: real('coxa_esq_cm'),
+  coxaDirCm: real('coxa_dir_cm'),
+  panturrilhaEsqCm: real('panturrilha_esq_cm'),
+  panturrilhaDirCm: real('panturrilha_dir_cm'),
+  // Legado (Fase 1B, lado único) — ver comentário acima.
   bracoCm: real('braco_cm'),
   coxaCm: real('coxa_cm'),
   panturrilhaCm: real('panturrilha_cm'),

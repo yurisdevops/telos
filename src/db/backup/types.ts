@@ -95,12 +95,30 @@ export type BackupDeloadWeek = {
 // BackupBodyWeightLog: standalone, uma linha por data, ausente em backups
 // anteriores a essa feature (normalizado pra `[]` na validação). Todas as
 // medidas nullable — usuário registra só as que quiser.
+//
+// `bracoCm`/`coxaCm`/`panturrilhaCm` (lado único, Fase 1B) são LEGADO desde
+// a expansão pro conjunto esquerdo/direito abaixo (ver comentário em
+// schema.ts) — continuam AQUI de propósito, pra não perder o que já tiver
+// sido digitado durante os testes da Fase 1B num backup antigo; só não são
+// mais lidos/escritos pela aplicação (body-measurements.ts/MeasurementsSection).
 export type BackupBodyMeasurement = {
   id: number;
   data: string;
+  // Tronco.
+  ombrosCm: number | null;
   peitoCm: number | null;
   cinturaCm: number | null;
   quadrilCm: number | null;
+  // Membros (esquerdo/direito).
+  bracoEsqCm: number | null;
+  bracoDirCm: number | null;
+  antebracoEsqCm: number | null;
+  antebracoDirCm: number | null;
+  coxaEsqCm: number | null;
+  coxaDirCm: number | null;
+  panturrilhaEsqCm: number | null;
+  panturrilhaDirCm: number | null;
+  // Legado (Fase 1B, lado único).
   bracoCm: number | null;
   coxaCm: number | null;
   panturrilhaCm: number | null;

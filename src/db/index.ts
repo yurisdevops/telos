@@ -58,6 +58,22 @@ const MIGRATION_COLUMN_RECONCILE_CASES: { table: string; column: string; tag: st
   // já grava o bookkeeping desse tag; a 2ª reconhece "já em dia" e não
   // duplica linha — uma só, igual a como o migrate() real registraria.
   { table: 'user_profile', column: 'sexo', tag: '0013_green_saracen' },
+  // Expansão de body_measurements pro conjunto completo (tronco + membros
+  // esq/dir) — 9 colunas novas, 1 migração só (0014), mesma justificativa de
+  // atomicidade do caso `sexo` acima: o lote inteiro roda num único
+  // BEGIN/COMMIT, então "só algumas das 9 colunas existem" não acontece pela
+  // via normal do migrate(). As 9 entradas convergem pro mesmo bookkeeping
+  // (mesmo tag/timestamp), sem duplicar linha — mesmo comportamento já
+  // verificado no caso anterior.
+  { table: 'body_measurements', column: 'ombros_cm', tag: '0014_steep_cobalt_man' },
+  { table: 'body_measurements', column: 'braco_esq_cm', tag: '0014_steep_cobalt_man' },
+  { table: 'body_measurements', column: 'braco_dir_cm', tag: '0014_steep_cobalt_man' },
+  { table: 'body_measurements', column: 'antebraco_esq_cm', tag: '0014_steep_cobalt_man' },
+  { table: 'body_measurements', column: 'antebraco_dir_cm', tag: '0014_steep_cobalt_man' },
+  { table: 'body_measurements', column: 'coxa_esq_cm', tag: '0014_steep_cobalt_man' },
+  { table: 'body_measurements', column: 'coxa_dir_cm', tag: '0014_steep_cobalt_man' },
+  { table: 'body_measurements', column: 'panturrilha_esq_cm', tag: '0014_steep_cobalt_man' },
+  { table: 'body_measurements', column: 'panturrilha_dir_cm', tag: '0014_steep_cobalt_man' },
 ];
 
 /**

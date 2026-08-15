@@ -430,9 +430,19 @@ function restoreBodyMeasurements(tx: Tx, rows: BackupBodyMeasurement[], mode: Im
     tx.insert(bodyMeasurements)
       .values({
         data: row.data,
+        ombrosCm: row.ombrosCm,
         peitoCm: row.peitoCm,
         cinturaCm: row.cinturaCm,
         quadrilCm: row.quadrilCm,
+        bracoEsqCm: row.bracoEsqCm,
+        bracoDirCm: row.bracoDirCm,
+        antebracoEsqCm: row.antebracoEsqCm,
+        antebracoDirCm: row.antebracoDirCm,
+        coxaEsqCm: row.coxaEsqCm,
+        coxaDirCm: row.coxaDirCm,
+        panturrilhaEsqCm: row.panturrilhaEsqCm,
+        panturrilhaDirCm: row.panturrilhaDirCm,
+        // Legado (Fase 1B) — preservado por compatibilidade, ver types.ts.
         bracoCm: row.bracoCm,
         coxaCm: row.coxaCm,
         panturrilhaCm: row.panturrilhaCm,
