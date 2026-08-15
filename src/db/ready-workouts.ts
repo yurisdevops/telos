@@ -255,8 +255,14 @@ export type TreinarAgoraResult = { status: 'started'; sessionId: number } | { st
  * sessão concluída quebraria essa sessão no histórico. Esses continuam no
  * banco de propósito; só não aparecem mais no seletor da aba Treinar (ver
  * filtro em hoje.tsx `DayPicker`).
+ *
+ * Exportada (Etapa C da feature de reset com PIN, reset-history.ts): depois
+ * que um reset de histórico apaga TODAS as `sessions`, `referencedDayIds`
+ * fica vazio — então esta mesma função, chamada depois disso, naturalmente
+ * apaga TODO plano `'Treino pronto'` (é exatamente o critério de "seguro pra
+ * apagar" que ela já implementa), sem duplicar a lógica.
  */
-function limparTreinosProntosOrfaos(tx: Tx) {
+export function limparTreinosProntosOrfaos(tx: Tx) {
   const referencedDayIds = new Set(tx.select({ id: sessions.workoutDayId }).from(sessions).all().map((r) => r.id));
 
   const candidateDays = tx

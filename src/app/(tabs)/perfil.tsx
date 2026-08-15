@@ -21,6 +21,7 @@ import { Label } from '@/components/ui/label';
 import { ScreenTitle } from '@/components/ui/screen-title';
 import { getLatestBodyWeightKg, upsertBodyWeightToday } from '@/db/body-weight';
 import { hasPin } from '@/db/pin';
+import { resetHistory, useSessionCount } from '@/db/reset-history';
 import { pickAndSaveProfilePhoto, removeProfilePhoto, updateUserProfile, useUserProfile } from '@/db/user-profile';
 import { EXPERIENCE_OPTIONS, type AssistantExperience } from '@/lib/assistant-profile';
 import { CHANGELOG_ENTRIES } from '@/lib/changelog';
@@ -42,17 +43,56 @@ export default function PerfilScreen() {
   // markChangelogSeen (isso é papel exclusivo do modal do boot).
   const [changelogModalVisible, setChangelogModalVisible] = useState(false);
 
-  // TEMPORÁRIO (Etapa B da feature de reset com PIN) — só pra validar o
-  // sistema de PIN isoladamente antes de ligar no reset de verdade (Etapa
-  // C). Remove este botão e este bloco de estado quando o reset estiver
-  // pronto; CreatePinFlow/VerifyPinFlow continuam (viram parte do reset).
-  const [pinTestFlow, setPinTestFlow] = useState<'create' | 'verify' | null>(null);
-  const handleTestPin = async () => {
+  // Reset de histórico com PIN (Etapa C) — 3 travas em sequência, nessa
+  // ordem: (1) Alert explicando o que apaga, (2) PIN (cria na 1ª vez, senão
+  // pede o existente), (3) confirmação final com a contagem real de sessões.
+  // `resetPhase` só cobre a etapa de PIN — a confirmação final e o Alert
+  // inicial são nativos (Alert.alert), não precisam de estado próprio.
+  const [resetPhase, setResetPhase] = useState<'create-pin' | 'verify-pin' | null>(null);
+  const sessionCount = useSessionCount();
+
+  const handleResetPress = () => {
+    Alert.alert(
+      'Resetar histórico de treinos?',
+      'Isso apaga TODO o seu histórico de treinos (sessões, séries, recordes). Seus planos, perfil e peso corporal são mantidos. Esta ação é IRREVERSÍVEL.',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Continuar', onPress: startPinCheck },
+      ]
+    );
+  };
+
+  const startPinCheck = async () => {
     try {
       const exists = await hasPin();
-      setPinTestFlow(exists ? 'verify' : 'create');
+      setResetPhase(exists ? 'verify-pin' : 'create-pin');
     } catch (err) {
       reportError('Erro ao checar PIN', err);
+    }
+  };
+
+  // Chamado tanto depois de CRIAR o PIN quanto depois de VERIFICAR um já
+  // existente — nos dois casos a próxima (e última) trava é a confirmação
+  // final abaixo. Fecha o modal de PIN antes de abrir o Alert nativo (os
+  // dois por cima um do outro ao mesmo tempo seria estranho visualmente).
+  const handlePinConfirmed = () => {
+    setResetPhase(null);
+    Alert.alert(
+      'Tem certeza?',
+      `Isso apaga ${sessionCount} ${sessionCount === 1 ? 'treino registrado' : 'treinos registrados'} e não pode ser desfeito.`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'APAGAR TUDO', style: 'destructive', onPress: performReset },
+      ]
+    );
+  };
+
+  const performReset = () => {
+    try {
+      resetHistory();
+      Alert.alert('Histórico apagado', 'Todo o seu histórico de treinos foi removido.');
+    } catch (err) {
+      reportError('Erro ao resetar histórico', err);
     }
   };
 
@@ -280,33 +320,30 @@ export default function PerfilScreen() {
           </Card>
         </Pressable>
 
-        {/* TEMPORÁRIO — ver comentário junto de pinTestFlow acima. */}
-        <Pressable onPress={handleTestPin}>
-          <Card className="flex-row items-center justify-between border-l-4 border-l-warning">
-            <View>
-              <Text className="font-card-title text-lg text-text">TESTE PIN (temporário)</Text>
-              <Label className="mt-1">Só pra validar o mecanismo — sai na Etapa C</Label>
+        {/* Visualmente perigosa, separada das ações normais acima: ícone e
+            texto em accent (não há um vermelho dedicado no design system —
+            accent já cumpre esse papel de "atenção" em todo o app), borda de
+            destaque. A trava de verdade são as 3 etapas do fluxo, não a cor. */}
+        <Pressable onPress={handleResetPress}>
+          <Card className="flex-row items-center justify-between border-l-4 border-l-accent">
+            <View className="flex-1 pr-3">
+              <Text className="font-card-title text-lg text-accent">Resetar histórico de treinos</Text>
+              <Label className="mt-1">Apaga sessões e séries — irreversível</Label>
             </View>
-            <Ionicons name="key-outline" size={20} color={colors.warning} />
+            <Ionicons name="trash-outline" size={20} color={colors.accent} />
           </Card>
         </Pressable>
       </Section>
 
       <CreatePinFlow
-        visible={pinTestFlow === 'create'}
-        onCreated={() => {
-          setPinTestFlow(null);
-          Alert.alert('PIN criado!', 'Toque em "TESTE PIN" de novo pra verificar.');
-        }}
-        onCancel={() => setPinTestFlow(null)}
+        visible={resetPhase === 'create-pin'}
+        onCreated={handlePinConfirmed}
+        onCancel={() => setResetPhase(null)}
       />
       <VerifyPinFlow
-        visible={pinTestFlow === 'verify'}
-        onVerified={() => {
-          setPinTestFlow(null);
-          Alert.alert('PIN correto!');
-        }}
-        onCancel={() => setPinTestFlow(null)}
+        visible={resetPhase === 'verify-pin'}
+        onVerified={handlePinConfirmed}
+        onCancel={() => setResetPhase(null)}
       />
 
       <ChangelogModal
