@@ -1,11 +1,11 @@
 import { Text, View } from 'react-native';
-import Svg, { Path } from 'react-native-svg';
+import Svg, { Circle, Path } from 'react-native-svg';
 
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { getLatestMeasurements } from '@/db/body-measurements';
 import { useUserProfile, type Sexo } from '@/db/user-profile';
-import { buildBodyPathD, VIEWBOX_HEIGHT, VIEWBOX_WIDTH } from '@/lib/body-silhouette';
+import { buildBodyPathD, getHeadCircle, VIEWBOX_HEIGHT, VIEWBOX_WIDTH } from '@/lib/body-silhouette';
 import { useDbQuery } from '@/lib/use-db-query';
 import { colors } from '@/theme/tokens';
 
@@ -56,6 +56,7 @@ export function BodySilhouette() {
     cinturaCm: latest?.cinturaCm ?? null,
     quadrilCm: latest?.quadrilCm ?? null,
   });
+  const head = getHeadCircle();
 
   return (
     <Card className="mb-6 items-center">
@@ -64,6 +65,9 @@ export function BodySilhouette() {
       <View style={{ width: DISPLAY_WIDTH, height: DISPLAY_HEIGHT }}>
         <Svg width={DISPLAY_WIDTH} height={DISPLAY_HEIGHT} viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}>
           <Path d={d} fill={colors.accent} stroke={colors.border} strokeWidth={2} />
+          {/* Cabeça — círculo separado (ver getHeadCircle), não faz parte do
+              path do corpo. Mesmo fill/stroke, sobreposto no pescoço. */}
+          <Circle cx={head.cx} cy={head.cy} r={head.r} fill={colors.accent} stroke={colors.border} strokeWidth={2} />
         </Svg>
       </View>
 
