@@ -4,6 +4,7 @@ import { useFocusEffect } from 'expo-router';
 
 import { Screen } from '@/components/screen';
 import { AdherenceSection } from '@/components/progresso/adherence-section';
+import { BodyWeightSection } from '@/components/progresso/body-weight-section';
 import { DensitySection } from '@/components/progresso/density-section';
 import { FrequencySection } from '@/components/progresso/frequency-section';
 import { MovementPatternSection } from '@/components/progresso/movement-pattern-section';
@@ -51,6 +52,7 @@ export default function ProgressoScreen() {
         <MovementPatternSection />
         <DensitySection />
         <StagnationSection />
+        <BodyWeightSection />
         <PersonalRecordsSection />
         <AdherenceSection />
       </View>

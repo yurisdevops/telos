@@ -13,6 +13,7 @@ import { Screen } from '@/components/screen';
 import { SummaryStatsSection } from '@/components/perfil/summary-stats-section';
 import { VolumeAnalysisSection } from '@/components/perfil/volume-analysis-section';
 import { WorkoutHistorySection } from '@/components/perfil/workout-history-section';
+import { MeasurementsSection } from '@/components/progresso/measurements-section';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Chip } from '@/components/ui/chip';
@@ -217,9 +218,12 @@ export default function PerfilScreen() {
     }
   };
 
-  // Sexo: mesma mecânica do chip de experiência — aplica na hora. Nullable
-  // (fundação do boneco 2D, Fase 2) — tocar no já selecionado desmarca
-  // (`toggle`), já que ninguém é obrigado a escolher agora.
+  // Sexo: mesma mecânica do chip de experiência — aplica na hora. Nullable —
+  // dado de perfil opcional como os outros desta seção (a feature que
+  // motivou adicionar essa coluna, um boneco 2D, foi removida; o campo ficou
+  // porque é um dado de perfil válido por si só, sem custo em manter). Tocar
+  // no já selecionado desmarca (`toggle`), já que ninguém é obrigado a
+  // escolher.
   const handleSetSexo = async (value: Sexo) => {
     try {
       await updateUserProfile({ sexo: profile?.sexo === value ? null : value });
@@ -315,8 +319,9 @@ export default function PerfilScreen() {
           ))}
         </View>
 
-        {/* Nullable de propósito — fundação do boneco 2D (Fase 2), que ainda
-            não existe. Tocar no já selecionado desmarca (handleSetSexo). */}
+        {/* Nullable de propósito — dado de perfil opcional, sem uso funcional
+            hoje (a feature que motivou adicionar isto, um boneco 2D, foi
+            removida). Tocar no já selecionado desmarca (handleSetSexo). */}
         <Label className="mb-2 mt-6">Sexo</Label>
         <View className="flex-row flex-wrap gap-2">
           {SEXO_OPTIONS.map((option) => (
@@ -349,10 +354,14 @@ export default function PerfilScreen() {
       </Section>
 
       {/* mt-6: a "Section" acima (Dados pessoais) só empurra o que vem antes
-          dela (margem no topo), não o que vem depois — sem isso o
-          CollapsibleSection (que só tem mb-6, mesmo padrão do Card usado no
-          resto da tela) ficaria colado nela. */}
+          dela (margem no topo), não o que vem depois — sem isso os
+          CollapsibleSection (que só têm mb-6, mesmo padrão do Card usado no
+          resto da tela) ficariam colados nela. */}
       <View className="mt-6">
+        <CollapsibleSection title="Medidas corporais">
+          <MeasurementsSection />
+        </CollapsibleSection>
+
         <CollapsibleSection title="Histórico de treinos">
           <WorkoutHistorySection key={statsResetKey} />
         </CollapsibleSection>

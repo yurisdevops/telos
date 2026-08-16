@@ -56,19 +56,9 @@ export default function PlanilhasScreen() {
         title="Planilhas"
         subtitle={`${planCount} ${planCount === 1 ? 'plano' : 'planos'}`}
         action={
-          <View className="flex-row items-center gap-3">
-            {/* Catálogo saiu da barra de abas (agora é a aba Corpo) — este é o
-                novo acesso, navegação livre pra consultar exercício sem
-                estar montando treino nenhum. A tela em si (`(tabs)/index.tsx`)
-                não mudou nada, só passou a ser alcançada por aqui em vez de
-                por uma aba. */}
-            <Pressable onPress={() => router.push('/')} hitSlop={8} className="p-1">
-              <Ionicons name="book-outline" size={24} color={colors.muted} />
-            </Pressable>
-            <Button onPress={() => router.push('/plano/novo')} className="self-start">
-              + Novo plano
-            </Button>
-          </View>
+          <Button onPress={() => router.push('/plano/novo')} className="self-start">
+            + Novo plano
+          </Button>
         }
       />
 
