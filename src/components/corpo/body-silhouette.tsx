@@ -1,41 +1,46 @@
 import { Text, View } from 'react-native';
-import Svg, { Circle, Path } from 'react-native-svg';
+import Svg, { Ellipse, Path } from 'react-native-svg';
 
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { getLatestMeasurements } from '@/db/body-measurements';
 import { useUserProfile, type Sexo } from '@/db/user-profile';
-import { buildBodyPathD, getHeadCircle, VIEWBOX_HEIGHT, VIEWBOX_WIDTH } from '@/lib/body-silhouette';
-import { useDbQuery } from '@/lib/use-db-query';
+import { buildFigurePaths, getHeadEllipse, VIEWBOX_HEIGHT, VIEWBOX_WIDTH } from '@/lib/body-silhouette';
 import { colors } from '@/theme/tokens';
 
-// Altura de exibição fixa (~320px, como pedido) — largura calculada pra
-// preservar a proporção do viewBox (240x480), não esticar o boneco.
+// Altura de exibição fixa (~320px) — largura calculada pra preservar a
+// proporção do viewBox (240x480), não esticar o boneco.
 const DISPLAY_HEIGHT = 320;
 const DISPLAY_WIDTH = (VIEWBOX_WIDTH / VIEWBOX_HEIGHT) * DISPLAY_HEIGHT;
+
+// Mesmo fill/stroke em TODAS as formas (cabeça + tronco + 2 braços + 2
+// pernas) — como são peças de um multi-path, usar a mesma cor em cada uma
+// faz a costura entre elas sumir visualmente (nenhuma linha aparece onde um
+// braço encosta no tronco, por exemplo). `stroke` em `colors.bg` (o fundo
+// mais escuro do app, mais escuro que o Card) em vez de `colors.border`
+// (cinza sutil) — contraste nítido tanto contra o preenchimento accent
+// quanto contra o surface do Card, lê como "ícone com contorno definido" em
+// vez de "mancha" (era o problema da v1/v2, preenchimento sólido sem
+// nenhuma borda visível).
+const FILL = colors.accent;
+const STROKE = colors.bg;
+const STROKE_WIDTH = 2.5;
 
 function isSexo(value: string | null | undefined): value is Sexo {
   return value === 'masculino' || value === 'feminino';
 }
 
 /**
- * Silhueta 2D — v1 "tosca de propósito" (Fase 2 do boneco). Reage só a
- * ombro/cintura/quadril (buildBodyPathD, src/lib/body-silhouette.ts);
- * braço/coxa/panturrilha, lado esquerdo/direito e refinamento visual ficam
- * pra rodadas seguintes.
+ * Silhueta 2D — v3, multi-path anatômico (cabeça/tronco/braço esq/braço
+ * dir/perna esq/perna dir), proporções FIXAS por sexo nesta rodada (ver
+ * body-silhouette.ts). A reação a ombro/cintura/quadril fica pra depois, se
+ * o visual for aprovado — por isso não lê nenhuma medida aqui, só o sexo.
  *
- * Fallbacks (nunca quebra por falta de dado):
- * - Sem sexo escolhido → não dá pra saber qual template base usar (masc/fem
- *   diferem na estrutura, não só numa escala) — CTA em vez de um boneco
- *   ambíguo.
- * - Sexo escolhido, sem NENHUMA medida → a própria buildBodyPathD já cai no
- *   valor base de cada âncora (ver BASE_PROPORTIONS) quando a medida ou a
- *   altura faltam — a silhueta "base pura" do sexo escolhido aparece sozinha,
- *   sem precisar de nenhum `if` especial aqui; só soma um aviso sutil.
+ * Fallback: sem sexo escolhido → não dá pra saber qual template usar
+ * (masc/fem diferem na estrutura inteira, não só numa escala) → CTA em vez
+ * de um boneco ambíguo.
  */
 export function BodySilhouette() {
   const profile = useUserProfile();
-  const latest = useDbQuery(getLatestMeasurements, ['body_measurements'], []);
 
   if (!isSexo(profile?.sexo)) {
     return (
@@ -46,17 +51,8 @@ export function BodySilhouette() {
     );
   }
 
-  const hasAnyMeasurement =
-    latest != null && (latest.ombrosCm != null || latest.cinturaCm != null || latest.quadrilCm != null);
-
-  const d = buildBodyPathD({
-    sexo: profile.sexo,
-    alturaCm: profile.alturaCm,
-    ombrosCm: latest?.ombrosCm ?? null,
-    cinturaCm: latest?.cinturaCm ?? null,
-    quadrilCm: latest?.quadrilCm ?? null,
-  });
-  const head = getHeadCircle();
+  const figure = buildFigurePaths(profile.sexo);
+  const head = getHeadEllipse(profile.sexo);
 
   return (
     <Card className="mb-6 items-center">
@@ -64,16 +60,22 @@ export function BodySilhouette() {
 
       <View style={{ width: DISPLAY_WIDTH, height: DISPLAY_HEIGHT }}>
         <Svg width={DISPLAY_WIDTH} height={DISPLAY_HEIGHT} viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}>
-          <Path d={d} fill={colors.accent} stroke={colors.border} strokeWidth={2} />
-          {/* Cabeça — círculo separado (ver getHeadCircle), não faz parte do
-              path do corpo. Mesmo fill/stroke, sobreposto no pescoço. */}
-          <Circle cx={head.cx} cy={head.cy} r={head.r} fill={colors.accent} stroke={colors.border} strokeWidth={2} />
+          <Path d={figure.pernaEsquerda} fill={FILL} stroke={STROKE} strokeWidth={STROKE_WIDTH} />
+          <Path d={figure.pernaDireita} fill={FILL} stroke={STROKE} strokeWidth={STROKE_WIDTH} />
+          <Path d={figure.bracoEsquerdo} fill={FILL} stroke={STROKE} strokeWidth={STROKE_WIDTH} />
+          <Path d={figure.bracoDireito} fill={FILL} stroke={STROKE} strokeWidth={STROKE_WIDTH} />
+          <Path d={figure.torso} fill={FILL} stroke={STROKE} strokeWidth={STROKE_WIDTH} />
+          <Ellipse
+            cx={head.cx}
+            cy={head.cy}
+            rx={head.rx}
+            ry={head.ry}
+            fill={FILL}
+            stroke={STROKE}
+            strokeWidth={STROKE_WIDTH}
+          />
         </Svg>
       </View>
-
-      {!hasAnyMeasurement && (
-        <Label className="mt-3 text-center">Registre suas medidas pra personalizar</Label>
-      )}
     </Card>
   );
 }

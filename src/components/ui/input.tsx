@@ -1,21 +1,56 @@
-import { forwardRef, useState } from 'react';
+import { forwardRef, useRef, useState, type Ref } from 'react';
 import { TextInput, type TextInputProps } from 'react-native';
 
+import { useScreenScrollRef } from '@/components/screen';
 import { colors } from '@/theme/tokens';
+
+// Combina o ref encaminhado por quem usa `Input` (ex: foco manual entre
+// campos, ver SetRow em hoje.tsx) com o ref interno que este componente
+// precisa pra rolar a si mesmo até acima do teclado — os dois convivem sem
+// conflito, cada um só escreve no seu próprio destino.
+function mergeRefs<T>(...refs: (Ref<T> | undefined)[]) {
+  return (node: T | null) => {
+    for (const ref of refs) {
+      if (!ref) continue;
+      if (typeof ref === 'function') ref(node);
+      else (ref as React.MutableRefObject<T | null>).current = node;
+    }
+  };
+}
 
 export const Input = forwardRef<TextInput, TextInputProps>(function Input(
   { className = '', onFocus, onBlur, ...props },
-  ref
+  forwardedRef
 ) {
   const [focused, setFocused] = useState(false);
+  const innerRef = useRef<TextInput>(null);
+  // `null` fora de uma <Screen scrollable> (ex: dentro de FormModal, que tem
+  // seu próprio ScrollView) — o onFocus abaixo já cobre isso (só rola se
+  // existir um ScrollView de Screen pra rolar).
+  const scrollRef = useScreenScrollRef();
 
   return (
     <TextInput
-      ref={ref}
+      ref={mergeRefs(innerRef, forwardedRef)}
       placeholderTextColor={colors.muted}
       onFocus={(event) => {
         setFocused(true);
         onFocus?.(event);
+        // Rola o ScrollView da Screen (via contexto) pra trazer ESTE campo
+        // pra cima do teclado — sem isso, campos perto do fim de telas
+        // longas (ex: panturrilha em Medidas corporais, aba Corpo) ficam
+        // tampados. `scrollResponderScrollNativeHandleToKeyboard` é a API
+        // do próprio React Native feita pra exatamente isso (mesma que
+        // libs de "keyboard aware scroll view" usam por baixo) — sem
+        // dependência nova. `requestAnimationFrame`: dá um tick pro layout
+        // assentar (troca de `focused` acima, teclado começando a abrir)
+        // antes de medir/rolar. `100`: folga acima do teclado, pra também
+        // mostrar o rótulo do campo, não só a borda dele.
+        requestAnimationFrame(() => {
+          if (innerRef.current && scrollRef?.current) {
+            scrollRef.current.scrollResponderScrollNativeHandleToKeyboard(innerRef.current, 100, true);
+          }
+        });
       }}
       onBlur={(event) => {
         setFocused(false);
