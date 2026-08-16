@@ -7,7 +7,7 @@ export type ChangelogEntry = {
 // Versão mais recente definida abaixo — o que o usuário já viu (persistido em
 // user_profile.lastSeenChangelogVersion) é comparado contra o `version` de
 // cada entrada, não contra essa constante diretamente (getUnseenChangelog).
-export const CURRENT_CHANGELOG_VERSION = 3;
+export const CURRENT_CHANGELOG_VERSION = 4;
 
 // Lista crescente de levas — nunca editar uma entrada já publicada (quem já
 // viu não deve ver de novo com conteúdo diferente); só adicionar novas com
@@ -107,6 +107,17 @@ export const CHANGELOG_ENTRIES: ChangelogEntry[] = [
       {
         titulo: 'Resetar histórico',
         descricao: 'Zere seus treinos com proteção por PIN, mantendo seus planos e perfil.',
+      },
+    ],
+  },
+  {
+    version: 4,
+    title: 'Novidades',
+    items: [
+      {
+        titulo: 'Medidas corporais',
+        descricao:
+          'Acompanhe a evolução das suas medidas (ombros, peito, cintura, braços, pernas e mais) ao longo do tempo, no Perfil.',
       },
     ],
   },
