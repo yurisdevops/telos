@@ -46,10 +46,19 @@ export const Input = forwardRef<TextInput, TextInputProps>(function Input(
         // assentar (troca de `focused` acima, teclado começando a abrir)
         // antes de medir/rolar. `100`: folga acima do teclado, pra também
         // mostrar o rótulo do campo, não só a borda dele.
+        // Duplo rAF: o primeiro tick só garante que o layout settou (troca de
+        // `focused` acima) — mas o teclado em si (principalmente Android)
+        // ainda pode estar no meio da animação de abertura nesse ponto, e
+        // `scrollResponderScrollNativeHandleToKeyboard` mede a posição do
+        // teclado NAQUELE instante. Um segundo rAF dá mais um frame de
+        // folga antes de medir/rolar. `120` (era `100`): folga um pouco
+        // maior acima do teclado.
         requestAnimationFrame(() => {
-          if (innerRef.current && scrollRef?.current) {
-            scrollRef.current.scrollResponderScrollNativeHandleToKeyboard(innerRef.current, 100, true);
-          }
+          requestAnimationFrame(() => {
+            if (innerRef.current && scrollRef?.current) {
+              scrollRef.current.scrollResponderScrollNativeHandleToKeyboard(innerRef.current, 120, true);
+            }
+          });
         });
       }}
       onBlur={(event) => {
