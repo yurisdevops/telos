@@ -108,7 +108,7 @@ export default function HojeScreen() {
   return (
     <Screen edges={['top', 'left', 'right']} scrollable scrollRef={scrollRef}>
       <View className="pb-4 pt-2">
-        <Label>{getWeekdayLabel(today)}</Label>
+        <Label>{getWeekdayLabel(today)} — OTA OK 2</Label>
         <Text className="font-display text-4xl uppercase text-text">{formatDateNoWeekday(today)}</Text>
       </View>
 
