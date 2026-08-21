@@ -259,7 +259,7 @@ export const WorkoutShareCard = forwardRef<
             style={{ width: TELOS_ICON_SIZE, height: TELOS_ICON_SIZE }}
           />
           <Text className="font-display uppercase text-text" style={{ fontSize: 20, letterSpacing: 4 }}>
-            TELOS
+            TELOS {/* TEMP: marcador de verificação de update, remover depois */}v2
           </Text>
         </View>
       </View>
