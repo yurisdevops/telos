@@ -177,14 +177,28 @@ export const WorkoutShareCardPhoto = forwardRef<
         )}
       </View>
 
-      <Text
-        className="font-display text-accent"
-        style={[
-          { position: 'absolute', bottom: CORNER_PADDING, right: CORNER_PADDING, fontSize: 16, letterSpacing: 4 },
-          TEXT_SHADOW,
-        ]}>
-        TELOS
-      </Text>
+      {/* Ícone do app ao lado de "TELOS" — sombra fica nos elementos de
+          texto (TEXT_SHADOW), como no resto do card; o ícone em si não
+          precisa de sombra própria pra ficar legível sobre a foto (é opaco,
+          diferente do texto). */}
+      <View
+        style={{
+          position: 'absolute',
+          bottom: CORNER_PADDING,
+          right: CORNER_PADDING,
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 6,
+        }}>
+        {/* Caminho relativo: este arquivo vive em src/components/share/,
+            3 níveis acima da raiz do repo — o ícone real do app fica em
+            assets/images/icon.png (ver app.json: "icon": "./assets/images/
+            icon.png"), não assets/icon.png. */}
+        <Image source={require('../../../assets/images/icon.png')} style={{ width: 32, height: 32, borderRadius: 8 }} />
+        <Text className="font-display text-accent" style={[{ fontSize: 14, letterSpacing: 4 }, TEXT_SHADOW]}>
+          TELOS
+        </Text>
+      </View>
     </View>
   );
 });
