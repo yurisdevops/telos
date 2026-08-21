@@ -30,6 +30,7 @@ import {
   WorkoutShareCard,
   type WorkoutShareMetrics,
 } from '@/components/share/workout-share-card';
+import { SHARE_CARD_MINIMAL_SIZE, WorkoutShareCardMinimal } from '@/components/share/workout-share-card-minimal';
 import { WorkoutShareModal } from '@/components/share/workout-share-modal';
 import { DEFAULT_SHARE_OPTIONS, type WorkoutShareOptions } from '@/components/share/types';
 import { Button } from '@/components/ui/button';
@@ -644,28 +645,53 @@ function SessionExecution({
   const shareCardRef = useRef<View>(null);
   const [cardReady, setCardReady] = useState(false);
 
+  // Segundo card off-screen (Etapa B, estilo 'minimalista') — mesmo
+  // raciocínio do card completo acima: montado sempre que a sessão existe,
+  // `cardMinimalReady` (onLayout) trava a captura até o 1º layout assentar.
+  // Os DOIS cards ficam sempre montados (nunca só o do estilo selecionado no
+  // momento) — trocar de estilo no modal não precisa esperar nenhum layout
+  // novo, só reflete a escolha já pronta.
+  const shareCardMinimalRef = useRef<View>(null);
+  const [cardMinimalReady, setCardMinimalReady] = useState(false);
+
   // Opções de personalização (WorkoutShareModal, `src/components/share/`) —
-  // o card off-screen abaixo recebe esse mesmo estado, então a imagem
+  // os 2 cards off-screen abaixo recebem esse mesmo estado, então a imagem
   // capturada sempre reflete a última escolha confirmada no modal. Fica em
-  // DEFAULT_SHARE_OPTIONS (tudo ligado, PR automático) até o usuário
-  // personalizar e tocar "Compartilhar" dentro do modal.
+  // DEFAULT_SHARE_OPTIONS (estilo 'completo', tudo ligado, PR automático)
+  // até o usuário personalizar e tocar "Compartilhar" dentro do modal.
   const [shareOptions, setShareOptions] = useState<WorkoutShareOptions>(DEFAULT_SHARE_OPTIONS);
   const [shareModalVisible, setShareModalVisible] = useState(false);
 
+  // Botão "Compartilhar treino" só habilita quando o card do estilo
+  // ATUALMENTE selecionado (shareOptions.estilo — o que o modal vai abrir
+  // já mostrando) está pronto; o outro estilo pode ainda não ter tido seu
+  // 1º onLayout e não bloqueia nada, já que só entra em jogo se o usuário
+  // trocar de estilo dentro do modal (nesse ponto, ambos os cards já estão
+  // montados há tempo suficiente pra essa troca raramente esbarrar num
+  // `cardMinimalReady` ainda falso — na prática, os 2 onLayout dos cards
+  // off-screen dispararam juntos, logo no primeiro render da sessão).
+  const selectedCardReady = shareOptions.estilo === 'minimalista' ? cardMinimalReady : cardReady;
+
   const handleOpenShareModal = useCallback(() => setShareModalVisible(true), []);
 
-  // Confirmação vinda do modal: grava as opções escolhidas (o card off-
-  // screen só reage a essa mudança no próximo render dele) e SÓ DEPOIS
+  // Confirmação vinda do modal: grava as opções escolhidas (os cards off-
+  // screen só reagem a essa mudança no próximo render deles) e SÓ DEPOIS
   // captura — precisa de um tick real pra essa nova árvore assentar no lado
   // nativo antes do captureRef rasterizar, mesmo padrão de "duplo rAF" já
   // usado em src/components/ui/input.tsx pra esperar um layout assentar
-  // antes de medir/agir sobre ele.
+  // antes de medir/agir sobre ele. Qual card capturar (e em qual resolução)
+  // depende do estilo escolhido NO MODAL (`options.estilo`, o argumento —
+  // não o `shareOptions` de fora, que só é atualizado por este mesmo `set`).
   const handleConfirmShare = useCallback(async (options: WorkoutShareOptions) => {
     setShareOptions(options);
     await new Promise<void>((resolve) => {
       requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
     });
-    await shareWorkoutImage(shareCardRef, SHARE_CARD_WIDTH, SHARE_CARD_HEIGHT);
+    const isMinimal = options.estilo === 'minimalista';
+    const ref = isMinimal ? shareCardMinimalRef : shareCardRef;
+    const width = isMinimal ? SHARE_CARD_MINIMAL_SIZE : SHARE_CARD_WIDTH;
+    const height = isMinimal ? SHARE_CARD_MINIMAL_SIZE : SHARE_CARD_HEIGHT;
+    await shareWorkoutImage(ref, width, height);
     setShareModalVisible(false);
   }, []);
 
@@ -902,6 +928,19 @@ function SessionExecution({
         />
       </View>
 
+      {/* Segundo card off-screen (Etapa B, estilo 'minimalista') — mesma
+          técnica exata do card completo acima (opacity:0 dentro dos limites
+          reais da tela, nunca -9999pt, ver comentário longo acima). */}
+      <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0, opacity: 0 }}>
+        <WorkoutShareCardMinimal
+          ref={shareCardMinimalRef}
+          metrics={shareMetrics}
+          options={shareOptions}
+          onLayout={() => setCardMinimalReady(true)}
+          style={{ position: 'absolute', top: 0, left: 0 }}
+        />
+      </View>
+
       <WorkoutShareModal
         visible={shareModalVisible}
         onClose={() => setShareModalVisible(false)}
@@ -954,7 +993,7 @@ function SessionExecution({
       )}
 
       {session.concluida && (
-        <Button className="mb-4" disabled={!cardReady || !prReady} onPress={handleOpenShareModal}>
+        <Button className="mb-4" disabled={!selectedCardReady || !prReady} onPress={handleOpenShareModal}>
           <View className="flex-row items-center gap-2">
             <Ionicons name="share-outline" size={18} color="#fff" />
             <Text className="font-label text-sm uppercase tracking-wide text-white">Compartilhar treino</Text>

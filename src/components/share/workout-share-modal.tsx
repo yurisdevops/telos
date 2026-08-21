@@ -8,16 +8,26 @@ import { Button } from '@/components/ui/button';
 import { relativeGain, type SessionPr } from '@/lib/personal-records';
 import { colors } from '@/theme/tokens';
 
-import { DEFAULT_SHARE_OPTIONS, type WorkoutShareOptions } from './types';
+import { DEFAULT_SHARE_OPTIONS, type WorkoutShareOptions, type WorkoutShareStyle } from './types';
+import { MINIMAL_CARD_SIZE, WorkoutShareCardMinimal } from './workout-share-card-minimal';
 import { CARD_HEIGHT, CARD_WIDTH, WorkoutShareCard, type WorkoutShareMetrics } from './workout-share-card';
 
 // Tamanho de layout (não pixels) da prévia — escalada por `transform`, não
 // redimensionada, pra manter as fontes/paddings do card real proporcionais
 // entre si (redimensionar só a `style.width/height` do card espremeria o
-// conteúdo sem escalar as fontes, que são valores fixos em pt).
+// conteúdo sem escalar as fontes, que são valores fixos em pt). Mesmo scale
+// pros 2 estilos (360×360 e 360×560 — a base 360 é igual nos dois) — dá
+// ~126pt de largura pra ambos, só a altura muda com o formato de cada um
+// (126×196 no completo, 126×126 no minimalista, quadrado).
 const PREVIEW_SCALE = 0.35;
 
-type BooleanOptionKey = Exclude<keyof WorkoutShareOptions, 'prEscolhido'>;
+type BooleanOptionKey = Exclude<keyof WorkoutShareOptions, 'prEscolhido' | 'estilo'>;
+
+const STYLE_OPTIONS: { value: WorkoutShareStyle; label: string; disabled?: boolean }[] = [
+  { value: 'completo', label: 'Completo' },
+  { value: 'minimalista', label: 'Minimalista' },
+  { value: 'foto', label: 'Foto', disabled: true },
+];
 
 /**
  * Tela de personalização do compartilhamento — abre ao tocar "Compartilhar
@@ -95,17 +105,58 @@ export function WorkoutShareModal({
         <ScrollView
           contentContainerStyle={{ padding: CONTENT_HORIZONTAL_PADDING, paddingBottom: 32 }}
           showsVerticalScrollIndicator={false}>
-          {/* Prévia ao vivo — instância separada da que fica off-screen em
-              hoje.tsx, só pra visualização; nunca é o alvo do captureRef. */}
-          <View
-            className="mb-6 self-center overflow-hidden rounded border border-border"
-            style={{ width: CARD_WIDTH * PREVIEW_SCALE, height: CARD_HEIGHT * PREVIEW_SCALE }}>
-            <WorkoutShareCard
-              metrics={metrics}
-              options={options}
-              style={{ transform: [{ scale: PREVIEW_SCALE }], transformOrigin: '0 0' }}
-            />
+          <View className="mb-6">
+            <Text className="mb-2 font-label text-xs uppercase tracking-wider text-muted">Estilo</Text>
+            <View className="flex-row flex-wrap gap-2">
+              {STYLE_OPTIONS.map((opt) => {
+                const selected = options.estilo === opt.value;
+                return (
+                  <Pressable
+                    key={opt.value}
+                    disabled={opt.disabled}
+                    onPress={() => setOptions((prev) => ({ ...prev, estilo: opt.value }))}
+                    className={`rounded border px-3 py-1.5 ${opt.disabled ? 'opacity-40' : ''} ${
+                      selected && !opt.disabled ? 'border-accent bg-accent' : 'border-border bg-transparent'
+                    }`}>
+                    <Text
+                      className={`font-label text-xs uppercase tracking-wide ${
+                        selected && !opt.disabled ? 'text-white' : 'text-muted'
+                      }`}>
+                      {opt.label}
+                      {opt.disabled ? ' · Em breve' : ''}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
           </View>
+
+          {/* Prévia ao vivo — instância separada da que fica off-screen em
+              hoje.tsx, só pra visualização; nunca é o alvo do captureRef.
+              Componente e tamanho do container trocam com options.estilo —
+              cada estilo tem sua própria proporção (360×560 no completo,
+              360×360 quadrado no minimalista), mesmo PREVIEW_SCALE nos 2. */}
+          {options.estilo === 'minimalista' ? (
+            <View
+              className="mb-6 self-center overflow-hidden rounded border border-border"
+              style={{ width: MINIMAL_CARD_SIZE * PREVIEW_SCALE, height: MINIMAL_CARD_SIZE * PREVIEW_SCALE }}>
+              <WorkoutShareCardMinimal
+                metrics={metrics}
+                options={options}
+                style={{ transform: [{ scale: PREVIEW_SCALE }], transformOrigin: '0 0' }}
+              />
+            </View>
+          ) : (
+            <View
+              className="mb-6 self-center overflow-hidden rounded border border-border"
+              style={{ width: CARD_WIDTH * PREVIEW_SCALE, height: CARD_HEIGHT * PREVIEW_SCALE }}>
+              <WorkoutShareCard
+                metrics={metrics}
+                options={options}
+                style={{ transform: [{ scale: PREVIEW_SCALE }], transformOrigin: '0 0' }}
+              />
+            </View>
+          )}
 
           {sessionPrs.length > 0 && (
             <View className="mb-6">
@@ -142,19 +193,34 @@ export function WorkoutShareModal({
             </View>
           )}
 
-          <View className="mb-8">
-            <Text className="mb-2 font-label text-xs uppercase tracking-wider text-muted">Métricas</Text>
-            <View className="flex-row flex-wrap gap-2">
-              <OptionToggle label="Duração" active={options.mostrarDuracao} onPress={() => toggle('mostrarDuracao')} />
-              <OptionToggle label="Volume (kg)" active={options.mostrarVolume} onPress={() => toggle('mostrarVolume')} />
-              <OptionToggle label="Séries" active={options.mostrarSeries} onPress={() => toggle('mostrarSeries')} />
-              <OptionToggle
-                label="Exercícios"
-                active={options.mostrarExercicios}
-                onPress={() => toggle('mostrarExercicios')}
-              />
+          {/* Métricas: só faz sentido pro estilo 'completo' — é a grade de
+              StatCells que esses 4 toggles ligam/desligam; o 'minimalista'
+              não tem essa grade (volume+duração são fixos nele, ver
+              workout-share-card-minimal.tsx), então os toggles ficariam sem
+              efeito visível se mostrados ali. */}
+          {options.estilo === 'completo' && (
+            <View className="mb-8">
+              <Text className="mb-2 font-label text-xs uppercase tracking-wider text-muted">Métricas</Text>
+              <View className="flex-row flex-wrap gap-2">
+                <OptionToggle
+                  label="Duração"
+                  active={options.mostrarDuracao}
+                  onPress={() => toggle('mostrarDuracao')}
+                />
+                <OptionToggle
+                  label="Volume (kg)"
+                  active={options.mostrarVolume}
+                  onPress={() => toggle('mostrarVolume')}
+                />
+                <OptionToggle label="Séries" active={options.mostrarSeries} onPress={() => toggle('mostrarSeries')} />
+                <OptionToggle
+                  label="Exercícios"
+                  active={options.mostrarExercicios}
+                  onPress={() => toggle('mostrarExercicios')}
+                />
+              </View>
             </View>
-          </View>
+          )}
 
           <Button onPress={() => onShare(options)}>
             <View className="flex-row items-center gap-2">

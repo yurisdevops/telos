@@ -70,6 +70,25 @@ export type WorkoutShareMetrics = {
 const WEEKDAY_LABELS = ['S', 'T', 'Q', 'Q', 'S', 'S', 'D']; // segunda .. domingo
 
 /**
+ * PR a mostrar no card, dadas as opções de personalização — extraído (Etapa
+ * B) pra ser reusado por qualquer estilo de card (WorkoutShareCard e
+ * WorkoutShareCardMinimal já; futuro estilo 'foto' também vai precisar).
+ * `options.mostrarPr` desliga a faixa inteira; com ela ligada, um índice
+ * explícito escolhido pelo usuário (`options.prEscolhido`) vence — mas só se
+ * ainda for válido em `sessionPrs` (sessão diferente, lista menor etc. cai
+ * de volta pro automático). `null` (modo automático) sempre cai no
+ * `prDestaque` já resolvido por `pickHighlightPr` em hoje.tsx.
+ */
+export function resolvePrParaMostrar(
+  metrics: Pick<WorkoutShareMetrics, 'sessionPrs' | 'prDestaque'>,
+  options: Pick<WorkoutShareOptions, 'mostrarPr' | 'prEscolhido'>
+): { exerciseNome: string; cargaNova: number } | null {
+  if (!options.mostrarPr) return null;
+  const escolhido = options.prEscolhido != null ? metrics.sessionPrs[options.prEscolhido] : undefined;
+  return escolhido ?? metrics.prDestaque;
+}
+
+/**
  * Card de resumo do treino — componente RN comum (View/Text, NativeWind),
  * capturado via `react-native-view-shot`'s `captureRef` em vez de SVG.
  *
@@ -91,14 +110,7 @@ export const WorkoutShareCard = forwardRef<
     onLayout?: (event: LayoutChangeEvent) => void;
   }
 >(function WorkoutShareCard({ metrics, options, style, onLayout }, ref) {
-  // PR a mostrar: options.mostrarPr desliga a faixa inteira; com ela ligada,
-  // um índice explícito escolhido pelo usuário (options.prEscolhido) vence —
-  // mas só se ainda for válido nesta `sessionPrs` (sessão diferente, lista
-  // menor etc. cai de volta pro automático). `null` (modo automático) sempre
-  // cai no `prDestaque` já resolvido por pickHighlightPr em hoje.tsx.
-  const escolhido =
-    options.prEscolhido != null ? metrics.sessionPrs[options.prEscolhido] : undefined;
-  const prParaMostrar = options.mostrarPr ? (escolhido ?? metrics.prDestaque) : null;
+  const prParaMostrar = resolvePrParaMostrar(metrics, options);
 
   const statCells = [
     options.mostrarDuracao && { key: 'duracao', value: metrics.durationLabel ?? '—', label: 'DURAÇÃO' },
