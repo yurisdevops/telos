@@ -160,7 +160,19 @@ export const WorkoutShareCard = forwardRef<
           className={`flex-row flex-wrap ${statCells.length === 1 ? 'justify-center' : 'justify-between'}`}
           style={{ rowGap: 20 }}>
           {statCells.map((cell) => (
-            <View key={cell.key} style={{ width: '47%' }}>
+            // `flex-row` aqui (não a `column` padrão): o `flex-1` da StatCell
+            // só faz sentido junto de um eixo principal DEFINIDO — antes da
+            // grade flexível, o pai era sempre um `flex-row` esticado até a
+            // largura fixa do card (CARD_WIDTH), então `flex-1` dividia essa
+            // largura. Um wrapper `column` (padrão do RN) sem altura definida
+            // faz o `flex-1` operar na ALTURA (o eixo principal de uma
+            // `column`), que aqui é "auto"/hug-content — sem espaço definido
+            // pra crescer, a StatCell colapsava pra altura zero (bug real,
+            // confirmado). `flex-row` realinha o eixo principal de volta pra
+            // LARGURA (que o `width: '47%'` abaixo torna definida), igual ao
+            // comportamento original — a altura vira eixo cruzado, sizada
+            // normalmente pelo conteúdo, sem nenhum flex-grow envolvido nela.
+            <View key={cell.key} className="flex-row" style={{ width: '47%' }}>
               <StatCell value={cell.value} label={cell.label} />
             </View>
           ))}
