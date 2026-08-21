@@ -798,43 +798,34 @@ function SessionExecution({
 
   return (
     <View>
-      {/* Escondido do usuário, e agora FORA da árvore nativa do ScrollView:
-          antes era uma View position:absolute dentro do scroll (junto com o
-          resto do conteúdo da sessão) — a View de cobertura do tamanho da
-          tela inteira, mesmo só "absoluta", ainda contava como parte da
-          subárvore que o ScrollView mede pra rolar um campo focado até acima
-          do teclado, e isso confundia esse cálculo (bug do teclado tampando
-          os campos de carga/reps das últimas séries). Um <Modal> renderiza
-          seu conteúdo numa janela/hierarquia nativa SEPARADA — nunca é
-          descendente do ScrollView de verdade, então não tem mais como
-          atrapalhar essa conta, mesmo continuando "montado" no mesmo lugar
-          do código (nada de shareMetrics/queries precisou se mover). Mesmo
-          padrão de Modal que RestTimerOverlay já usa, só que sempre visível
-          (não é um overlay que o usuário abre/fecha) e com pointerEvents
-          "none" em tudo — o toque atravessa pros controles reais da tela.
-          onRequestClose vazio: no Android, sem isso o botão físico de voltar
-          ficaria "preso" nesse modal em vez de agir na tela por trás. */}
-      <Modal transparent visible statusBarTranslucent onRequestClose={() => {}}>
-        <View pointerEvents="none" style={{ flex: 1 }}>
-          <WorkoutShareCard
-            ref={shareCardRef}
-            metrics={shareMetrics}
-            onLayout={() => setCardReady(true)}
-            style={{ position: 'absolute', top: 0, left: 0 }}
-          />
-          <View
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: windowWidth,
-              height: windowHeight,
-              zIndex: 1,
-              backgroundColor: colors.bg,
-            }}
-          />
-        </View>
-      </Modal>
+      {/* Escondido do usuário, mas DENTRO dos limites da tela — não a
+          -9999pt de distância (o Android pula a pintura de views longe
+          demais de qualquer viewport real, o que gerava PNG válido só que
+          vazio/preto no captureRef). Aqui o card fica em (0,0) de verdade,
+          só que coberto por cima por uma View opaca do tamanho da tela
+          inteira — visualmente invisível pro usuário, mas realmente pintado
+          pelo Android, então o captureRef captura o conteúdo de verdade.
+          pointerEvents="none" no wrapper garante que nada aqui dentro
+          intercepta toque — os controles reais da tela continuam abaixo. */}
+      <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0 }}>
+        <WorkoutShareCard
+          ref={shareCardRef}
+          metrics={shareMetrics}
+          onLayout={() => setCardReady(true)}
+          style={{ position: 'absolute', top: 0, left: 0 }}
+        />
+        <View
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: windowWidth,
+            height: windowHeight,
+            zIndex: 1,
+            backgroundColor: colors.bg,
+          }}
+        />
+      </View>
 
       <Text className="mb-1 font-display text-5xl uppercase text-text" numberOfLines={1}>
         {dayLabel}
