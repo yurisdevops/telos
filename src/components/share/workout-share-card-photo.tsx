@@ -21,6 +21,13 @@ export const PHOTO_CARD_HEIGHT = 450;
 
 const CORNER_PADDING = 20;
 
+// Foreground do adaptive icon — ver comentário completo em
+// workout-share-card.tsx (mesmo asset, mesmo tamanho, mesmo motivo: o
+// símbolo ocupa só ~45% do canvas do PNG, então 44pt compensa a margem de
+// segurança do formato pra ficar visualmente equivalente a um ícone comum
+// de ~20pt ao lado do "TELOS").
+const TELOS_ICON_SIZE = 44;
+
 // Sombra escura em todo texto sobreposto — é o que garante legibilidade do
 // texto branco em cima de QUALQUER foto (clara ou escura), já que este
 // estilo não tem nenhum fundo opaco atrás dos dados (só a camada 2 abaixo,
@@ -180,7 +187,10 @@ export const WorkoutShareCardPhoto = forwardRef<
       {/* Ícone do app ao lado de "TELOS" — sombra fica nos elementos de
           texto (TEXT_SHADOW), como no resto do card; o ícone em si não
           precisa de sombra própria pra ficar legível sobre a foto (é opaco,
-          diferente do texto). */}
+          diferente do texto). Foreground do adaptive icon (transparente ao
+          redor, sem borderRadius — ver TELOS_ICON_SIZE acima), não mais o
+          assets/images/icon.png (ícone completo, com fundo quadrado opaco,
+          que exigia o borderRadius:8 de antes pra suavizar o quadrado). */}
       <View
         style={{
           position: 'absolute',
@@ -190,11 +200,10 @@ export const WorkoutShareCardPhoto = forwardRef<
           alignItems: 'center',
           gap: 6,
         }}>
-        {/* Caminho relativo: este arquivo vive em src/components/share/,
-            3 níveis acima da raiz do repo — o ícone real do app fica em
-            assets/images/icon.png (ver app.json: "icon": "./assets/images/
-            icon.png"), não assets/icon.png. */}
-        <Image source={require('../../../assets/images/icon.png')} style={{ width: 32, height: 32, borderRadius: 8 }} />
+        <Image
+          source={require('../../../assets/images/adaptive-icon.png')}
+          style={{ width: TELOS_ICON_SIZE, height: TELOS_ICON_SIZE }}
+        />
         <Text className="font-display text-accent" style={[{ fontSize: 14, letterSpacing: 4 }, TEXT_SHADOW]}>
           TELOS
         </Text>

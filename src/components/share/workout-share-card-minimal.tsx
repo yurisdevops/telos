@@ -1,5 +1,6 @@
 import { forwardRef } from 'react';
 import { Text, View, type LayoutChangeEvent, type StyleProp, type ViewStyle } from 'react-native';
+import { Image } from 'expo-image';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { formatNumberPtBr } from '@/lib/format';
@@ -22,6 +23,13 @@ export const MINIMAL_CARD_SIZE = 360;
 const BACKGROUND = '#1A1A1A';
 const ACCENT_BAR_WIDTH = 6;
 const CONTENT_PADDING_LEFT = 28;
+
+// Foreground do adaptive icon — ver comentário completo em
+// workout-share-card.tsx (mesmo asset, mesmo tamanho, mesmo motivo: o
+// símbolo ocupa só ~45% do canvas do PNG, então 44pt compensa a margem de
+// segurança do formato pra ficar visualmente equivalente a um ícone comum
+// de ~20pt ao lado do "TELOS").
+const TELOS_ICON_SIZE = 44;
 
 /**
  * Segundo estilo do card de compartilhamento (Etapa B) — "só essência":
@@ -141,10 +149,18 @@ export const WorkoutShareCardMinimal = forwardRef<
         )}
 
         {/* Rodapé: assinatura, alinhada à direita (diferente do card
-            completo, que a centraliza). */}
-        <Text className="font-display text-accent" style={{ fontSize: 20, letterSpacing: 4, textAlign: 'right' }}>
-          TELOS
-        </Text>
+            completo, que a centraliza) — `justifyContent:'flex-end'` no lugar
+            do `textAlign:'right'` de antes, agora que é uma linha com 2
+            elementos (ícone + texto) em vez de um Text sozinho. */}
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', gap: 8 }}>
+          <Image
+            source={require('../../../assets/images/adaptive-icon.png')}
+            style={{ width: TELOS_ICON_SIZE, height: TELOS_ICON_SIZE }}
+          />
+          <Text className="font-display text-accent" style={{ fontSize: 20, letterSpacing: 4 }}>
+            TELOS
+          </Text>
+        </View>
       </View>
     </View>
   );

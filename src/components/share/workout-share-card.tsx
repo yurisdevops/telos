@@ -1,5 +1,6 @@
 import { forwardRef } from 'react';
 import { Text, View, type LayoutChangeEvent, type StyleProp, type ViewStyle } from 'react-native';
+import { Image } from 'expo-image';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { formatNumberPtBr } from '@/lib/format';
@@ -68,6 +69,23 @@ export type WorkoutShareMetrics = {
 // comum, já que todas vêm ligadas por padrão).
 
 const WEEKDAY_LABELS = ['S', 'T', 'Q', 'Q', 'S', 'S', 'D']; // segunda .. domingo
+
+// Foreground do adaptive icon (assets/images/adaptive-icon.png, ver
+// app.json: android.adaptiveIcon.foregroundImage) — símbolo puro, SEM fundo
+// (o fundo sólido #141414 do ícone real é aplicado pelo próprio SO Android a
+// partir de android.adaptiveIcon.backgroundColor, não faz parte deste PNG).
+// Diferente do assets/images/icon.png (ícone completo, com fundo opaco
+// quadrado) usado antes — esse teria trazido um quadrado colorido junto do
+// símbolo, exigindo o borderRadius que este asset já não precisa.
+//
+// 44pt (não os 32pt "óbvios" de um ícone comum): o PNG do foreground tem uma
+// margem de segurança enorme ao redor do símbolo (padrão do formato adaptive
+// icon do Android — o SO recorta uma área menor do que o canvas inteiro), o
+// símbolo em si ocupa só ~45% do canvas. Renderizado a 32pt, o desenho
+// visível ficaria com ~14pt — pequeno demais ao lado do "TELOS". 44pt
+// compensa essa margem (44 × 0,45 ≈ 20pt de símbolo visível, equivalente a
+// um ícone comum de ~20pt sem a margem).
+const TELOS_ICON_SIZE = 44;
 
 /**
  * PR a mostrar no card, dadas as opções de personalização — extraído (Etapa
@@ -235,9 +253,15 @@ export const WorkoutShareCard = forwardRef<
       {/* Rodapé: assinatura */}
       <View className="items-center">
         <View className="mb-3 h-px w-12 bg-border" />
-        <Text className="font-display uppercase text-text" style={{ fontSize: 20, letterSpacing: 4 }}>
-          TELOS
-        </Text>
+        <View className="flex-row items-center gap-2">
+          <Image
+            source={require('../../../assets/images/adaptive-icon.png')}
+            style={{ width: TELOS_ICON_SIZE, height: TELOS_ICON_SIZE }}
+          />
+          <Text className="font-display uppercase text-text" style={{ fontSize: 20, letterSpacing: 4 }}>
+            TELOS
+          </Text>
+        </View>
       </View>
     </View>
   );
