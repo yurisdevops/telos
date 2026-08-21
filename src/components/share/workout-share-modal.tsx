@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Alert, Modal, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as ImagePicker from 'expo-image-picker';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { CONTENT_HORIZONTAL_PADDING } from '@/components/screen';
@@ -10,6 +11,7 @@ import { colors } from '@/theme/tokens';
 
 import { DEFAULT_SHARE_OPTIONS, type WorkoutShareOptions, type WorkoutShareStyle } from './types';
 import { MINIMAL_CARD_SIZE, WorkoutShareCardMinimal } from './workout-share-card-minimal';
+import { PHOTO_CARD_HEIGHT, PHOTO_CARD_WIDTH, WorkoutShareCardPhoto } from './workout-share-card-photo';
 import { CARD_HEIGHT, CARD_WIDTH, WorkoutShareCard, type WorkoutShareMetrics } from './workout-share-card';
 
 // Tamanho de layout (não pixels) da prévia — escalada por `transform`, não
@@ -26,7 +28,7 @@ type BooleanOptionKey = Exclude<keyof WorkoutShareOptions, 'prEscolhido' | 'esti
 const STYLE_OPTIONS: { value: WorkoutShareStyle; label: string; disabled?: boolean }[] = [
   { value: 'completo', label: 'Completo' },
   { value: 'minimalista', label: 'Minimalista' },
-  { value: 'foto', label: 'Foto', disabled: true },
+  { value: 'foto', label: 'Foto' },
 ];
 
 /**
@@ -77,6 +79,45 @@ export function WorkoutShareModal({
   const toggle = (key: BooleanOptionKey) => {
     setOptions((prev) => ({ ...prev, [key]: !prev[key] }));
   };
+
+  // Fluxo de escolher/tirar foto (estilo 'foto') — Alert.alert com as 2
+  // fontes + cancelar, cada uma pedindo sua própria permissão só na hora
+  // (não no mount do modal). Permissão negada avisa e não mexe em nada;
+  // cancelamento do picker (`result.canceled`) é no-op silencioso, mesmo
+  // padrão já usado no resto do app (ver pickAndSaveProfilePhoto).
+  const pickPhotoFrom = useCallback(async (source: 'camera' | 'library') => {
+    const permission =
+      source === 'camera'
+        ? await ImagePicker.requestCameraPermissionsAsync()
+        : await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
+      Alert.alert(
+        'Permissão necessária',
+        source === 'camera'
+          ? 'Permita o acesso à câmera nas configurações do aparelho pra tirar uma foto.'
+          : 'Permita o acesso à galeria nas configurações do aparelho pra escolher uma foto.'
+      );
+      return;
+    }
+
+    const result =
+      source === 'camera'
+        ? await ImagePicker.launchCameraAsync({ quality: 0.9 })
+        : await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], quality: 0.9 });
+    if (result.canceled) return;
+
+    const picked = result.assets[0];
+    if (!picked) return;
+    setOptions((prev) => ({ ...prev, fotoUri: picked.uri }));
+  }, []);
+
+  const handlePickPhoto = useCallback(() => {
+    Alert.alert('Escolher foto', undefined, [
+      { text: 'Câmera', onPress: () => pickPhotoFrom('camera') },
+      { text: 'Galeria', onPress: () => pickPhotoFrom('library') },
+      { text: 'Cancelar', style: 'cancel' },
+    ]);
+  }, [pickPhotoFrom]);
 
   return (
     <Modal
@@ -135,18 +176,9 @@ export function WorkoutShareModal({
               hoje.tsx, só pra visualização; nunca é o alvo do captureRef.
               Componente e tamanho do container trocam com options.estilo —
               cada estilo tem sua própria proporção (360×560 no completo,
-              360×360 quadrado no minimalista), mesmo PREVIEW_SCALE nos 2. */}
-          {options.estilo === 'minimalista' ? (
-            <View
-              className="mb-6 self-center overflow-hidden rounded border border-border"
-              style={{ width: MINIMAL_CARD_SIZE * PREVIEW_SCALE, height: MINIMAL_CARD_SIZE * PREVIEW_SCALE }}>
-              <WorkoutShareCardMinimal
-                metrics={metrics}
-                options={options}
-                style={{ transform: [{ scale: PREVIEW_SCALE }], transformOrigin: '0 0' }}
-              />
-            </View>
-          ) : (
+              360×360 quadrado no minimalista, 360×450 no foto), mesmo
+              PREVIEW_SCALE nos 3. */}
+          {options.estilo === 'completo' && (
             <View
               className="mb-6 self-center overflow-hidden rounded border border-border"
               style={{ width: CARD_WIDTH * PREVIEW_SCALE, height: CARD_HEIGHT * PREVIEW_SCALE }}>
@@ -157,6 +189,46 @@ export function WorkoutShareModal({
               />
             </View>
           )}
+
+          {options.estilo === 'minimalista' && (
+            <View
+              className="mb-6 self-center overflow-hidden rounded border border-border"
+              style={{ width: MINIMAL_CARD_SIZE * PREVIEW_SCALE, height: MINIMAL_CARD_SIZE * PREVIEW_SCALE }}>
+              <WorkoutShareCardMinimal
+                metrics={metrics}
+                options={options}
+                style={{ transform: [{ scale: PREVIEW_SCALE }], transformOrigin: '0 0' }}
+              />
+            </View>
+          )}
+
+          {options.estilo === 'foto' &&
+            (options.fotoUri ? (
+              <View className="mb-6 items-center">
+                <View
+                  className="overflow-hidden rounded border border-border"
+                  style={{ width: PHOTO_CARD_WIDTH * PREVIEW_SCALE, height: PHOTO_CARD_HEIGHT * PREVIEW_SCALE }}>
+                  <WorkoutShareCardPhoto
+                    metrics={metrics}
+                    options={options}
+                    style={{ transform: [{ scale: PREVIEW_SCALE }], transformOrigin: '0 0' }}
+                  />
+                </View>
+                <Pressable onPress={handlePickPhoto} className="mt-3 py-1">
+                  <Text className="font-label text-xs uppercase tracking-wide text-accent">Trocar foto</Text>
+                </Pressable>
+              </View>
+            ) : (
+              <Pressable
+                onPress={handlePickPhoto}
+                className="mb-6 items-center justify-center self-center rounded border border-dashed border-border bg-surface"
+                style={{ width: PHOTO_CARD_WIDTH * PREVIEW_SCALE, height: PHOTO_CARD_HEIGHT * PREVIEW_SCALE }}>
+                <Ionicons name="camera-outline" size={28} color={colors.muted} />
+                <Text className="mt-2 px-4 text-center font-label text-xs uppercase tracking-wide text-muted">
+                  Toque para escolher uma foto
+                </Text>
+              </Pressable>
+            ))}
 
           {sessionPrs.length > 0 && (
             <View className="mb-6">
