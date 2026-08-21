@@ -20,6 +20,7 @@ import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { useRouter } from 'expo-router';
 import { useKeepAwake } from 'expo-keep-awake';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import { PrCelebrationOverlay } from '@/components/celebration/pr-celebration-overlay';
 import { Screen } from '@/components/screen';
@@ -86,7 +87,15 @@ function reportError(context: string, err: unknown) {
 export default function HojeScreen() {
   const todayStr = getTodayDateString();
   const today = new Date();
+  // Dois refs, um pra cada mecanismo de rolagem — nunca montados ao mesmo
+  // tempo (um por branch abaixo), mas com APIs de imperative handle
+  // diferentes, então não dá pra reaproveitar o mesmo ref tipado:
+  // `scrollRef` é o ScrollView nativo de <Screen scrollable> (branch sem
+  // sessão, DayPicker); `kasvRef` é a instância do KeyboardAwareScrollView
+  // (branch com sessão em andamento) — expõe `scrollToPosition(x,y,animated)`
+  // em vez de `.scrollTo(...)` do ScrollView (ver SessionExecution abaixo).
   const scrollRef = useRef<ScrollView>(null);
+  const kasvRef = useRef<KeyboardAwareScrollView>(null);
 
   const { data: todaySessions } = useLiveQuery(
     db.select().from(sessions).where(eq(sessions.data, todayStr))
@@ -106,18 +115,43 @@ export default function HojeScreen() {
     }
   };
 
+  const header = (
+    <View className="pb-4 pt-2">
+      <Label>{getWeekdayLabel(today)}</Label>
+      <Text className="font-display text-4xl uppercase text-text">{formatDateNoWeekday(today)}</Text>
+    </View>
+  );
+
+  // Sessão em andamento: troca o ScrollView interno de <Screen scrollable>
+  // por KeyboardAwareScrollView (JS puro, sem módulo nativo) — ele mede a
+  // altura do teclado e rola o campo focado (reps/carga das últimas séries)
+  // pra cima dela automaticamente, nos dois SOs. `enableOnAndroid` é
+  // obrigatório (por padrão a lib só age no iOS); `extraScrollHeight={120}`
+  // mantém a mesma folga já usada no auto-scroll manual de input.tsx.
+  if (todaySession) {
+    return (
+      <Screen edges={['top', 'left', 'right']}>
+        <KeyboardAwareScrollView
+          ref={kasvRef}
+          style={{ flex: 1 }}
+          contentContainerStyle={{ paddingBottom: 24 }}
+          keyboardShouldPersistTaps="handled"
+          enableOnAndroid
+          extraScrollHeight={120}
+        >
+          {header}
+          <SessionExecution session={todaySession} scrollRef={kasvRef} />
+        </KeyboardAwareScrollView>
+      </Screen>
+    );
+  }
+
+  // Sem sessão hoje (DayPicker): mantém <Screen scrollable> como sempre —
+  // não tem campo de texto pra focar aqui, então não precisa da lib nova.
   return (
     <Screen edges={['top', 'left', 'right']} scrollable scrollRef={scrollRef}>
-      <View className="pb-4 pt-2">
-        <Label>{getWeekdayLabel(today)}</Label>
-        <Text className="font-display text-4xl uppercase text-text">{formatDateNoWeekday(today)}</Text>
-      </View>
-
-      {todaySession ? (
-        <SessionExecution session={todaySession} scrollRef={scrollRef} />
-      ) : (
-        <DayPicker onStart={handleStartDay} todayStr={todayStr} />
-      )}
+      {header}
+      <DayPicker onStart={handleStartDay} todayStr={todayStr} />
     </Screen>
   );
 }
@@ -260,7 +294,7 @@ function SessionExecution({
   scrollRef,
 }: {
   session: Session;
-  scrollRef: RefObject<ScrollView | null>;
+  scrollRef: RefObject<KeyboardAwareScrollView | null>;
 }) {
   const router = useRouter();
   const now = useNow(1000);
@@ -274,12 +308,16 @@ function SessionExecution({
   // separado): o scroll anima o conteúdo por baixo, o overlay (se houver)
   // aparece por cima — quando o usuário fecha a celebração, a tela já está
   // no topo mostrando o card "Treino concluído".
+  // `scrollToPosition(x, y, animated)`, não `.scrollTo({y, animated})` — a
+  // instância exposta pelo ref do KeyboardAwareScrollView NÃO é um ScrollView
+  // nativo, é a classe wrapper da lib (ver node_modules/.../index.d.ts:
+  // ScrollableComponent), que só expõe scrollToPosition/scrollToEnd/etc.
   const prevConcluidaRef = useRef(session.concluida);
   useEffect(() => {
     const wasConcluida = prevConcluidaRef.current;
     prevConcluidaRef.current = session.concluida;
     if (!wasConcluida && session.concluida) {
-      scrollRef.current?.scrollTo({ y: 0, animated: true });
+      scrollRef.current?.scrollToPosition(0, 0, true);
     }
   }, [session.concluida, scrollRef]);
 
@@ -796,17 +834,20 @@ function SessionExecution({
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      // Android: `enabled={false}` faz esse componente se comportar como uma
-      // View comum, sem NENHUM ajuste próprio — depende só do resize nativo
-      // (`softwareKeyboardLayoutMode: "resize"` no app.json), evitando o
-      // conflito de dupla-compensação que "height"/"padding" causariam ali
-      // junto com o adjustResize do sistema. iOS não tem resize nativo
-      // equivalente, então "padding" segue necessário — soma com o
-      // KeyboardAvoidingView da própria <Screen> (que envolve o ScrollView
-      // por fora): o de fora encolhe a área visível, este aqui abre espaço
-      // NO FIM do conteúdo rolável pra as últimas séries terem pra onde
-      // subir acima do teclado.
-      enabled={Platform.OS === 'ios'}>
+      // `enabled={false}` nos dois SOs agora: quem envolve esta árvore (ver
+      // HojeScreen) passou a ser o KeyboardAwareScrollView
+      // (react-native-keyboard-aware-scroll-view), que já cobre iOS por
+      // conta própria (escuta keyboardWillShow/Hide e ajusta contentInset +
+      // rola o campo focado, sem precisar de `enableOnAndroid` pra isso — só
+      // o Android depende dessa flag) e o Android via `enableOnAndroid` +
+      // resize nativo (`softwareKeyboardLayoutMode: "resize"` no app.json).
+      // Manter este KeyboardAvoidingView com `behavior="padding"` ativo no
+      // iOS, POR CIMA do que a lib já faz, dobraria a compensação (padding
+      // do KeyboardAvoidingView + contentInset do KeyboardAwareScrollView
+      // reagindo ao mesmo evento de teclado) — por isso fica desligado nos
+      // dois lados agora; o componente em si permanece só pra não precisar
+      // duplicar o JSX que ele envolve.
+      enabled={false}>
       {/* Escondido do usuário, mas DENTRO dos limites da tela — não a
           -9999pt de distância (o Android pula a pintura de views longe
           demais de qualquer viewport real, o que gerava PNG válido só que
