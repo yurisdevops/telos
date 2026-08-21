@@ -105,7 +105,11 @@ export function pickHighlightPr(prs: SessionPr[]): SessionPr | null {
   return prs.reduce((best, current) => (relativeGain(current) > relativeGain(best) ? current : best));
 }
 
-function relativeGain(pr: SessionPr): number {
+/** Exportado pra a tela de personalização de compartilhamento (WorkoutShareModal)
+ * reusar o mesmo cálculo ao listar o ganho relativo de cada PR da sessão —
+ * mesma fórmula que `pickHighlightPr` já usa internamente pra escolher o
+ * destaque automático. */
+export function relativeGain(pr: SessionPr): number {
   if (pr.cargaAnterior == null || pr.cargaAnterior <= 0) return Infinity;
   return (pr.cargaNova - pr.cargaAnterior) / pr.cargaAnterior;
 }

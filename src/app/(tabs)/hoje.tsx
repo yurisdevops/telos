@@ -30,6 +30,8 @@ import {
   WorkoutShareCard,
   type WorkoutShareMetrics,
 } from '@/components/share/workout-share-card';
+import { WorkoutShareModal } from '@/components/share/workout-share-modal';
+import { DEFAULT_SHARE_OPTIONS, type WorkoutShareOptions } from '@/components/share/types';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Chip } from '@/components/ui/chip';
@@ -611,6 +613,7 @@ function SessionExecution({
       totalExercises: activeItems.length,
       grupos,
       prDestaque,
+      sessionPrs,
       diasSemana,
       indiceHoje,
     }),
@@ -624,6 +627,7 @@ function SessionExecution({
       activeItems.length,
       grupos,
       prDestaque,
+      sessionPrs,
       diasSemana,
       indiceHoje,
     ]
@@ -639,8 +643,30 @@ function SessionExecution({
   // soma a mesma trava pro cálculo assíncrono do PR (ver acima).
   const shareCardRef = useRef<View>(null);
   const [cardReady, setCardReady] = useState(false);
-  const handleShareImage = useCallback(async () => {
+
+  // Opções de personalização (WorkoutShareModal, `src/components/share/`) —
+  // o card off-screen abaixo recebe esse mesmo estado, então a imagem
+  // capturada sempre reflete a última escolha confirmada no modal. Fica em
+  // DEFAULT_SHARE_OPTIONS (tudo ligado, PR automático) até o usuário
+  // personalizar e tocar "Compartilhar" dentro do modal.
+  const [shareOptions, setShareOptions] = useState<WorkoutShareOptions>(DEFAULT_SHARE_OPTIONS);
+  const [shareModalVisible, setShareModalVisible] = useState(false);
+
+  const handleOpenShareModal = useCallback(() => setShareModalVisible(true), []);
+
+  // Confirmação vinda do modal: grava as opções escolhidas (o card off-
+  // screen só reage a essa mudança no próximo render dele) e SÓ DEPOIS
+  // captura — precisa de um tick real pra essa nova árvore assentar no lado
+  // nativo antes do captureRef rasterizar, mesmo padrão de "duplo rAF" já
+  // usado em src/components/ui/input.tsx pra esperar um layout assentar
+  // antes de medir/agir sobre ele.
+  const handleConfirmShare = useCallback(async (options: WorkoutShareOptions) => {
+    setShareOptions(options);
+    await new Promise<void>((resolve) => {
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+    });
     await shareWorkoutImage(shareCardRef, SHARE_CARD_WIDTH, SHARE_CARD_HEIGHT);
+    setShareModalVisible(false);
   }, []);
 
   // Marcável/desmarcável a qualquer momento (durante o treino ou já
@@ -870,10 +896,19 @@ function SessionExecution({
         <WorkoutShareCard
           ref={shareCardRef}
           metrics={shareMetrics}
+          options={shareOptions}
           onLayout={() => setCardReady(true)}
           style={{ position: 'absolute', top: 0, left: 0 }}
         />
       </View>
+
+      <WorkoutShareModal
+        visible={shareModalVisible}
+        onClose={() => setShareModalVisible(false)}
+        metrics={shareMetrics}
+        sessionPrs={sessionPrs}
+        onShare={handleConfirmShare}
+      />
 
       <Text className="mb-1 font-display text-5xl uppercase text-text" numberOfLines={1}>
         {dayLabel}
@@ -919,7 +954,7 @@ function SessionExecution({
       )}
 
       {session.concluida && (
-        <Button className="mb-4" disabled={!cardReady || !prReady} onPress={handleShareImage}>
+        <Button className="mb-4" disabled={!cardReady || !prReady} onPress={handleOpenShareModal}>
           <View className="flex-row items-center gap-2">
             <Ionicons name="share-outline" size={18} color="#fff" />
             <Text className="font-label text-sm uppercase tracking-wide text-white">Compartilhar treino</Text>

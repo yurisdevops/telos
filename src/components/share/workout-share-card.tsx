@@ -3,7 +3,10 @@ import { Text, View, type LayoutChangeEvent, type StyleProp, type ViewStyle } fr
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { formatNumberPtBr } from '@/lib/format';
+import type { SessionPr } from '@/lib/personal-records';
 import { colors } from '@/theme/tokens';
+
+import type { WorkoutShareOptions } from './types';
 
 // Resolução final do PNG (passada como `width`/`height` de resize pro
 // `captureRef` em share-image.ts) — precisa manter a MESMA proporção de
@@ -22,8 +25,11 @@ export const SHARE_CARD_HEIGHT = 1680;
 // negativo). Nada aqui usa flex-1/justify-center pra "esticar" mais — cada
 // seção tem seu tamanho natural, e o `justify-between` do container só
 // distribui o que sobra como respiro, nunca aperta.
-const CARD_WIDTH = 360;
-const CARD_HEIGHT = 560;
+// Exportado pra a prévia ao vivo da tela de personalização (workout-share-
+// modal.tsx) escalar o card mantendo a proporção exata, sem duplicar os
+// números aqui.
+export const CARD_WIDTH = 360;
+export const CARD_HEIGHT = 560;
 
 export type WorkoutShareMetrics = {
   dayLabel: string;
@@ -38,8 +44,13 @@ export type WorkoutShareMetrics = {
   grupos: string[];
   /** PR em destaque desta sessão (já escolhido por quem monta as métricas,
    * ver pickHighlightPr em lib/personal-records.ts) — null = nenhum PR
-   * batido, omite a faixa inteira. */
+   * batido, omite a faixa inteira. Usado como fallback automático quando
+   * `options.prEscolhido` é `null` ou aponta pra um índice inválido. */
   prDestaque: { exerciseNome: string; cargaNova: number } | null;
+  /** Lista COMPLETA de PRs da sessão (mesmo array que alimenta a celebração
+   * em hoje.tsx) — a tela de personalização usa pra deixar o usuário
+   * escolher qual mostrar (`options.prEscolhido`, índice neste array). */
+  sessionPrs: SessionPr[];
   /** Dias com sessão concluída na semana atual (segunda-domingo) — índice 0
    * = segunda ... 6 = domingo, ver computeTrainedDaysInWeek em lib/stats.ts. */
   diasSemana: boolean[];
@@ -47,6 +58,14 @@ export type WorkoutShareMetrics = {
    * pra destacar o dia atual no marcador. */
   indiceHoje: number;
 };
+
+// Card 360×560 tem espaço natural pra 4 StatCell em grade 2×2 — com 1 a 3
+// métricas desligadas (WorkoutShareOptions), forçar sempre 2 colunas fixas
+// deixaria buraco(s) vazios no meio da grade. Em vez disso, as células
+// LIGADAS são listadas e distribuídas num grid flexível (flex-wrap, 2 por
+// linha) que se reorganiza sozinho pra qualquer contagem de 1 a 4 — a
+// simetria perfeita 2×2 só volta quando as 4 estão ligadas (o caso mais
+// comum, já que todas vêm ligadas por padrão).
 
 const WEEKDAY_LABELS = ['S', 'T', 'Q', 'Q', 'S', 'S', 'D']; // segunda .. domingo
 
@@ -65,8 +84,33 @@ const WEEKDAY_LABELS = ['S', 'T', 'Q', 'Q', 'S', 'S', 'D']; // segunda .. doming
  */
 export const WorkoutShareCard = forwardRef<
   View,
-  { metrics: WorkoutShareMetrics; style?: StyleProp<ViewStyle>; onLayout?: (event: LayoutChangeEvent) => void }
->(function WorkoutShareCard({ metrics, style, onLayout }, ref) {
+  {
+    metrics: WorkoutShareMetrics;
+    options: WorkoutShareOptions;
+    style?: StyleProp<ViewStyle>;
+    onLayout?: (event: LayoutChangeEvent) => void;
+  }
+>(function WorkoutShareCard({ metrics, options, style, onLayout }, ref) {
+  // PR a mostrar: options.mostrarPr desliga a faixa inteira; com ela ligada,
+  // um índice explícito escolhido pelo usuário (options.prEscolhido) vence —
+  // mas só se ainda for válido nesta `sessionPrs` (sessão diferente, lista
+  // menor etc. cai de volta pro automático). `null` (modo automático) sempre
+  // cai no `prDestaque` já resolvido por pickHighlightPr em hoje.tsx.
+  const escolhido =
+    options.prEscolhido != null ? metrics.sessionPrs[options.prEscolhido] : undefined;
+  const prParaMostrar = options.mostrarPr ? (escolhido ?? metrics.prDestaque) : null;
+
+  const statCells = [
+    options.mostrarDuracao && { key: 'duracao', value: metrics.durationLabel ?? '—', label: 'DURAÇÃO' },
+    options.mostrarVolume && { key: 'volume', value: formatNumberPtBr(metrics.volumeKg), label: 'VOLUME (KG)' },
+    options.mostrarSeries && { key: 'series', value: String(metrics.totalSeries), label: 'SÉRIES' },
+    options.mostrarExercicios && {
+      key: 'exercicios',
+      value: String(metrics.totalExercises),
+      label: 'EXERCÍCIOS',
+    },
+  ].filter((cell): cell is { key: string; value: string; label: string } => cell !== false);
+
   return (
     <View
       ref={ref}
@@ -105,26 +149,31 @@ export const WorkoutShareCard = forwardRef<
 
       <View className="h-px bg-border" />
 
-      {/* Miolo: 4 números em destaque, 2x2 — tamanho NATURAL (sem flex-1),
-          pra nunca ser espremida por outras seções quando o conteúdo total
-          crescer (grupos/PR/semana). */}
-      <View className="gap-6">
-        <View className="flex-row">
-          <StatCell value={metrics.durationLabel ?? '—'} label="DURAÇÃO" />
-          <StatCell value={formatNumberPtBr(metrics.volumeKg)} label="VOLUME (KG)" />
+      {/* Miolo: números em destaque — tamanho NATURAL (sem flex-1), pra nunca
+          ser espremida por outras seções quando o conteúdo total crescer
+          (grupos/PR/semana). Grid flexível: 2 por linha, se reorganiza
+          sozinho conforme quantas métricas estão ligadas (ver comentário
+          acima de WorkoutShareMetrics). Seção inteira some se as 4 estiverem
+          desligadas — `justify-between` do container redistribui o espaço. */}
+      {statCells.length > 0 && (
+        <View
+          className={`flex-row flex-wrap ${statCells.length === 1 ? 'justify-center' : 'justify-between'}`}
+          style={{ rowGap: 20 }}>
+          {statCells.map((cell) => (
+            <View key={cell.key} style={{ width: '47%' }}>
+              <StatCell value={cell.value} label={cell.label} />
+            </View>
+          ))}
         </View>
-        <View className="flex-row">
-          <StatCell value={String(metrics.totalSeries)} label="SÉRIES" />
-          <StatCell value={String(metrics.totalExercises)} label="EXERCÍCIOS" />
-        </View>
-      </View>
+      )}
 
-      {/* Faixa de PR — só existe quando há recorde; sem espaço reservado
-          quando não há (justify-between do container redistribui sozinho).
+      {/* Faixa de PR — só existe quando há recorde pra mostrar (metrics tem
+          PR E options.mostrarPr está ligado); sem espaço reservado quando
+          não há (justify-between do container redistribui sozinho).
           "Novo recorde" fica numa linha curta e fixa; o nome do exercício +
           carga (variável, pode ser longo) tem sua PRÓPRIA linha com até 2
           linhas + auto-encolhe, pra nunca estourar a largura do card. */}
-      {metrics.prDestaque && (
+      {prParaMostrar && (
         <View className="items-center">
           <View className="flex-row items-center gap-2">
             <Ionicons name="trophy" size={16} color={colors.accent} />
@@ -137,7 +186,7 @@ export const WorkoutShareCard = forwardRef<
             adjustsFontSizeToFit
             className="mt-1 text-center font-body-medium text-accent"
             style={{ fontSize: 14 }}>
-            {`${metrics.prDestaque.exerciseNome} · ${metrics.prDestaque.cargaNova}kg`}
+            {`${prParaMostrar.exerciseNome} · ${prParaMostrar.cargaNova}kg`}
           </Text>
         </View>
       )}
