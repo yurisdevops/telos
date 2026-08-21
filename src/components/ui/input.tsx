@@ -18,8 +18,17 @@ function mergeRefs<T>(...refs: (Ref<T> | undefined)[]) {
   };
 }
 
-export const Input = forwardRef<TextInput, TextInputProps>(function Input(
-  { className = '', onFocus, onBlur, ...props },
+type InputProps = TextInputProps & {
+  // Desliga o auto-scroll manual (scrollResponderScrollNativeHandleToKeyboard)
+  // deste campo específico — só a tela de Treino usa (SetRow em hoje.tsx),
+  // que agora depende de KeyboardAvoidingView (iOS) + resize nativo do
+  // Android em vez do scroll manual. Padrão `false`/ausente em todo o resto
+  // do app (Medidas, Perfil etc.) — nada muda pra quem não passar essa prop.
+  disableAutoScroll?: boolean;
+};
+
+export const Input = forwardRef<TextInput, InputProps>(function Input(
+  { className = '', onFocus, onBlur, disableAutoScroll, ...props },
   forwardedRef
 ) {
   const [focused, setFocused] = useState(false);
@@ -36,6 +45,7 @@ export const Input = forwardRef<TextInput, TextInputProps>(function Input(
       onFocus={(event) => {
         setFocused(true);
         onFocus?.(event);
+        if (disableAutoScroll) return;
         // Rola o ScrollView da Screen (via contexto) pra trazer ESTE campo
         // pra cima do teclado — sem isso, campos perto do fim de telas
         // longas (ex: panturrilha em Medidas corporais, aba Corpo) ficam
@@ -44,15 +54,8 @@ export const Input = forwardRef<TextInput, TextInputProps>(function Input(
         // libs de "keyboard aware scroll view" usam por baixo) — sem
         // dependência nova. `requestAnimationFrame`: dá um tick pro layout
         // assentar (troca de `focused` acima, teclado começando a abrir)
-        // antes de medir/rolar. `100`: folga acima do teclado, pra também
-        // mostrar o rótulo do campo, não só a borda dele.
-        // Duplo rAF: o primeiro tick só garante que o layout settou (troca de
-        // `focused` acima) — mas o teclado em si (principalmente Android)
-        // ainda pode estar no meio da animação de abertura nesse ponto, e
-        // `scrollResponderScrollNativeHandleToKeyboard` mede a posição do
-        // teclado NAQUELE instante. Um segundo rAF dá mais um frame de
-        // folga antes de medir/rolar. `120` (era `100`): folga um pouco
-        // maior acima do teclado.
+        // antes de medir/rolar. Duplo rAF + `120`: folga extra de frame e de
+        // distância, pro caso do teclado ainda estar abrindo no 1º tick.
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
             if (innerRef.current && scrollRef?.current) {

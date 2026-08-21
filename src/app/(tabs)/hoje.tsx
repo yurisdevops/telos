@@ -5,6 +5,7 @@ import {
   Easing,
   InputAccessoryView,
   Keyboard,
+  KeyboardAvoidingView,
   Modal,
   Platform,
   Pressable,
@@ -108,7 +109,7 @@ export default function HojeScreen() {
   return (
     <Screen edges={['top', 'left', 'right']} scrollable scrollRef={scrollRef}>
       <View className="pb-4 pt-2">
-        <Label>{getWeekdayLabel(today)} — OTA OK 2</Label>
+        <Label>{getWeekdayLabel(today)}</Label>
         <Text className="font-display text-4xl uppercase text-text">{formatDateNoWeekday(today)}</Text>
       </View>
 
@@ -792,7 +793,20 @@ function SessionExecution({
   }, [isRestDone]);
 
   return (
-    <View>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      // Android: `enabled={false}` faz esse componente se comportar como uma
+      // View comum, sem NENHUM ajuste próprio — depende só do resize nativo
+      // (`softwareKeyboardLayoutMode: "resize"` no app.json), evitando o
+      // conflito de dupla-compensação que "height"/"padding" causariam ali
+      // junto com o adjustResize do sistema. iOS não tem resize nativo
+      // equivalente, então "padding" segue necessário — soma com o
+      // KeyboardAvoidingView da própria <Screen> (que envolve o ScrollView
+      // por fora): o de fora encolhe a área visível, este aqui abre espaço
+      // NO FIM do conteúdo rolável pra as últimas séries terem pra onde
+      // subir acima do teclado.
+      enabled={Platform.OS === 'ios'}>
       {/* Escondido do usuário, mas DENTRO dos limites da tela — não a
           -9999pt de distância (o Android pula a pintura de views longe
           demais de qualquer viewport real, o que gerava PNG válido só que
@@ -928,7 +942,7 @@ function SessionExecution({
       <Button variant="destructive" onPress={handleCancel}>
         Cancelar sessão de hoje
       </Button>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -1582,6 +1596,7 @@ function SetRow({
             keyboardType="number-pad"
             placeholder="0"
             className="text-center font-display text-2xl"
+            disableAutoScroll
           />
         </View>
         <View className="flex-1 flex-row items-center gap-1">
@@ -1604,6 +1619,7 @@ function SetRow({
               keyboardType="decimal-pad"
               placeholder="0"
               className="flex-1 text-center font-display text-2xl"
+              disableAutoScroll
             />
           )}
           <Pressable
