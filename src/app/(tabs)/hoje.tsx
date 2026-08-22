@@ -15,7 +15,7 @@ import {
   Vibration,
   View,
 } from 'react-native';
-import { eq, ne, sql } from 'drizzle-orm';
+import { and, eq, ne, sql } from 'drizzle-orm';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { useRouter } from 'expo-router';
 import { useKeepAwake } from 'expo-keep-awake';
@@ -46,6 +46,8 @@ import { Label } from '@/components/ui/label';
 import { ProgressBar } from '@/components/ui/progress-bar';
 import { db } from '@/db';
 import {
+  cardioLogs,
+  cardioSessions,
   exercisePreferences,
   exercises,
   sessionExtraExercises,
@@ -57,6 +59,7 @@ import {
   workoutPlans,
   type Session,
 } from '@/db/schema';
+import { MODALIDADES_CARDIO, INTENSIDADES_CARDIO } from '@/lib/cardio';
 import {
   daysBetween,
   formatDateNoWeekday,
@@ -93,6 +96,7 @@ function reportError(context: string, err: unknown) {
 }
 
 export default function HojeScreen() {
+  const router = useRouter();
   const todayStr = getTodayDateString();
   const today = new Date();
   // Dois refs, um pra cada mecanismo de rolagem — nunca montados ao mesmo
@@ -110,6 +114,22 @@ export default function HojeScreen() {
   );
   const todaySession = todaySessions?.[0];
 
+  // Cardio em andamento hoje (modo B, sessão separada) — só as NÃO
+  // concluídas de propósito (diferente de `todaySessions` acima, que pega
+  // qualquer sessão de força do dia independente do status): uma vez
+  // concluída, o cardio de hoje "sai do caminho" — a aba volta a oferecer
+  // DayPicker/"Iniciar cardio" normalmente, permitindo até uma 2ª sessão de
+  // cardio ou um treino de força no mesmo dia. Musculação não funciona assim
+  // (fica mostrando o card "Treino concluído" pro resto do dia) — divergência
+  // deliberada entre os dois modos.
+  const { data: todayCardioRows } = useLiveQuery(
+    db
+      .select()
+      .from(cardioSessions)
+      .where(and(eq(cardioSessions.data, todayStr), eq(cardioSessions.concluida, false)))
+  );
+  const todayCardioSession = todayCardioRows?.[0] ?? null;
+
   const handleStartDay = async (dayId: number) => {
     try {
       await db.insert(sessions).values({
@@ -120,6 +140,50 @@ export default function HojeScreen() {
       });
     } catch (err) {
       reportError('Erro ao iniciar treino', err);
+    }
+  };
+
+  // Verifica se já existe cardioSession hoje (concluída ou não) antes de
+  // criar uma nova — 3 casos: em andamento (só navega), já concluída hoje
+  // (confirma antes de abrir outra) ou nenhuma ainda (cria direto).
+  const handleStartCardio = async () => {
+    try {
+      const existingRows = await db.select().from(cardioSessions).where(eq(cardioSessions.data, todayStr));
+      const existing = existingRows[0];
+
+      if (existing && !existing.concluida) {
+        router.push({ pathname: '/cardio/sessao', params: { cardioSessionId: String(existing.id) } });
+        return;
+      }
+
+      if (existing && existing.concluida) {
+        Alert.alert('Cardio de hoje já feito', 'Você já fez cardio hoje. Deseja iniciar outra sessão?', [
+          { text: 'Cancelar', style: 'cancel' },
+          {
+            text: 'Iniciar outra',
+            onPress: async () => {
+              try {
+                const [created] = await db
+                  .insert(cardioSessions)
+                  .values({ data: todayStr, horaInicio: Date.now(), concluida: false })
+                  .returning();
+                router.push({ pathname: '/cardio/sessao', params: { cardioSessionId: String(created.id) } });
+              } catch (err) {
+                reportError('Erro ao iniciar cardio', err);
+              }
+            },
+          },
+        ]);
+        return;
+      }
+
+      const [created] = await db
+        .insert(cardioSessions)
+        .values({ data: todayStr, horaInicio: Date.now(), concluida: false })
+        .returning();
+      router.push({ pathname: '/cardio/sessao', params: { cardioSessionId: String(created.id) } });
+    } catch (err) {
+      reportError('Erro ao iniciar cardio', err);
     }
   };
 
@@ -154,12 +218,45 @@ export default function HojeScreen() {
     );
   }
 
+  // Cardio em andamento (modo B) — substitui o DayPicker inteiro enquanto
+  // durar (nunca os dois ao mesmo tempo, ver comentário em todayCardioSession
+  // acima). Só um atalho pra continuar; o cronômetro/blocos/conclusão vivem
+  // todos em cardio/sessao.tsx.
+  if (todayCardioSession) {
+    return (
+      <Screen edges={['top', 'left', 'right']} scrollable scrollRef={scrollRef}>
+        {header}
+        <Card className="border-l-4 border-l-accent">
+          <Text className="font-card-title text-lg text-text">Cardio em andamento</Text>
+          <Label className="mt-1">Iniciado hoje</Label>
+          <Button
+            className="mt-3"
+            onPress={() =>
+              router.push({
+                pathname: '/cardio/sessao',
+                params: { cardioSessionId: String(todayCardioSession.id) },
+              })
+            }
+          >
+            Continuar
+          </Button>
+        </Card>
+      </Screen>
+    );
+  }
+
   // Sem sessão hoje (DayPicker): mantém <Screen scrollable> como sempre —
   // não tem campo de texto pra focar aqui, então não precisa da lib nova.
   return (
     <Screen edges={['top', 'left', 'right']} scrollable scrollRef={scrollRef}>
       {header}
       <DayPicker onStart={handleStartDay} todayStr={todayStr} />
+      <Button variant="secondary" className="mt-3" onPress={handleStartCardio}>
+        <View className="flex-row items-center gap-2">
+          <Ionicons name="flash-outline" size={18} color={colors.muted} />
+          <Text className="font-label text-sm uppercase tracking-wide text-muted">Iniciar cardio</Text>
+        </View>
+      </Button>
     </Screen>
   );
 }
@@ -388,6 +485,14 @@ function SessionExecution({
 
   const { data: logs } = useLiveQuery(
     db.select().from(setLogs).where(eq(setLogs.sessionId, session.id)),
+    [session.id]
+  );
+
+  // Blocos de cardio registrados dentro deste treino de força (modo A) —
+  // ver src/app/sessao/adicionar-cardio.tsx. Query própria, independente de
+  // `logs`/`setLogs` (tabela diferente).
+  const { data: cardioBlocks } = useLiveQuery(
+    db.select().from(cardioLogs).where(eq(cardioLogs.sessionId, session.id)),
     [session.id]
   );
 
@@ -810,6 +915,10 @@ function SessionExecution({
           style: 'destructive',
           onPress: async () => {
             try {
+              // cardioLogs entra aqui também (Cardio, Etapa B) — referencia
+              // sessions.id (modo A), então precisa sumir antes da sessão,
+              // mesma ordem filho-antes-do-pai do resto desta função.
+              await db.delete(cardioLogs).where(eq(cardioLogs.sessionId, session.id));
               await db.delete(setLogs).where(eq(setLogs.sessionId, session.id));
               await db.delete(sessionExtraExercises).where(eq(sessionExtraExercises.sessionId, session.id));
               await db.delete(sessionSkips).where(eq(sessionSkips.sessionId, session.id));
@@ -821,6 +930,23 @@ function SessionExecution({
         },
       ]
     );
+  };
+
+  const handleDeleteCardio = (id: number) => {
+    Alert.alert('Remover bloco de cardio', 'Remover este bloco de cardio?', [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Remover',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await db.delete(cardioLogs).where(eq(cardioLogs.id, id));
+          } catch (err) {
+            reportError('Erro ao remover cardio', err);
+          }
+        },
+      },
+    ]);
   };
 
   const handleSkip = useCallback(
@@ -1102,15 +1228,51 @@ function SessionExecution({
         />
       ))}
 
+      {(cardioBlocks ?? []).map((log) => {
+        const modalidade = MODALIDADES_CARDIO.find((m) => m.key === log.modalidade);
+        const intensidade = INTENSIDADES_CARDIO.find((i) => i.key === log.intensidade);
+        return (
+          <Card key={log.id} className="mb-3 flex-row items-center gap-3 px-4 py-3">
+            <Ionicons name={modalidade?.icon ?? 'fitness-outline'} size={20} color={colors.accent} />
+            <View className="flex-1">
+              <Text className="font-card-title text-sm text-text">{modalidade?.label ?? log.modalidade}</Text>
+              <Text className="font-label text-xs text-muted">
+                {`${log.duracaoMin} min${log.distanciaKm ? ` · ${log.distanciaKm}km` : ''} · ${
+                  intensidade?.label ?? log.intensidade
+                }`}
+              </Text>
+            </View>
+            <Pressable onPress={() => handleDeleteCardio(log.id)} hitSlop={8}>
+              <Ionicons name="close-outline" size={18} color={colors.muted} />
+            </Pressable>
+          </Card>
+        );
+      })}
+
       {!session.concluida && (
         <Button
           variant="secondary"
-          className="mb-4"
+          className="mb-3"
           onPress={() =>
             router.push({ pathname: '/sessao/adicionar-exercicio', params: { sessionId: String(session.id) } })
           }
         >
           + Adicionar exercício
+        </Button>
+      )}
+
+      {!session.concluida && (
+        <Button
+          variant="secondary"
+          className="mb-4"
+          onPress={() =>
+            router.push({ pathname: '/sessao/adicionar-cardio', params: { sessionId: String(session.id) } })
+          }
+        >
+          <View className="flex-row items-center gap-2">
+            <Ionicons name="bicycle-outline" size={18} color={colors.muted} />
+            <Text className="font-label text-sm uppercase tracking-wide text-muted">+ Cardio</Text>
+          </View>
         </Button>
       )}
 
