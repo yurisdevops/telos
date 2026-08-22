@@ -173,6 +173,37 @@ export type BackupUserProfile = {
   sexo: string | null;
 };
 
+// Fundação de cardio (Etapa A) — cardioSessions é standalone de verdade
+// (sem FK pra dentro do núcleo sessions/workoutPlans, mesmo espírito de
+// BackupBodyMeasurement) mas É referenciada por cardioLogs, então (ao
+// contrário de BackupBodyWeightLog/BackupDeloadWeek) precisa de resolução de
+// id na restauração — ver restoreCardioSessions em restore.ts.
+export type BackupCardioSession = {
+  id: number;
+  data: string;
+  horaInicio: number | null;
+  horaFim: number | null;
+  concluida: boolean;
+  obs: string | null;
+};
+
+// Bloco de cardio — usado nos DOIS modos (ver schema.ts): `sessionId`
+// (dentro de um treino de força, referencia BackupSession.id) OU
+// `cardioSessionId` (sessão separada só de cardio, referencia
+// BackupCardioSession.id). Exatamente um dos dois deve ser não-null — nunca
+// os dois, nunca nenhum; validate.ts recusa o backup se esse invariante for
+// violado (não é um campo "opcional ausente em backup antigo" — é uma
+// tabela nova inteira, sem baggage de compatibilidade retroativa própria).
+export type BackupCardioLog = {
+  id: number;
+  sessionId: number | null;
+  cardioSessionId: number | null;
+  modalidade: string;
+  duracaoMin: number;
+  distanciaKm: number | null;
+  intensidade: string;
+};
+
 export type BackupPayload = {
   formatVersion: number;
   exportedAt: string;
@@ -197,6 +228,10 @@ export type BackupPayload = {
   // Perfil — ausente em backups anteriores, normalizado pra `null` (não `[]`,
   // já que é um objeto único, não uma lista).
   userProfile: BackupUserProfile | null;
+  // Fundação de cardio (Etapa A) — ausentes em backups anteriores, mesma
+  // regra de normalização pra `[]`.
+  cardioSessions: BackupCardioSession[];
+  cardioLogs: BackupCardioLog[];
 };
 
 export type ImportMode = 'replace' | 'merge';
@@ -214,7 +249,9 @@ export type TableKey =
   | 'exercisePreferences'
   | 'exerciseSubstitutions'
   | 'userProfile'
-  | 'bodyMeasurements';
+  | 'bodyMeasurements'
+  | 'cardioSessions'
+  | 'cardioLogs';
 
 export type SkippedOrphanExercise = {
   table: TableKey;
@@ -243,4 +280,6 @@ export const TABLE_LABELS: Record<TableKey, string> = {
   exerciseSubstitutions: 'substituições de exercício',
   userProfile: 'perfil',
   bodyMeasurements: 'medidas corporais',
+  cardioSessions: 'sessões de cardio',
+  cardioLogs: 'blocos de cardio',
 };

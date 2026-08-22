@@ -113,6 +113,13 @@
       "when": 1787404310637,
       "tag": "0015_nebulous_centennial",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "6",
+      "when": 1787406021812,
+      "tag": "0016_new_cloak",
+      "breakpoints": true
     }
   ]
 }

@@ -4,6 +4,8 @@ import { db } from '@/db';
 import {
   bodyMeasurements,
   bodyWeightLogs,
+  cardioLogs,
+  cardioSessions,
   deloadWeeks,
   exercisePreferences,
   exercises,
@@ -40,6 +42,8 @@ export async function buildBackupPayload(): Promise<BackupPayload> {
     substitutionRows,
     profileRows,
     measurementRows,
+    cardioSessionRows,
+    cardioLogRows,
   ] = await Promise.all([
     db.select().from(workoutPlans),
     db.select().from(workoutDays),
@@ -55,6 +59,8 @@ export async function buildBackupPayload(): Promise<BackupPayload> {
     db.select().from(exerciseSubstitutions),
     db.select().from(userProfile).where(eq(userProfile.id, USER_PROFILE_ID)),
     db.select().from(bodyMeasurements),
+    db.select().from(cardioSessions),
+    db.select().from(cardioLogs),
   ]);
   const profile = profileRows[0];
 
@@ -180,5 +186,22 @@ export async function buildBackupPayload(): Promise<BackupPayload> {
           sexo: profile.sexo,
         }
       : null,
+    cardioSessions: cardioSessionRows.map((cs) => ({
+      id: cs.id,
+      data: cs.data,
+      horaInicio: cs.horaInicio,
+      horaFim: cs.horaFim,
+      concluida: cs.concluida,
+      obs: cs.obs,
+    })),
+    cardioLogs: cardioLogRows.map((cl) => ({
+      id: cl.id,
+      sessionId: cl.sessionId,
+      cardioSessionId: cl.cardioSessionId,
+      modalidade: cl.modalidade,
+      duracaoMin: cl.duracaoMin,
+      distanciaKm: cl.distanciaKm,
+      intensidade: cl.intensidade,
+    })),
   };
 }

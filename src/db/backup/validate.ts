@@ -109,6 +109,13 @@ export function assertValidBackupPayload(json: unknown): BackupPayload {
   // `undefined` (chave ausente) é normalizado.
   if (json.userProfile === undefined) json.userProfile = null;
 
+  // Fundação de cardio (Etapa A) — ausentes em backups anteriores, mesma
+  // regra de ausência das tabelas acima.
+  if (json.cardioSessions === undefined) json.cardioSessions = [];
+  if (json.cardioLogs === undefined) json.cardioLogs = [];
+  assertArray(json.cardioSessions, 'cardioSessions');
+  assertArray(json.cardioLogs, 'cardioLogs');
+
   json.workoutPlans.forEach((row, index) => {
     if (!isRecord(row)) throw new BackupValidationError(`workoutPlans[${index}] inválido.`);
     assertNumber(row.id, `workoutPlans[${index}].id`);
@@ -279,6 +286,43 @@ export function assertValidBackupPayload(json: unknown): BackupPayload {
     assertOptionalNullableString(json.userProfile.sexo, 'userProfile.sexo');
     if (json.userProfile.sexo === undefined) json.userProfile.sexo = null;
   }
+
+  json.cardioSessions.forEach((row, index) => {
+    if (!isRecord(row)) throw new BackupValidationError(`cardioSessions[${index}] inválido.`);
+    assertNumber(row.id, `cardioSessions[${index}].id`);
+    assertString(row.data, `cardioSessions[${index}].data`);
+    assertNullableNumber(row.horaInicio, `cardioSessions[${index}].horaInicio`);
+    assertNullableNumber(row.horaFim, `cardioSessions[${index}].horaFim`);
+    assertBoolean(row.concluida, `cardioSessions[${index}].concluida`);
+    assertOptionalNullableString(row.obs, `cardioSessions[${index}].obs`);
+    if (row.obs === undefined) row.obs = null;
+  });
+
+  json.cardioLogs.forEach((row, index) => {
+    if (!isRecord(row)) throw new BackupValidationError(`cardioLogs[${index}] inválido.`);
+    assertNumber(row.id, `cardioLogs[${index}].id`);
+    assertNullableNumber(row.sessionId, `cardioLogs[${index}].sessionId`);
+    assertNullableNumber(row.cardioSessionId, `cardioLogs[${index}].cardioSessionId`);
+    // Invariante da aplicação (ver schema.ts/types.ts): exatamente um dos
+    // dois deve ser não-null — nunca os dois, nunca nenhum. Um backup que
+    // viole isso está corrompido/malformado; rejeita explicitamente em vez
+    // de deixar a linha órfã silenciosa na restauração.
+    if (row.sessionId == null && row.cardioSessionId == null) {
+      throw new BackupValidationError(
+        `cardioLogs[${index}]: sessionId e cardioSessionId não podem ser os dois nulos.`
+      );
+    }
+    if (row.sessionId != null && row.cardioSessionId != null) {
+      throw new BackupValidationError(
+        `cardioLogs[${index}]: sessionId e cardioSessionId não podem estar os dois preenchidos.`
+      );
+    }
+    assertString(row.modalidade, `cardioLogs[${index}].modalidade`);
+    assertNumber(row.duracaoMin, `cardioLogs[${index}].duracaoMin`);
+    assertOptionalNullableNumber(row.distanciaKm, `cardioLogs[${index}].distanciaKm`);
+    if (row.distanciaKm === undefined) row.distanciaKm = null;
+    assertString(row.intensidade, `cardioLogs[${index}].intensidade`);
+  });
 
   return json as unknown as BackupPayload;
 }

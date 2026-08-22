@@ -246,3 +246,41 @@ export const userProfile = sqliteTable('user_profile', {
 
 export type UserProfile = typeof userProfile.$inferSelect;
 export type NewUserProfile = typeof userProfile.$inferInsert;
+
+// Fundação de cardio (Etapa A) — sessão SEPARADA só de cardio (modo B),
+// standalone de propósito: sem FK pra sessions/workoutPlans, mesmo padrão já
+// usado por body_measurements/user_profile/deload_weeks. `sessions.
+// workoutDayId` é NOT NULL (investigado antes desta etapa) — torná-la
+// nullable pra caber cardio ali quebraria silenciosamente todo innerJoin
+// que já assume essa FK (ex: WorkoutHistorySection, AdherenceSection).
+// Criar uma tabela irmã evita esse risco por completo.
+export const cardioSessions = sqliteTable('cardio_sessions', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  data: text('data').notNull(),
+  horaInicio: integer('hora_inicio'),
+  horaFim: integer('hora_fim'),
+  concluida: integer('concluida', { mode: 'boolean' }).notNull().default(false),
+  obs: text('obs'),
+});
+
+export type CardioSession = typeof cardioSessions.$inferSelect;
+export type NewCardioSession = typeof cardioSessions.$inferInsert;
+
+// Blocos de cardio — usado nos DOIS modos: dentro de um treino de força
+// (sessionId aponta pra `sessions`) OU numa sessão separada só de cardio
+// (cardioSessionId aponta pra `cardioSessions`). As duas FKs são nullable no
+// schema porque SQLite não tem constraint nativa de "exatamente uma das
+// duas preenchida" sem trigger — esse invariante é enforçado na aplicação
+// (quem grava sempre preenche uma e deixa a outra `null`), nunca no banco.
+export const cardioLogs = sqliteTable('cardio_logs', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  sessionId: integer('session_id').references(() => sessions.id),
+  cardioSessionId: integer('cardio_session_id').references(() => cardioSessions.id),
+  modalidade: text('modalidade').notNull(),
+  duracaoMin: integer('duracao_min').notNull(),
+  distanciaKm: real('distancia_km'),
+  intensidade: text('intensidade').notNull(),
+});
+
+export type CardioLog = typeof cardioLogs.$inferSelect;
+export type NewCardioLog = typeof cardioLogs.$inferInsert;

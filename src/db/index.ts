@@ -89,6 +89,15 @@ const MIGRATION_COLUMN_RECONCILE_CASES: { table: string; column: string; tag: st
 const MIGRATION_TABLE_RECONCILE_CASES: { table: string; tag: string }[] = [
   { table: 'user_profile', tag: '0008_little_maginty' },
   { table: 'body_measurements', tag: '0013_green_saracen' },
+  // cardio_logs e cardio_sessions nascem juntas no mesmo arquivo (0016) —
+  // mesma justificativa de atomicidade já usada pro caso `sexo`/
+  // body_measurements acima (SQLiteSyncDialect.migrate() envolve todas as
+  // migrações pendentes de um lote num único BEGIN/COMMIT), então "uma
+  // tabela criada mas a outra não" não acontece pela via normal do
+  // migrate() — as duas entradas convergem pro mesmo tag sem duplicar linha
+  // de bookkeeping (mesmo comportamento já verificado nesse caso anterior).
+  { table: 'cardio_logs', tag: '0016_new_cloak' },
+  { table: 'cardio_sessions', tag: '0016_new_cloak' },
 ];
 
 function tableExists(table: string): boolean {

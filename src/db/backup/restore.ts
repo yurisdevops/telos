@@ -1,9 +1,11 @@
-import { eq, isNull } from 'drizzle-orm';
+import { and, eq, isNotNull, isNull } from 'drizzle-orm';
 
 import { db } from '@/db';
 import {
   bodyMeasurements,
   bodyWeightLogs,
+  cardioLogs,
+  cardioSessions,
   deloadWeeks,
   exercisePreferences,
   exercises,
@@ -22,6 +24,8 @@ import { USER_PROFILE_ID } from '@/db/user-profile';
 import type {
   BackupBodyMeasurement,
   BackupBodyWeightLog,
+  BackupCardioLog,
+  BackupCardioSession,
   BackupDeloadWeek,
   BackupExercisePreference,
   BackupExerciseSubstitution,
@@ -56,6 +60,8 @@ function emptySummary(): ImportSummary {
     exerciseSubstitutions: 0,
     userProfile: 0,
     bodyMeasurements: 0,
+    cardioSessions: 0,
+    cardioLogs: 0,
   });
   return {
     inserted: zeroTable(),
@@ -70,8 +76,12 @@ function buildWgerIdMap(tx: Tx): Map<number, number> {
   return new Map(rows.map((r) => [r.wgerId, r.id]));
 }
 
-// Ordem segura de FK — nunca toca no catálogo de exercícios.
+// Ordem segura de FK — nunca toca no catálogo de exercícios. cardioLogs
+// referencia sessions E cardioSessions (as duas FKs nullable, ver
+// schema.ts) — apagada antes das duas, mesmo raciocínio de setLogs antes de
+// sessions.
 function wipeUserData(tx: Tx) {
+  tx.delete(cardioLogs).run();
   tx.delete(setLogs).run();
   tx.delete(sessionSkips).run();
   tx.delete(sessionExtraExercises).run();
@@ -84,6 +94,7 @@ function wipeUserData(tx: Tx) {
   tx.delete(exercisePreferences).run();
   tx.delete(exerciseSubstitutions).run();
   tx.delete(bodyMeasurements).run();
+  tx.delete(cardioSessions).run();
 }
 
 function restorePlans(
@@ -570,6 +581,116 @@ function restoreUserProfile(tx: Tx, row: BackupUserProfile | null, summary: Impo
   summary.inserted.userProfile += 1;
 }
 
+// Fundação de cardio (Etapa A) — cardioSessions é standalone do NÚCLEO
+// (sessions/workoutPlans), mas precisa de idMap de retorno porque
+// cardioLogs pode referenciá-la (diferente de restoreBodyWeightLogs/
+// restoreDeloadWeeks, que nada referencia). Merge por `(data, horaInicio)`:
+// mesmo dia E mesmo horário de início é o par mais estável disponível pra
+// reconhecer "a mesma sessão de cardio" sem um FK-pai como workoutDayId
+// (que a sessão de força usa) pra ajudar a desambiguar.
+function restoreCardioSessions(
+  tx: Tx,
+  rows: BackupCardioSession[],
+  mode: ImportMode,
+  summary: ImportSummary
+): Map<number, number> {
+  const idMap = new Map<number, number>();
+  const existing = mode === 'merge' ? tx.select().from(cardioSessions).all() : [];
+
+  for (const row of rows) {
+    if (mode === 'merge') {
+      const candidates = existing.filter((e) => e.data === row.data && e.horaInicio === row.horaInicio);
+      if (candidates.length === 1) {
+        idMap.set(row.id, candidates[0].id);
+        summary.reused.cardioSessions += 1;
+        continue;
+      }
+      if (candidates.length > 1) {
+        summary.ambiguous.cardioSessions += 1;
+      }
+    }
+
+    const created = tx
+      .insert(cardioSessions)
+      .values({
+        data: row.data,
+        horaInicio: row.horaInicio,
+        horaFim: row.horaFim,
+        concluida: row.concluida,
+        obs: row.obs,
+      })
+      .returning()
+      .get();
+    idMap.set(row.id, created.id);
+    summary.inserted.cardioSessions += 1;
+  }
+
+  return idMap;
+}
+
+// Bloco de cardio — usa QUAL dos 2 mapas de id conforme qual campo o backup
+// trouxe preenchido (validate.ts já garante que é exatamente um dos dois,
+// nunca os dois nem nenhum). Se o lado preenchido não resolver no mapa
+// correspondente (a sessão-pai não foi restaurada, ex: merge que reusou uma
+// diferente), a linha inteira é pulada — mesmo critério de "FK-pai não
+// resolvida = pula" já usado em restoreSetLogs/restoreExtraExercises/
+// restoreSkips.
+function restoreCardioLogs(
+  tx: Tx,
+  rows: BackupCardioLog[],
+  sessionIdMap: Map<number, number>,
+  cardioSessionIdMap: Map<number, number>,
+  mode: ImportMode,
+  summary: ImportSummary
+) {
+  const existing = mode === 'merge' ? tx.select().from(cardioLogs).all() : [];
+
+  for (const row of rows) {
+    let localSessionId: number | null = null;
+    if (row.sessionId != null) {
+      const resolved = sessionIdMap.get(row.sessionId);
+      if (resolved === undefined) continue;
+      localSessionId = resolved;
+    }
+
+    let localCardioSessionId: number | null = null;
+    if (row.cardioSessionId != null) {
+      const resolved = cardioSessionIdMap.get(row.cardioSessionId);
+      if (resolved === undefined) continue;
+      localCardioSessionId = resolved;
+    }
+
+    if (mode === 'merge') {
+      const candidates = existing.filter(
+        (e) =>
+          e.sessionId === localSessionId &&
+          e.cardioSessionId === localCardioSessionId &&
+          e.modalidade === row.modalidade &&
+          e.duracaoMin === row.duracaoMin
+      );
+      if (candidates.length === 1) {
+        summary.reused.cardioLogs += 1;
+        continue;
+      }
+      if (candidates.length > 1) {
+        summary.ambiguous.cardioLogs += 1;
+      }
+    }
+
+    tx.insert(cardioLogs)
+      .values({
+        sessionId: localSessionId,
+        cardioSessionId: localCardioSessionId,
+        modalidade: row.modalidade,
+        duracaoMin: row.duracaoMin,
+        distanciaKm: row.distanciaKm,
+        intensidade: row.intensidade,
+      })
+      .run();
+    summary.inserted.cardioLogs += 1;
+  }
+}
+
 // Rede de segurança final — o algoritmo acima já garante isso por construção
 // (toda inserção resolve a FK por um mapa ou é pulada), mas é barato conferir
 // de novo antes de confirmar, no mesmo espírito da migração de catálogo do
@@ -666,6 +787,24 @@ function validateNoOrphans(tx: Tx) {
         .where(isNull(exercises.id))
         .all(),
     ],
+    [
+      'bloco(s) de cardio com sessão de força inexistente',
+      tx
+        .select({ id: cardioLogs.id })
+        .from(cardioLogs)
+        .leftJoin(sessions, eq(cardioLogs.sessionId, sessions.id))
+        .where(and(isNotNull(cardioLogs.sessionId), isNull(sessions.id)))
+        .all(),
+    ],
+    [
+      'bloco(s) de cardio com sessão de cardio inexistente',
+      tx
+        .select({ id: cardioLogs.id })
+        .from(cardioLogs)
+        .leftJoin(cardioSessions, eq(cardioLogs.cardioSessionId, cardioSessions.id))
+        .where(and(isNotNull(cardioLogs.cardioSessionId), isNull(cardioSessions.id)))
+        .all(),
+    ],
   ];
 
   for (const [description, rows] of checks) {
@@ -700,6 +839,12 @@ export function importBackupPayload(payload: BackupPayload, mode: ImportMode): I
     restoreExerciseSubstitutions(tx, payload.exerciseSubstitutions, mode, summary);
     restoreUserProfile(tx, payload.userProfile, summary);
     restoreBodyMeasurements(tx, payload.bodyMeasurements, mode, summary);
+
+    // cardioSessions antes de cardioLogs (cardioLogs pode referenciá-la);
+    // sessionIdMap já existe desde restoreSessions acima — cardioLogs pode
+    // depender dela também (modo A, bloco dentro de treino de força).
+    const cardioSessionIdMap = restoreCardioSessions(tx, payload.cardioSessions, mode, summary);
+    restoreCardioLogs(tx, payload.cardioLogs, sessionIdMap, cardioSessionIdMap, mode, summary);
 
     validateNoOrphans(tx);
 
