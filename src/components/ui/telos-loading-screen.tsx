@@ -130,7 +130,7 @@ export function TelosLoadingScreen({
             profundidade. */}
         <Image
           source={require('../../../assets/images/adaptive-icon.png')}
-          style={{ width: 120, height: 120, alignSelf: 'center' }}
+          style={{ width: 160, height: 160, alignSelf: 'center' }}
           resizeMode="contain"
         />
         <Text
@@ -168,45 +168,54 @@ export function TelosLoadingScreen({
         </Text>
       </View>
 
-      <Animated.View style={{ alignItems: 'center', opacity: iconOpacity }}>
-        <Ionicons name={icon.name} size={52} color={colors.text} />
-        <Text
-          style={{
-            marginTop: 8,
-            fontFamily: fonts.label,
-            fontSize: 11,
-            color: colors.muted,
-            letterSpacing: 2,
-            textTransform: 'uppercase',
-          }}>
-          {icon.label}
-        </Text>
-      </Animated.View>
-
+      {/* Ícone de treino + barra de progresso juntos num grupo só — root
+          continua `justifyContent:'space-between'` com só 2 filhos agora
+          (cabeçalho em cima, este grupo embaixo), então o espaço sobrando
+          fica todo ENTRE os dois grupos, não mais dividido em 3 partes — a
+          barra fica coladinha no ícone (marginTop:16) em vez de espalhada
+          lá embaixo sozinha; o "espaço no fim" continua sendo o mesmo
+          paddingVertical:80 do container raiz, sem precisar de nada extra. */}
       <View style={{ alignItems: 'center' }}>
-        <View
-          style={{
-            width: 220,
-            height: 8,
-            backgroundColor: colors.border,
-            borderRadius: 4,
-            overflow: 'hidden',
-          }}>
-          <Animated.View
-            style={{ width: barWidth, height: '100%', backgroundColor: colors.accent, borderRadius: 4 }}
-          />
+        <Animated.View style={{ alignItems: 'center', opacity: iconOpacity }}>
+          <Ionicons name={icon.name} size={52} color={colors.text} />
+          <Text
+            style={{
+              marginTop: 8,
+              fontFamily: fonts.label,
+              fontSize: 11,
+              color: colors.muted,
+              letterSpacing: 2,
+              textTransform: 'uppercase',
+            }}>
+            {icon.label}
+          </Text>
+        </Animated.View>
+
+        <View style={{ alignItems: 'center', marginTop: 16 }}>
+          <View
+            style={{
+              width: 220,
+              height: 8,
+              backgroundColor: colors.border,
+              borderRadius: 4,
+              overflow: 'hidden',
+            }}>
+            <Animated.View
+              style={{ width: barWidth, height: '100%', backgroundColor: colors.accent, borderRadius: 4 }}
+            />
+          </View>
+          <Text
+            style={{
+              marginTop: 6,
+              width: 220,
+              fontFamily: fonts.label,
+              fontSize: 11,
+              color: colors.muted,
+              textAlign: 'right',
+            }}>
+            {`${percent}%`}
+          </Text>
         </View>
-        <Text
-          style={{
-            marginTop: 6,
-            width: 220,
-            fontFamily: fonts.label,
-            fontSize: 11,
-            color: colors.muted,
-            textAlign: 'right',
-          }}>
-          {`${percent}%`}
-        </Text>
       </View>
     </View>
   );
