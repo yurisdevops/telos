@@ -1,0 +1,1 @@
+ALTER TABLE `set_logs` ADD `aquecimento` integer DEFAULT false NOT NULL;

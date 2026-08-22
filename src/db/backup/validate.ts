@@ -185,6 +185,8 @@ export function assertValidBackupPayload(json: unknown): BackupPayload {
     if (row.rpe === undefined) row.rpe = null;
     assertOptionalBoolean(row.pesoCorporal, `setLogs[${index}].pesoCorporal`);
     if (row.pesoCorporal === undefined) row.pesoCorporal = false;
+    assertOptionalBoolean(row.aquecimento, `setLogs[${index}].aquecimento`);
+    if (row.aquecimento === undefined) row.aquecimento = false;
   });
 
   json.bodyWeightLogs.forEach((row, index) => {

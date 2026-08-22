@@ -76,6 +76,10 @@ export type BackupSetLog = {
   // Peso corporal: sempre presente e normalizado para `false` em backups
   // antigos, de antes dessa feature existir.
   pesoCorporal: boolean;
+  // Aquecimento: mesmo padrão de pesoCorporal acima — sempre presente e
+  // normalizado para `false` em backups antigos, de antes dessa coluna
+  // existir (migração 0015).
+  aquecimento: boolean;
 };
 
 // Onda 4 — tabelas standalone, sem FK nenhuma (não referenciam nem são

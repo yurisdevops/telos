@@ -128,6 +128,7 @@ export async function buildBackupPayload(): Promise<BackupPayload> {
         carga: log.carga,
         rpe: log.rpe,
         pesoCorporal: log.pesoCorporal,
+        aquecimento: log.aquecimento,
       };
     }),
     bodyWeightLogs: weightLogs.map((w) => ({ id: w.id, data: w.data, pesoKg: w.pesoKg })),

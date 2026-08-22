@@ -74,6 +74,7 @@ const MIGRATION_COLUMN_RECONCILE_CASES: { table: string; column: string; tag: st
   { table: 'body_measurements', column: 'coxa_dir_cm', tag: '0014_steep_cobalt_man' },
   { table: 'body_measurements', column: 'panturrilha_esq_cm', tag: '0014_steep_cobalt_man' },
   { table: 'body_measurements', column: 'panturrilha_dir_cm', tag: '0014_steep_cobalt_man' },
+  { table: 'set_logs', column: 'aquecimento', tag: '0015_nebulous_centennial' },
 ];
 
 /**
