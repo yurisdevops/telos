@@ -80,6 +80,7 @@ import { suggestRestSeconds } from '@/lib/suggest-rest';
 import { shareWorkoutImage } from '@/lib/share-image';
 import { findSessionPrs, pickHighlightPr, type SessionPr } from '@/lib/personal-records';
 import { computeTrainedDaysInWeek } from '@/lib/stats';
+import { useConfirmDialog } from '@/lib/use-confirm-dialog';
 import { formatLastPerformance, useLastPerformance } from '@/lib/use-last-performance';
 import { colors } from '@/theme/tokens';
 
@@ -111,6 +112,7 @@ function reportError(context: string, err: unknown) {
 
 export default function HojeScreen() {
   const router = useRouter();
+  const { confirm, dialog } = useConfirmDialog();
   const todayStr = getTodayDateString();
   const today = new Date();
   // Dois refs, um pra cada mecanismo de rolagem — nunca montados ao mesmo
@@ -171,23 +173,22 @@ export default function HojeScreen() {
       }
 
       if (existing && existing.concluida) {
-        Alert.alert('Cardio de hoje já feito', 'Você já fez cardio hoje. Deseja iniciar outra sessão?', [
-          { text: 'Cancelar', style: 'cancel' },
-          {
-            text: 'Iniciar outra',
-            onPress: async () => {
-              try {
-                const [created] = await db
-                  .insert(cardioSessions)
-                  .values({ data: todayStr, horaInicio: Date.now(), concluida: false })
-                  .returning();
-                router.push({ pathname: '/cardio/sessao', params: { cardioSessionId: String(created.id) } });
-              } catch (err) {
-                reportError('Erro ao iniciar cardio', err);
-              }
-            },
-          },
-        ]);
+        const ok = await confirm({
+          title: 'Cardio de hoje já feito',
+          message: 'Você já fez cardio hoje. Deseja iniciar outra sessão?',
+          confirmLabel: 'Iniciar outra',
+        });
+        if (ok) {
+          try {
+            const [created] = await db
+              .insert(cardioSessions)
+              .values({ data: todayStr, horaInicio: Date.now(), concluida: false })
+              .returning();
+            router.push({ pathname: '/cardio/sessao', params: { cardioSessionId: String(created.id) } });
+          } catch (err) {
+            reportError('Erro ao iniciar cardio', err);
+          }
+        }
         return;
       }
 
@@ -264,13 +265,45 @@ export default function HojeScreen() {
   return (
     <Screen edges={['top', 'left', 'right']} scrollable scrollRef={scrollRef}>
       {header}
+
+      {/* Dois cards grandes de entrada — Musculação e Cardio. Só aparecem
+          aqui (nada em andamento): os dois modos são mutuamente exclusivos e
+          tomam a tela inteira quando ativos (ver branches acima), então não
+          há risco dos dois cards e uma sessão em andamento coexistirem. */}
+      <View className="mb-6 mt-2 flex-row gap-3">
+        <Pressable
+          className="flex-1 items-center gap-3 rounded-xl border border-border bg-surface p-5"
+          onPress={() => scrollRef.current?.scrollTo({ y: 200, animated: true })}>
+          <View
+            className="h-14 w-14 items-center justify-center rounded-full"
+            style={{ backgroundColor: `${colors.accent}1A` }}>
+            <Ionicons name="barbell-outline" size={28} color={colors.accent} />
+          </View>
+          <View className="items-center gap-1">
+            <Text className="font-display text-base uppercase text-text">Musculação</Text>
+            <Text className="text-center font-label text-xs text-muted">Escolha seu treino abaixo</Text>
+          </View>
+        </Pressable>
+
+        <Pressable
+          className="flex-1 items-center gap-3 rounded-xl border border-border bg-surface p-5"
+          onPress={handleStartCardio}>
+          <View
+            className="h-14 w-14 items-center justify-center rounded-full"
+            style={{ backgroundColor: `${colors.accent}1A` }}>
+            <Ionicons name="heart-outline" size={28} color={colors.accent} />
+          </View>
+          <View className="items-center gap-1">
+            <Text className="font-display text-base uppercase text-text">Cardio</Text>
+            <Text className="text-center font-label text-xs text-muted">Iniciar sessão de cardio</Text>
+          </View>
+        </Pressable>
+      </View>
+
+      <Text className="mb-3 font-label text-xs uppercase tracking-wide text-muted">Treinos de musculação</Text>
+
       <DayPicker onStart={handleStartDay} todayStr={todayStr} />
-      <Button variant="secondary" className="mt-3" onPress={handleStartCardio}>
-        <View className="flex-row items-center gap-2">
-          <Ionicons name="flash-outline" size={18} color={colors.muted} />
-          <Text className="font-label text-sm uppercase tracking-wide text-muted">Iniciar cardio</Text>
-        </View>
-      </Button>
+      {dialog}
     </Screen>
   );
 }
@@ -418,6 +451,7 @@ function SessionExecution({
 }) {
   const router = useRouter();
   const now = useNow(1000);
+  const { confirm, dialog } = useConfirmDialog();
 
   // Rola pro topo só na TRANSIÇÃO false→true (o momento exato de concluir) —
   // nunca ao montar já concluída (reabrir o app/voltar pra aba com o treino
@@ -898,69 +932,55 @@ function SessionExecution({
     }
   };
 
-  const handleReopen = () => {
-    Alert.alert(
-      'Reabrir treino?',
-      'O treino volta pro estado editável — você poderá corrigir séries, cargas e exercícios, e concluir de novo.',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Reabrir',
-          onPress: async () => {
-            try {
-              await db.update(sessions).set({ concluida: false }).where(eq(sessions.id, session.id));
-            } catch (err) {
-              reportError('Erro ao reabrir treino', err);
-            }
-          },
-        },
-      ]
-    );
+  const handleReopen = async () => {
+    const ok = await confirm({
+      title: 'Reabrir treino?',
+      message: 'O treino volta pro estado editável — você poderá corrigir séries, cargas e exercícios, e concluir de novo.',
+      confirmLabel: 'Reabrir',
+    });
+    if (!ok) return;
+    try {
+      await db.update(sessions).set({ concluida: false }).where(eq(sessions.id, session.id));
+    } catch (err) {
+      reportError('Erro ao reabrir treino', err);
+    }
   };
 
-  const handleCancel = () => {
-    Alert.alert(
-      'Cancelar sessão',
-      'Isso apaga o treino de hoje e os registros feitos. Deseja continuar?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Apagar',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              // cardioLogs entra aqui também (Cardio, Etapa B) — referencia
-              // sessions.id (modo A), então precisa sumir antes da sessão,
-              // mesma ordem filho-antes-do-pai do resto desta função.
-              await db.delete(cardioLogs).where(eq(cardioLogs.sessionId, session.id));
-              await db.delete(setLogs).where(eq(setLogs.sessionId, session.id));
-              await db.delete(sessionExtraExercises).where(eq(sessionExtraExercises.sessionId, session.id));
-              await db.delete(sessionSkips).where(eq(sessionSkips.sessionId, session.id));
-              await db.delete(sessions).where(eq(sessions.id, session.id));
-            } catch (err) {
-              reportError('Erro ao cancelar sessão', err);
-            }
-          },
-        },
-      ]
-    );
+  const handleCancel = async () => {
+    const ok = await confirm({
+      title: 'Cancelar sessão',
+      message: 'Isso apaga o treino de hoje e os registros feitos. Deseja continuar?',
+      confirmLabel: 'Apagar',
+      variant: 'destructive',
+    });
+    if (!ok) return;
+    try {
+      // cardioLogs entra aqui também (Cardio, Etapa B) — referencia
+      // sessions.id (modo A), então precisa sumir antes da sessão,
+      // mesma ordem filho-antes-do-pai do resto desta função.
+      await db.delete(cardioLogs).where(eq(cardioLogs.sessionId, session.id));
+      await db.delete(setLogs).where(eq(setLogs.sessionId, session.id));
+      await db.delete(sessionExtraExercises).where(eq(sessionExtraExercises.sessionId, session.id));
+      await db.delete(sessionSkips).where(eq(sessionSkips.sessionId, session.id));
+      await db.delete(sessions).where(eq(sessions.id, session.id));
+    } catch (err) {
+      reportError('Erro ao cancelar sessão', err);
+    }
   };
 
-  const handleDeleteCardio = (id: number) => {
-    Alert.alert('Remover bloco de cardio', 'Remover este bloco de cardio?', [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Remover',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            await db.delete(cardioLogs).where(eq(cardioLogs.id, id));
-          } catch (err) {
-            reportError('Erro ao remover cardio', err);
-          }
-        },
-      },
-    ]);
+  const handleDeleteCardio = async (id: number) => {
+    const ok = await confirm({
+      title: 'Remover bloco de cardio',
+      message: 'Remover este bloco de cardio?',
+      confirmLabel: 'Remover',
+      variant: 'destructive',
+    });
+    if (!ok) return;
+    try {
+      await db.delete(cardioLogs).where(eq(cardioLogs.id, id));
+    } catch (err) {
+      reportError('Erro ao remover cardio', err);
+    }
   };
 
   const handleSkip = useCallback(
@@ -982,25 +1002,26 @@ function SessionExecution({
     }
   }, []);
 
+  // `confirm` (do useConfirmDialog acima) não entra nas deps de propósito —
+  // mesmo raciocínio de handleUnskip logo abaixo: não referencia estado
+  // nenhum que fique desatualizado entre renders (só chama setState, que o
+  // React garante estável), então manter `[]` evita recriar esta função a
+  // cada render só porque `confirm` também é recriado a cada render.
   const handleRemoveExtra = useCallback(async (extraId: number, hasLogs: boolean) => {
-    const doRemove = async () => {
-      try {
-        await db.delete(sessionExtraExercises).where(eq(sessionExtraExercises.id, extraId));
-      } catch (err) {
-        reportError('Erro ao remover exercício', err);
-      }
-    };
     if (hasLogs) {
-      Alert.alert(
-        'Remover exercício',
-        'Esse exercício já tem séries registradas nesta sessão. Remover não apaga o que já foi salvo, só tira o card daqui. Continuar?',
-        [
-          { text: 'Cancelar', style: 'cancel' },
-          { text: 'Remover', style: 'destructive', onPress: doRemove },
-        ]
-      );
-    } else {
-      await doRemove();
+      const ok = await confirm({
+        title: 'Remover exercício',
+        message:
+          'Esse exercício já tem séries registradas nesta sessão. Remover não apaga o que já foi salvo, só tira o card daqui. Continuar?',
+        confirmLabel: 'Remover',
+        variant: 'destructive',
+      });
+      if (!ok) return;
+    }
+    try {
+      await db.delete(sessionExtraExercises).where(eq(sessionExtraExercises.id, extraId));
+    } catch (err) {
+      reportError('Erro ao remover exercício', err);
     }
   }, []);
 
@@ -1300,6 +1321,7 @@ function SessionExecution({
       <Button variant="destructive" onPress={handleCancel}>
         Cancelar sessão de hoje
       </Button>
+      {dialog}
     </KeyboardAvoidingView>
   );
 }
@@ -1487,6 +1509,8 @@ const ExerciseSessionCard = memo(
       return map;
     }, [logs]);
 
+    const { confirm, dialog } = useConfirmDialog();
+
     const { data: preferenceRows } = useLiveQuery(
       db.select().from(exercisePreferences).where(eq(exercisePreferences.exerciseWgerId, item.exerciseWgerId)),
       [item.exerciseWgerId]
@@ -1580,41 +1604,39 @@ const ExerciseSessionCard = memo(
     // isso, handleAddWarmup (baseado em `warmupLogs.length`) poderia
     // reatribuir um numeroSerie já em uso por um aquecimento que sobrou no
     // meio, colidindo. Uma transação só: apaga e renumera atomicamente.
-    const handleRemoveWarmup = (logId: number) => {
-      Alert.alert('Remover aquecimento', 'Remover esta série de aquecimento?', [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Remover',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              db.transaction((tx) => {
-                tx.delete(setLogs).where(eq(setLogs.id, logId)).run();
-                const remaining = tx
-                  .select()
-                  .from(setLogs)
-                  .where(
-                    and(
-                      eq(setLogs.sessionId, sessionId),
-                      eq(setLogs.exerciseId, item.exerciseId),
-                      eq(setLogs.aquecimento, true)
-                    )
-                  )
-                  .orderBy(setLogs.numeroSerie)
-                  .all();
-                remaining.forEach((log, index) => {
-                  const target = WARMUP_NUMERO_SERIE_BASE + index;
-                  if (log.numeroSerie !== target) {
-                    tx.update(setLogs).set({ numeroSerie: target }).where(eq(setLogs.id, log.id)).run();
-                  }
-                });
-              });
-            } catch (err) {
-              reportError('Erro ao remover aquecimento', err);
+    const handleRemoveWarmup = async (logId: number) => {
+      const ok = await confirm({
+        title: 'Remover aquecimento',
+        message: 'Remover esta série de aquecimento?',
+        confirmLabel: 'Remover',
+        variant: 'destructive',
+      });
+      if (!ok) return;
+      try {
+        db.transaction((tx) => {
+          tx.delete(setLogs).where(eq(setLogs.id, logId)).run();
+          const remaining = tx
+            .select()
+            .from(setLogs)
+            .where(
+              and(
+                eq(setLogs.sessionId, sessionId),
+                eq(setLogs.exerciseId, item.exerciseId),
+                eq(setLogs.aquecimento, true)
+              )
+            )
+            .orderBy(setLogs.numeroSerie)
+            .all();
+          remaining.forEach((log, index) => {
+            const target = WARMUP_NUMERO_SERIE_BASE + index;
+            if (log.numeroSerie !== target) {
+              tx.update(setLogs).set({ numeroSerie: target }).where(eq(setLogs.id, log.id)).run();
             }
-          },
-        },
-      ]);
+          });
+        });
+      } catch (err) {
+        reportError('Erro ao remover aquecimento', err);
+      }
     };
 
     // Aquecimento não conta como série de trabalho — "X/Y séries completas",
@@ -1822,6 +1844,7 @@ const ExerciseSessionCard = memo(
         )}
         </Card>
         {inSupersetGroup && !item.isLastInSupersetGroup && <View className="h-1 bg-accent" />}
+        {dialog}
       </>
     );
   },

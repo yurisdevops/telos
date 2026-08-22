@@ -13,14 +13,18 @@ const CONTAINER_BY_VARIANT: Record<ButtonVariant, string> = {
   primary: 'bg-accent',
   secondary: 'border border-border bg-transparent',
   ghost: 'bg-transparent',
-  destructive: 'border border-border bg-transparent',
+  // Antes idêntico a `secondary` (border-border + texto muted) — sem cor de
+  // perigo nenhuma, um "Cancelar sessão" ficava visualmente igual a
+  // qualquer botão secundário comum. Borda + texto em accent (a única cor
+  // de "alerta" que o app tem) deixa claro que é uma ação destrutiva.
+  destructive: 'border border-accent bg-transparent',
 };
 
 const TEXT_BY_VARIANT: Record<ButtonVariant, string> = {
   primary: 'text-white',
   secondary: 'text-text',
   ghost: 'text-muted',
-  destructive: 'text-muted',
+  destructive: 'text-accent',
 };
 
 export function Button({ children, variant = 'primary', disabled, className = '', ...props }: ButtonProps) {

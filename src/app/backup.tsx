@@ -16,6 +16,7 @@ import { importBackupPayload } from '@/db/backup/restore';
 import { TABLE_LABELS, type BackupPayload, type ImportMode, type ImportSummary, type TableKey } from '@/db/backup/types';
 import { BackupValidationError, assertValidBackupPayload } from '@/db/backup/validate';
 import { getTodayDateString } from '@/lib/date';
+import { useConfirmDialog } from '@/lib/use-confirm-dialog';
 import { colors } from '@/theme/tokens';
 
 const TABLE_ORDER: TableKey[] = [
@@ -69,6 +70,7 @@ export default function BackupScreen() {
   const [stage, setStage] = useState<string | null>(null);
   const [mode, setMode] = useState<ImportMode>('merge');
   const busy = stage !== null;
+  const { confirm, dialog } = useConfirmDialog();
 
   const handleExport = async () => {
     try {
@@ -130,23 +132,22 @@ export default function BackupScreen() {
       setStage(null);
 
       if (mode === 'replace') {
-        Alert.alert(
-          'Substituir todos os dados?',
-          'Isso apaga TODOS os seus planos, dias, sessões e séries atuais e coloca no lugar exatamente o que está neste arquivo de backup. Essa ação não pode ser desfeita.',
-          [
-            { text: 'Cancelar', style: 'cancel' },
-            { text: 'Substituir', style: 'destructive', onPress: () => runImport(payload, 'replace') },
-          ]
-        );
+        const ok = await confirm({
+          title: 'Substituir todos os dados?',
+          message:
+            'Isso apaga TODOS os seus planos, dias, sessões e séries atuais e coloca no lugar exatamente o que está neste arquivo de backup. Essa ação não pode ser desfeita.',
+          confirmLabel: 'Substituir',
+          variant: 'destructive',
+        });
+        if (ok) await runImport(payload, 'replace');
       } else {
-        Alert.alert(
-          'Mesclar backup?',
-          'Isso adiciona ao que você já tem os planos, dias, sessões e séries deste arquivo que ainda não existem no aparelho. Nada é apagado.',
-          [
-            { text: 'Cancelar', style: 'cancel' },
-            { text: 'Mesclar', onPress: () => runImport(payload, 'merge') },
-          ]
-        );
+        const ok = await confirm({
+          title: 'Mesclar backup?',
+          message:
+            'Isso adiciona ao que você já tem os planos, dias, sessões e séries deste arquivo que ainda não existem no aparelho. Nada é apagado.',
+          confirmLabel: 'Mesclar',
+        });
+        if (ok) await runImport(payload, 'merge');
       }
     } catch (err) {
       setStage(null);
@@ -212,6 +213,8 @@ export default function BackupScreen() {
           Escolher arquivo de backup
         </Button>
       </Card>
+
+      {dialog}
     </Screen>
   );
 }

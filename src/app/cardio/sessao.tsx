@@ -14,6 +14,7 @@ import { db } from '@/db';
 import { cardioLogs, cardioSessions } from '@/db/schema';
 import { deleteCardioSession } from '@/db/cardio-stats';
 import { INTENSIDADES_CARDIO, MODALIDADES_CARDIO } from '@/lib/cardio';
+import { useConfirmDialog } from '@/lib/use-confirm-dialog';
 import { colors } from '@/theme/tokens';
 
 function reportError(context: string, err: unknown) {
@@ -25,6 +26,7 @@ export default function CardioSessaoScreen() {
   const router = useRouter();
   const { cardioSessionId } = useLocalSearchParams<{ cardioSessionId: string }>();
   const cardioSessionIdNum = Number(cardioSessionId);
+  const { confirm, dialog } = useConfirmDialog();
 
   const { data: cardioSessionRows } = useLiveQuery(
     db.select().from(cardioSessions).where(eq(cardioSessions.id, cardioSessionIdNum)),
@@ -51,21 +53,19 @@ export default function CardioSessaoScreen() {
     return { totalBlocos, totalMinutos, modalidades };
   }, [blocks]);
 
-  const handleDeleteBlock = (id: number) => {
-    Alert.alert('Remover bloco de cardio', 'Remover este bloco de cardio?', [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Remover',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            await db.delete(cardioLogs).where(eq(cardioLogs.id, id));
-          } catch (err) {
-            reportError('Erro ao remover cardio', err);
-          }
-        },
-      },
-    ]);
+  const handleDeleteBlock = async (id: number) => {
+    const ok = await confirm({
+      title: 'Remover bloco de cardio',
+      message: 'Remover este bloco de cardio?',
+      confirmLabel: 'Remover',
+      variant: 'destructive',
+    });
+    if (!ok) return;
+    try {
+      await db.delete(cardioLogs).where(eq(cardioLogs.id, id));
+    } catch (err) {
+      reportError('Erro ao remover cardio', err);
+    }
   };
 
   const handleComplete = async () => {
@@ -82,26 +82,20 @@ export default function CardioSessaoScreen() {
   // Deleção (filhos antes do pai) extraída pra deleteCardioSession em
   // db/cardio-stats.ts — reusada também pelo botão de apagar no histórico
   // do Progresso (CardioSection), em vez de duplicar as 2 chamadas aqui.
-  const handleCancel = () => {
-    Alert.alert(
-      'Cancelar sessão de cardio',
-      'Isso apaga a sessão e todos os blocos registrados nela. Não pode ser desfeito. Deseja continuar?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Apagar',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await deleteCardioSession(cardioSessionIdNum);
-              router.back();
-            } catch (err) {
-              reportError('Erro ao cancelar sessão de cardio', err);
-            }
-          },
-        },
-      ]
-    );
+  const handleCancel = async () => {
+    const ok = await confirm({
+      title: 'Cancelar sessão de cardio',
+      message: 'Isso apaga a sessão e todos os blocos registrados nela. Não pode ser desfeito. Deseja continuar?',
+      confirmLabel: 'Apagar',
+      variant: 'destructive',
+    });
+    if (!ok) return;
+    try {
+      await deleteCardioSession(cardioSessionIdNum);
+      router.back();
+    } catch (err) {
+      reportError('Erro ao cancelar sessão de cardio', err);
+    }
   };
 
   if (!cardioSession) return null;
@@ -166,6 +160,8 @@ export default function CardioSessaoScreen() {
       <Button variant="destructive" onPress={handleCancel}>
         Cancelar sessão
       </Button>
+
+      {dialog}
     </Screen>
   );
 }

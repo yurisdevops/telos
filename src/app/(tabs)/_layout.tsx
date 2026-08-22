@@ -1,13 +1,14 @@
 import { useRef } from 'react';
-import { Alert } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Tabs } from 'expo-router';
 
+import { useConfirmDialog } from '@/lib/use-confirm-dialog';
 import { useOpenSessionNeedsConfirm } from '@/lib/use-open-session-guard';
 import { colors } from '@/theme/tokens';
 
 export default function TabsLayout() {
   const needsConfirm = useOpenSessionNeedsConfirm();
+  const { confirm, dialog } = useConfirmDialog();
   // Ref porque o listener de tabPress é registrado uma vez pelo navigator —
   // ler de um ref garante o valor mais recente no momento do toque, em vez de
   // uma closure presa ao valor de quando o listener foi criado.
@@ -19,17 +20,24 @@ export default function TabsLayout() {
     (e: { preventDefault: () => void }) => {
       if (!needsConfirmRef.current) return;
       e.preventDefault();
-      Alert.alert(
-        'Sessão não concluída',
-        'Você ainda não concluiu o treino de hoje. O que já foi preenchido está salvo e continua aqui quando você voltar — nada se perde. Quer continuar treinando ou sair mesmo assim?',
-        [
-          { text: 'Continuar treino', style: 'cancel' },
-          { text: 'Sair', onPress: () => navigation.navigate(routeName) },
-        ]
-      );
+      // "Sair" é a ação principal aqui (o toque original na aba, que o
+      // preventDefault acima interrompeu) — fica em confirmLabel (botão
+      // sólido accent do diálogo); "Continuar treino" é o padrão seguro,
+      // fica em cancelLabel. Não é destrutivo (nada se perde, como o
+      // próprio texto explica), por isso `variant` fica no default.
+      confirm({
+        title: 'Sessão não concluída',
+        message:
+          'Você ainda não concluiu o treino de hoje. O que já foi preenchido está salvo e continua aqui quando você voltar — nada se perde. Quer continuar treinando ou sair mesmo assim?',
+        confirmLabel: 'Sair',
+        cancelLabel: 'Continuar treino',
+      }).then((ok) => {
+        if (ok) navigation.navigate(routeName);
+      });
     };
 
   return (
+    <>
     <Tabs
       screenOptions={{
         headerShown: false,
@@ -96,5 +104,7 @@ export default function TabsLayout() {
         })}
       />
     </Tabs>
+    {dialog}
+    </>
   );
 }

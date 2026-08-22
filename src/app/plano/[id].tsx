@@ -17,6 +17,7 @@ import { db } from '@/db';
 import { exercises, workoutDayExercises, workoutDays, workoutPlans } from '@/db/schema';
 import { duplicateDayTx, duplicatePlanTx } from '@/db/duplicate';
 import { buildPlanShareText, shareText } from '@/lib/share-text';
+import { useConfirmDialog } from '@/lib/use-confirm-dialog';
 import { colors } from '@/theme/tokens';
 
 const SUPERSET_GROUP_OPTIONS = ['Nenhuma', 'A', 'B', 'C', 'D'] as const;
@@ -25,6 +26,7 @@ export default function PlanoDetailScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const planId = Number(id);
+  const { confirm, dialog } = useConfirmDialog();
   const [isAddDayModalVisible, setIsAddDayModalVisible] = useState(false);
   const [dayLabel, setDayLabel] = useState('');
 
@@ -232,22 +234,20 @@ export default function PlanoDetailScreen() {
     }
   };
 
-  const handleRemoveExercise = (dayExerciseId: number) => {
-    Alert.alert('Remover exercício', 'Deseja remover este exercício do dia?', [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Remover',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            await db.delete(workoutDayExercises).where(eq(workoutDayExercises.id, dayExerciseId));
-          } catch (err) {
-            console.error('Falha ao remover exercício:', err);
-            Alert.alert('Erro ao remover exercício', String(err instanceof Error ? err.message : err));
-          }
-        },
-      },
-    ]);
+  const handleRemoveExercise = async (dayExerciseId: number) => {
+    const ok = await confirm({
+      title: 'Remover exercício',
+      message: 'Deseja remover este exercício do dia?',
+      confirmLabel: 'Remover',
+      variant: 'destructive',
+    });
+    if (!ok) return;
+    try {
+      await db.delete(workoutDayExercises).where(eq(workoutDayExercises.id, dayExerciseId));
+    } catch (err) {
+      console.error('Falha ao remover exercício:', err);
+      Alert.alert('Erro ao remover exercício', String(err instanceof Error ? err.message : err));
+    }
   };
 
   const handleMoveExercise = (dayId: number, exerciseRowId: number, direction: 'up' | 'down') => {
@@ -276,54 +276,42 @@ export default function PlanoDetailScreen() {
     }
   };
 
-  const handleRemoveDay = (dayId: number) => {
-    Alert.alert(
-      'Remover dia',
-      'Isso também remove os exercícios adicionados nele. Deseja continuar?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Remover',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await db.delete(workoutDayExercises).where(eq(workoutDayExercises.dayId, dayId));
-              await db.delete(workoutDays).where(eq(workoutDays.id, dayId));
-            } catch (err) {
-              console.error('Falha ao remover dia:', err);
-              Alert.alert('Erro ao remover dia', String(err instanceof Error ? err.message : err));
-            }
-          },
-        },
-      ]
-    );
+  const handleRemoveDay = async (dayId: number) => {
+    const ok = await confirm({
+      title: 'Remover dia',
+      message: 'Isso também remove os exercícios adicionados nele. Deseja continuar?',
+      confirmLabel: 'Remover',
+      variant: 'destructive',
+    });
+    if (!ok) return;
+    try {
+      await db.delete(workoutDayExercises).where(eq(workoutDayExercises.dayId, dayId));
+      await db.delete(workoutDays).where(eq(workoutDays.id, dayId));
+    } catch (err) {
+      console.error('Falha ao remover dia:', err);
+      Alert.alert('Erro ao remover dia', String(err instanceof Error ? err.message : err));
+    }
   };
 
-  const handleDeletePlan = () => {
-    Alert.alert(
-      'Excluir plano',
-      `Tem certeza que deseja excluir "${plan?.nome}"? Essa ação não pode ser desfeita.`,
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Excluir',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              for (const day of sortedDays) {
-                await db.delete(workoutDayExercises).where(eq(workoutDayExercises.dayId, day.id));
-              }
-              await db.delete(workoutDays).where(eq(workoutDays.planId, planId));
-              await db.delete(workoutPlans).where(eq(workoutPlans.id, planId));
-              router.back();
-            } catch (err) {
-              console.error('Falha ao excluir plano:', err);
-              Alert.alert('Erro ao excluir plano', String(err instanceof Error ? err.message : err));
-            }
-          },
-        },
-      ]
-    );
+  const handleDeletePlan = async () => {
+    const ok = await confirm({
+      title: 'Excluir plano',
+      message: `Tem certeza que deseja excluir "${plan?.nome}"? Essa ação não pode ser desfeita.`,
+      confirmLabel: 'Excluir',
+      variant: 'destructive',
+    });
+    if (!ok) return;
+    try {
+      for (const day of sortedDays) {
+        await db.delete(workoutDayExercises).where(eq(workoutDayExercises.dayId, day.id));
+      }
+      await db.delete(workoutDays).where(eq(workoutDays.planId, planId));
+      await db.delete(workoutPlans).where(eq(workoutPlans.id, planId));
+      router.back();
+    } catch (err) {
+      console.error('Falha ao excluir plano:', err);
+      Alert.alert('Erro ao excluir plano', String(err instanceof Error ? err.message : err));
+    }
   };
 
   const handleSharePlan = async () => {
@@ -744,6 +732,8 @@ export default function PlanoDetailScreen() {
           </Button>
         </View>
       </FormModal>
+
+      {dialog}
     </Screen>
   );
 }

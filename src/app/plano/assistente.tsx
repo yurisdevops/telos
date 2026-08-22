@@ -32,6 +32,7 @@ import {
   type AssistantGoal,
   type AssistantProfile,
 } from '@/lib/assistant-profile';
+import { useConfirmDialog } from '@/lib/use-confirm-dialog';
 import { useDbQuery } from '@/lib/use-db-query';
 import { colors } from '@/theme/tokens';
 
@@ -45,6 +46,7 @@ function isAssistantExperience(value: string): value is AssistantExperience {
 
 export default function AssistenteScreen() {
   const router = useRouter();
+  const { confirm, dialog } = useConfirmDialog();
   const [step, setStep] = useState(0);
 
   const [alturaText, setAlturaText] = useState('');
@@ -133,25 +135,23 @@ export default function AssistenteScreen() {
     setReviewOpen(true);
   };
 
-  const handleRemoveExercise = (target: ExerciseTarget) => {
+  const handleRemoveExercise = async (target: ExerciseTarget) => {
     const exercise = draftDays[target.dayIndex]?.exercises[target.exerciseIndex];
     if (!exercise) return;
-    Alert.alert('Remover exercício', `Remover "${exercise.nome}" deste dia?`, [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Remover',
-        style: 'destructive',
-        onPress: () => {
-          setDraftDays((days) =>
-            days.map((day, i) =>
-              i === target.dayIndex
-                ? { ...day, exercises: day.exercises.filter((_, j) => j !== target.exerciseIndex) }
-                : day
-            )
-          );
-        },
-      },
-    ]);
+    const ok = await confirm({
+      title: 'Remover exercício',
+      message: `Remover "${exercise.nome}" deste dia?`,
+      confirmLabel: 'Remover',
+      variant: 'destructive',
+    });
+    if (!ok) return;
+    setDraftDays((days) =>
+      days.map((day, i) =>
+        i === target.dayIndex
+          ? { ...day, exercises: day.exercises.filter((_, j) => j !== target.exerciseIndex) }
+          : day
+      )
+    );
   };
 
   const openEditExercise = (target: ExerciseTarget) => {
@@ -208,11 +208,15 @@ export default function AssistenteScreen() {
     setSwapTarget(null);
   };
 
-  const handleCancelReview = () => {
-    Alert.alert('Descartar sugestão?', 'O plano gerado não será salvo.', [
-      { text: 'Continuar editando', style: 'cancel' },
-      { text: 'Descartar', style: 'destructive', onPress: () => setReviewOpen(false) },
-    ]);
+  const handleCancelReview = async () => {
+    const ok = await confirm({
+      title: 'Descartar sugestão?',
+      message: 'O plano gerado não será salvo.',
+      confirmLabel: 'Descartar',
+      cancelLabel: 'Continuar editando',
+      variant: 'destructive',
+    });
+    if (ok) setReviewOpen(false);
   };
 
   const showTrocasDetail = (motivo: ExerciseSwap['motivo']) => {
@@ -424,6 +428,8 @@ export default function AssistenteScreen() {
             </Button>
           </View>
         </FormModal>
+
+        {dialog}
       </Screen>
     );
   }

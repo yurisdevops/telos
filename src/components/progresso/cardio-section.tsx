@@ -15,6 +15,7 @@ import {
 } from '@/db/cardio-stats';
 import { MODALIDADES_CARDIO } from '@/lib/cardio';
 import { formatShortDateLabel, getTodayDateString, getWeekStartIso, parseLocalIsoDate, toLocalIsoDate } from '@/lib/date';
+import { useConfirmDialog } from '@/lib/use-confirm-dialog';
 import { useDbQuery } from '@/lib/use-db-query';
 import { colors } from '@/theme/tokens';
 
@@ -45,6 +46,7 @@ export function CardioSection() {
     [startIso, endIso]
   );
   const history = useDbQuery(() => getCardioHistory(HISTORY_LIMIT), ['cardio_logs', 'sessions', 'cardio_sessions'], []);
+  const { confirm, dialog } = useConfirmDialog();
 
   // `blocos[0]` já basta pra achar o id certo — todo bloco de um mesmo item
   // de histórico compartilha o mesmo sessionId OU cardioSessionId (é
@@ -52,28 +54,26 @@ export function CardioSection() {
   // query reativa (useDbQuery acima, via addDatabaseChangeListener nas
   // tabelas cardio_logs/cardio_sessions) atualiza a lista sozinha depois —
   // nenhum refetch manual necessário aqui.
-  const handleDeleteHistoryItem = (item: CardioHistoryItem) => {
-    Alert.alert('Apagar este cardio?', 'Esta ação não pode ser desfeita.', [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Apagar',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            if (item.tipo === 'cardio_puro') {
-              const cardioSessionId = item.blocos[0]?.cardioSessionId;
-              if (cardioSessionId != null) await deleteCardioSession(cardioSessionId);
-            } else {
-              const sessionId = item.blocos[0]?.sessionId;
-              if (sessionId != null) await deleteCardioLogsForSession(sessionId);
-            }
-          } catch (err) {
-            console.error('Erro ao apagar cardio:', err);
-            Alert.alert('Erro ao apagar cardio', String(err instanceof Error ? err.message : err));
-          }
-        },
-      },
-    ]);
+  const handleDeleteHistoryItem = async (item: CardioHistoryItem) => {
+    const ok = await confirm({
+      title: 'Apagar este cardio?',
+      message: 'Esta ação não pode ser desfeita.',
+      confirmLabel: 'Apagar',
+      variant: 'destructive',
+    });
+    if (!ok) return;
+    try {
+      if (item.tipo === 'cardio_puro') {
+        const cardioSessionId = item.blocos[0]?.cardioSessionId;
+        if (cardioSessionId != null) await deleteCardioSession(cardioSessionId);
+      } else {
+        const sessionId = item.blocos[0]?.sessionId;
+        if (sessionId != null) await deleteCardioLogsForSession(sessionId);
+      }
+    } catch (err) {
+      console.error('Erro ao apagar cardio:', err);
+      Alert.alert('Erro ao apagar cardio', String(err instanceof Error ? err.message : err));
+    }
   };
 
   return (
@@ -138,6 +138,8 @@ export function CardioSection() {
           ))}
         </View>
       )}
+
+      {dialog}
     </CollapsibleSection>
   );
 }

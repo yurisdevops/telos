@@ -34,6 +34,7 @@ import {
 } from '@/db/user-profile';
 import { EXPERIENCE_OPTIONS, type AssistantExperience } from '@/lib/assistant-profile';
 import { CHANGELOG_ENTRIES } from '@/lib/changelog';
+import { useConfirmDialog } from '@/lib/use-confirm-dialog';
 import { formatNumberPtBr } from '@/lib/format';
 import { useDbQuery } from '@/lib/use-db-query';
 import { colors } from '@/theme/tokens';
@@ -46,6 +47,7 @@ function reportError(context: string, err: unknown) {
 export default function PerfilScreen() {
   const router = useRouter();
   const profile = useUserProfile();
+  const { confirm, dialog: confirmDialog } = useConfirmDialog();
 
   // Reler pelo Perfil mostra o changelog INTEIRO (não só o não visto — é "o
   // que mudou", não "o que há de novo") e só fecha ao dispensar; nunca chama
@@ -74,15 +76,15 @@ export default function PerfilScreen() {
   // fisicamente entre SummaryStats/VolumeAnalysis e WorkoutHistorySection.
   const [statsResetKey, setStatsResetKey] = useState(0);
 
-  const handleResetPress = () => {
-    Alert.alert(
-      'Resetar histórico de treinos?',
-      'Isso apaga TODO o seu histórico de treinos (sessões, séries, recordes). Seus planos, perfil e peso corporal são mantidos. Esta ação é IRREVERSÍVEL.',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        { text: 'Continuar', onPress: startPinCheck },
-      ]
-    );
+  const handleResetPress = async () => {
+    const ok = await confirm({
+      title: 'Resetar histórico de treinos?',
+      message:
+        'Isso apaga TODO o seu histórico de treinos (sessões, séries, recordes). Seus planos, perfil e peso corporal são mantidos. Esta ação é IRREVERSÍVEL.',
+      confirmLabel: 'Continuar',
+      variant: 'destructive',
+    });
+    if (ok) startPinCheck();
   };
 
   const startPinCheck = async () => {
@@ -98,16 +100,15 @@ export default function PerfilScreen() {
   // existente — nos dois casos a próxima (e última) trava é a confirmação
   // final abaixo. Fecha o modal de PIN antes de abrir o Alert nativo (os
   // dois por cima um do outro ao mesmo tempo seria estranho visualmente).
-  const handlePinConfirmed = () => {
+  const handlePinConfirmed = async () => {
     setResetPhase(null);
-    Alert.alert(
-      'Tem certeza?',
-      `Isso apaga ${sessionCount} ${sessionCount === 1 ? 'treino registrado' : 'treinos registrados'} e não pode ser desfeito.`,
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        { text: 'APAGAR TUDO', style: 'destructive', onPress: performReset },
-      ]
-    );
+    const ok = await confirm({
+      title: 'Tem certeza?',
+      message: `Isso apaga ${sessionCount} ${sessionCount === 1 ? 'treino registrado' : 'treinos registrados'} e não pode ser desfeito.`,
+      confirmLabel: 'APAGAR TUDO',
+      variant: 'destructive',
+    });
+    if (ok) performReset();
   };
 
   const performReset = () => {
@@ -419,6 +420,8 @@ export default function PerfilScreen() {
         entries={CHANGELOG_ENTRIES}
         onDismiss={() => setChangelogModalVisible(false)}
       />
+
+      {confirmDialog}
     </Screen>
   );
 }

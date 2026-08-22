@@ -20,12 +20,14 @@ import {
 } from '@/db/schema';
 import { formatShortDateLabel } from '@/lib/date';
 import { formatElapsed } from '@/lib/duration';
+import { useConfirmDialog } from '@/lib/use-confirm-dialog';
 import { colors } from '@/theme/tokens';
 
 export default function SessaoDetailScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const sessionId = Number(id);
+  const { confirm, dialog } = useConfirmDialog();
 
   const { data: sessionRows } = useLiveQuery(
     db
@@ -83,32 +85,27 @@ export default function SessaoDetailScreen() {
     return order.map((exerciseId) => map.get(exerciseId)!);
   }, [logRows]);
 
-  const handleDeleteSession = () => {
-    Alert.alert(
-      'Excluir sessão',
-      'Isso apaga essa sessão e todas as séries registradas nela — inclusive dos seus gráficos e recordes de progresso. Não pode ser desfeito. Deseja continuar?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Excluir',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              db.transaction((tx) => {
-                tx.delete(setLogs).where(eq(setLogs.sessionId, sessionId)).run();
-                tx.delete(sessionExtraExercises).where(eq(sessionExtraExercises.sessionId, sessionId)).run();
-                tx.delete(sessionSkips).where(eq(sessionSkips.sessionId, sessionId)).run();
-                tx.delete(sessions).where(eq(sessions.id, sessionId)).run();
-              });
-              router.back();
-            } catch (err) {
-              console.error('Falha ao excluir sessão:', err);
-              Alert.alert('Erro ao excluir sessão', String(err instanceof Error ? err.message : err));
-            }
-          },
-        },
-      ]
-    );
+  const handleDeleteSession = async () => {
+    const ok = await confirm({
+      title: 'Excluir sessão',
+      message:
+        'Isso apaga essa sessão e todas as séries registradas nela — inclusive dos seus gráficos e recordes de progresso. Não pode ser desfeito. Deseja continuar?',
+      confirmLabel: 'Excluir',
+      variant: 'destructive',
+    });
+    if (!ok) return;
+    try {
+      db.transaction((tx) => {
+        tx.delete(setLogs).where(eq(setLogs.sessionId, sessionId)).run();
+        tx.delete(sessionExtraExercises).where(eq(sessionExtraExercises.sessionId, sessionId)).run();
+        tx.delete(sessionSkips).where(eq(sessionSkips.sessionId, sessionId)).run();
+        tx.delete(sessions).where(eq(sessions.id, sessionId)).run();
+      });
+      router.back();
+    } catch (err) {
+      console.error('Falha ao excluir sessão:', err);
+      Alert.alert('Erro ao excluir sessão', String(err instanceof Error ? err.message : err));
+    }
   };
 
   if (!session) {
@@ -151,6 +148,8 @@ export default function SessaoDetailScreen() {
       <Button variant="destructive" className="mt-4" onPress={handleDeleteSession}>
         Excluir sessão
       </Button>
+
+      {dialog}
     </Screen>
   );
 }
