@@ -1786,7 +1786,7 @@ function SetRow({
   return (
     <View className={`mb-3 ${aquecimento ? 'opacity-60' : ''}`}>
       <View className="flex-row items-center gap-3">
-        <Label className={`w-16 ${isFilled ? 'text-accent' : ''}`}>{`Série ${numeroSerie}`}</Label>
+        <Label className={`w-16 ${isFilled ? 'text-accent' : ''}`}>{aquecimento ? `Aquec. ${numeroSerie}` : `Série ${numeroSerie}`}</Label>
         <Pressable
           onPress={handleToggleAquecimento}
           hitSlop={8}
