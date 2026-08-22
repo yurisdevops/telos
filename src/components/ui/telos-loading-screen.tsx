@@ -117,35 +117,52 @@ export function TelosLoadingScreen({
         justifyContent: 'space-between',
         paddingVertical: 80,
       }}>
-      <View style={{ alignItems: 'center' }}>
+      {/* width:'100%' aqui é o que dá sentido ao width:'100%' dos filhos
+          abaixo — sem isso, esta View (sem largura própria) encolheria pro
+          conteúdo mais largo, e os `textAlign:'center'` dos Text ficariam
+          centralizando dentro de uma caixa já do tamanho do texto (efeito
+          nenhum). alignItems:'center' continua aqui só pro Image (que TEM
+          largura própria fixa, 96) — daí o alignSelf:'center' explícito nele. */}
+      <View style={{ width: '100%', alignItems: 'center' }}>
         {/* Caminho relativo: este arquivo vive em src/components/ui/, 3
             níveis acima da raiz do repo — mesmo cálculo já confirmado pra
             o card de compartilhamento (src/components/share/), mesma
             profundidade. */}
         <Image
           source={require('../../../assets/images/adaptive-icon.png')}
-          style={{ width: 96, height: 96 }}
+          style={{ width: 96, height: 96, alignSelf: 'center' }}
           resizeMode="contain"
         />
         <Text
           style={{
+            width: '100%',
             marginTop: 16,
             fontFamily: fonts.display,
-            fontSize: 48,
+            fontSize: 64,
             color: colors.accent,
             letterSpacing: 6,
             textTransform: 'uppercase',
+            textAlign: 'center',
           }}>
           TELOS
         </Text>
+        {/* numberOfLines+adjustsFontSizeToFit (não só reduzir letterSpacing/
+            fontSize): é o padrão já usado no resto do app pra texto que não
+            pode cortar (workout-share-card.tsx, ExerciseSessionCard) —
+            encolhe a fonte na hora se precisar, então nunca corta nem quebra
+            linha, garantido, em vez de só reduzir o risco. */}
         <Text
+          numberOfLines={1}
+          adjustsFontSizeToFit
           style={{
+            width: '100%',
             marginTop: 4,
             fontFamily: fonts.label,
             fontSize: 13,
             color: colors.muted,
-            letterSpacing: 2,
+            letterSpacing: 1,
             textTransform: 'uppercase',
+            textAlign: 'center',
           }}>
           Treine com propósito
         </Text>
