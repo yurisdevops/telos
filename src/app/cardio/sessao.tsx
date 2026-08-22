@@ -12,7 +12,6 @@ import { Label } from '@/components/ui/label';
 import { ScreenTitle } from '@/components/ui/screen-title';
 import { db } from '@/db';
 import { cardioLogs, cardioSessions } from '@/db/schema';
-import { formatElapsed, useNow } from '@/lib/duration';
 import { INTENSIDADES_CARDIO, MODALIDADES_CARDIO } from '@/lib/cardio';
 import { colors } from '@/theme/tokens';
 
@@ -25,7 +24,6 @@ export default function CardioSessaoScreen() {
   const router = useRouter();
   const { cardioSessionId } = useLocalSearchParams<{ cardioSessionId: string }>();
   const cardioSessionIdNum = Number(cardioSessionId);
-  const now = useNow(1000);
 
   const { data: cardioSessionRows } = useLiveQuery(
     db.select().from(cardioSessions).where(eq(cardioSessions.id, cardioSessionIdNum)),
@@ -110,14 +108,6 @@ export default function CardioSessaoScreen() {
   return (
     <Screen showBack scrollable>
       <ScreenTitle title="Sessão de Cardio" />
-
-      {cardioSession.horaInicio != null && (
-        <Label className="mb-3">
-          {cardioSession.concluida && cardioSession.horaFim != null
-            ? `Duração: ${formatElapsed(cardioSession.horaFim - cardioSession.horaInicio)}`
-            : `Em andamento: ${formatElapsed(now - cardioSession.horaInicio)}`}
-        </Label>
-      )}
 
       {cardioSession.concluida && (
         <Card className="mb-4 border-l-4 border-l-success">
