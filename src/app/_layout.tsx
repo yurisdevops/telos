@@ -16,11 +16,12 @@ import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, useColorScheme, View } from 'react-native';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Animated, StyleSheet, Text, useColorScheme, View } from 'react-native';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 
 import { ChangelogModal } from '@/components/changelog-modal';
+import { TelosLoadingScreen } from '@/components/ui/telos-loading-screen';
 import { db } from '@/db';
 import migrations from '@/db/migrations/migrations';
 import { seedDatabase } from '@/db/seed';
@@ -70,11 +71,39 @@ export default function TabLayout() {
   const ready = success && fontsLoaded;
   const anyError = error ?? fontError;
 
+  // Esconde a splash NATIVA assim que as FONTES carregarem — não espera
+  // `ready` (que também depende das migrações/seed) como antes. A splash
+  // nativa é estática (sem como mostrar progresso); trocando cedo por
+  // TelosLoadingScreen (que já usa as fontes certas, por isso esperar só
+  // fontsLoaded e não `ready`) o app fica animado durante o resto do boot —
+  // exatamente o período que a splash nativa cobria escondido antes. Sem
+  // essa mudança, TelosLoadingScreen quase nunca apareceria de fato: na
+  // prática as migrações costumam terminar rápido, e a splash nativa (que
+  // esperava as duas coisas) já teria escondido tudo por trás dela.
   useEffect(() => {
-    if (ready || anyError) {
+    if (fontsLoaded || anyError) {
       SplashScreen.hideAsync();
     }
-  }, [ready, anyError]);
+  }, [fontsLoaded, anyError]);
+
+  // Overlay da tela de loading (TelosLoadingScreen) por cima do app —
+  // `showLoading` continua true até handleLoadingReady rodar (chamado só
+  // quando a tela sinaliza, via onReady, que a barra completou E `ready` é
+  // true). O <Stack> já monta assim que `ready` vira true (por baixo do
+  // overlay, nunca visível ainda) — só o fade-out revela o que já está
+  // pronto, em vez de montar o app do zero no momento da revelação.
+  const [showLoading, setShowLoading] = useState(true);
+  const loadingOpacity = useRef(new Animated.Value(1)).current;
+
+  const handleLoadingReady = useCallback(() => {
+    Animated.timing(loadingOpacity, {
+      toValue: 0,
+      duration: 400,
+      useNativeDriver: true,
+    }).start(({ finished }) => {
+      if (finished) setShowLoading(false);
+    });
+  }, [loadingOpacity]);
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
@@ -83,20 +112,26 @@ export default function TabLayout() {
         <View style={styles.center}>
           <Text style={styles.errorText}>Erro ao iniciar o app: {anyError.message}</Text>
         </View>
-      ) : ready ? (
+      ) : (
         <>
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="(tabs)" />
-            <Stack.Screen name="plano/novo" options={{ presentation: 'modal' }} />
-          </Stack>
-          {unseenChangelog.length > 0 && (
-            <ChangelogModal visible entries={unseenChangelog} onDismiss={handleDismissChangelog} />
+          {ready && (
+            <>
+              <Stack screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="(tabs)" />
+                <Stack.Screen name="plano/novo" options={{ presentation: 'modal' }} />
+              </Stack>
+              {unseenChangelog.length > 0 && (
+                <ChangelogModal visible entries={unseenChangelog} onDismiss={handleDismissChangelog} />
+              )}
+            </>
+          )}
+
+          {showLoading && (
+            <Animated.View style={[StyleSheet.absoluteFill, { opacity: loadingOpacity }]}>
+              <TelosLoadingScreen appReady={ready} onReady={handleLoadingReady} />
+            </Animated.View>
           )}
         </>
-      ) : (
-        <View style={styles.center}>
-          <ActivityIndicator />
-        </View>
       )}
     </ThemeProvider>
   );
