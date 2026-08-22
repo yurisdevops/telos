@@ -7,7 +7,7 @@ export type ChangelogEntry = {
 // Versão mais recente definida abaixo — o que o usuário já viu (persistido em
 // user_profile.lastSeenChangelogVersion) é comparado contra o `version` de
 // cada entrada, não contra essa constante diretamente (getUnseenChangelog).
-export const CURRENT_CHANGELOG_VERSION = 4;
+export const CURRENT_CHANGELOG_VERSION = 5;
 
 // Lista crescente de levas — nunca editar uma entrada já publicada (quem já
 // viu não deve ver de novo com conteúdo diferente); só adicionar novas com
@@ -118,6 +118,40 @@ export const CHANGELOG_ENTRIES: ChangelogEntry[] = [
         titulo: 'Medidas corporais',
         descricao:
           'Acompanhe a evolução das suas medidas (ombros, peito, cintura, braços, pernas e mais) ao longo do tempo, no Perfil.',
+      },
+    ],
+  },
+  {
+    version: 5,
+    title: 'Novidades',
+    items: [
+      {
+        titulo: 'Tela de abertura',
+        descricao: 'O app agora tem uma tela de boas-vindas com ícone, nome e barra de carregamento ao iniciar.',
+      },
+      {
+        titulo: 'Cardio em destaque',
+        descricao: 'Musculação e cardio aparecem lado a lado na aba Treinar — escolha o que fazer sem precisar rolar.',
+      },
+      {
+        titulo: 'Aquecimento',
+        descricao:
+          'Adicione séries de aquecimento antes das séries válidas em qualquer exercício. Elas não contam no volume nem nos recordes.',
+      },
+      {
+        titulo: 'Cardio integrado',
+        descricao:
+          'Registre cardio dentro do treino ou em sessão separada. Corrida, bike, HIIT e mais — com duração, distância e intensidade.',
+      },
+      {
+        titulo: 'Compartilhamento reformulado',
+        descricao:
+          'Três estilos de card: completo, minimalista e foto com dados sobrepostos. Escolha o recorde e as métricas antes de compartilhar.',
+      },
+      {
+        titulo: 'Exercícios novos',
+        descricao:
+          '33 exercícios adicionados: máquinas iso-lateral, convergentes e versões unilaterais do que antes só tinha bilateral.',
       },
     ],
   },
