@@ -130,7 +130,7 @@ export function TelosLoadingScreen({
             profundidade. */}
         <Image
           source={require('../../../assets/images/adaptive-icon.png')}
-          style={{ width: 96, height: 96, alignSelf: 'center' }}
+          style={{ width: 120, height: 120, alignSelf: 'center' }}
           resizeMode="contain"
         />
         <Text
@@ -186,20 +186,20 @@ export function TelosLoadingScreen({
       <View style={{ alignItems: 'center' }}>
         <View
           style={{
-            width: 200,
-            height: 3,
+            width: 220,
+            height: 8,
             backgroundColor: colors.border,
-            borderRadius: 2,
+            borderRadius: 4,
             overflow: 'hidden',
           }}>
           <Animated.View
-            style={{ width: barWidth, height: '100%', backgroundColor: colors.accent, borderRadius: 2 }}
+            style={{ width: barWidth, height: '100%', backgroundColor: colors.accent, borderRadius: 4 }}
           />
         </View>
         <Text
           style={{
             marginTop: 6,
-            width: 200,
+            width: 220,
             fontFamily: fonts.label,
             fontSize: 11,
             color: colors.muted,
