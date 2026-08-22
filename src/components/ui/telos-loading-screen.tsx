@@ -109,21 +109,11 @@ export function TelosLoadingScreen({
   const barWidth = progress.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] });
 
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: colors.bg,
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingVertical: 80,
-      }}>
-      {/* width:'100%' aqui é o que dá sentido ao width:'100%' dos filhos
-          abaixo — sem isso, esta View (sem largura própria) encolheria pro
-          conteúdo mais largo, e os `textAlign:'center'` dos Text ficariam
-          centralizando dentro de uma caixa já do tamanho do texto (efeito
-          nenhum). alignItems:'center' continua aqui só pro Image (que TEM
-          largura própria fixa, 96) — daí o alignSelf:'center' explícito nele. */}
-      <View style={{ width: '100%', alignItems: 'center' }}>
+    <View style={{ flex: 1, backgroundColor: colors.bg, alignItems: 'center' }}>
+      {/* TOPO: ícone adaptativo + TELOS + slogan, fixo no terço superior
+          (não cresce, não centraliza — `paddingTop` é o único espaçamento
+          dele; quem cresce e centraliza é só o MEIO, logo abaixo). */}
+      <View style={{ width: '100%', alignItems: 'center', paddingTop: 60 }}>
         {/* Caminho relativo: este arquivo vive em src/components/ui/, 3
             níveis acima da raiz do repo — mesmo cálculo já confirmado pra
             o card de compartilhamento (src/components/share/), mesma
@@ -168,14 +158,13 @@ export function TelosLoadingScreen({
         </Text>
       </View>
 
-      {/* Ícone de treino + barra de progresso juntos num grupo só — root
-          continua `justifyContent:'space-between'` com só 2 filhos agora
-          (cabeçalho em cima, este grupo embaixo), então o espaço sobrando
-          fica todo ENTRE os dois grupos, não mais dividido em 3 partes — a
-          barra fica coladinha no ícone (marginTop:16) em vez de espalhada
-          lá embaixo sozinha; o "espaço no fim" continua sendo o mesmo
-          paddingVertical:80 do container raiz, sem precisar de nada extra. */}
-      <View style={{ alignItems: 'center' }}>
+      {/* MEIO: `flex:1` — absorve todo o espaço que sobra entre o topo e o
+          rodapé (ambos de altura fixa/natural) e centraliza o conteúdo
+          dentro dele (`justifyContent:'center'`) — é isso que garante o
+          conjunto ícone+barra no centro vertical do espaço DISPONÍVEL, não
+          da tela inteira (que ficaria puxado pra cima, mais perto do topo
+          fixo do que do rodapé fixo, se centralizasse contra a tela toda). */}
+      <View style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
         <Animated.View style={{ alignItems: 'center', opacity: iconOpacity }}>
           <Ionicons name={icon.name} size={52} color={colors.text} />
           <Text
@@ -216,6 +205,37 @@ export function TelosLoadingScreen({
             {`${percent}%`}
           </Text>
         </View>
+      </View>
+
+      {/* RODAPÉ: assinatura — discreta, ecoando a mesma hierarquia
+          título/subtítulo já usada no topo (nome em font-display igual
+          "TELOS", linha secundária em font-label bem apagada), só que numa
+          escala bem menor pra nunca competir com o resto da tela. Linha
+          fininha (colors.border) como separador, no lugar de qualquer
+          pontuação. */}
+      <View style={{ alignItems: 'center', paddingBottom: 40 }}>
+        <View style={{ height: 0.5, width: 40, backgroundColor: colors.border, marginBottom: 12 }} />
+        <Text
+          style={{
+            fontFamily: fonts.display,
+            fontSize: 14,
+            color: colors.muted,
+            letterSpacing: 2,
+            textTransform: 'uppercase',
+          }}>
+          Yuri Souza
+        </Text>
+        <Text
+          style={{
+            marginTop: 2,
+            fontFamily: fonts.label,
+            fontSize: 10,
+            color: colors.border,
+            letterSpacing: 1,
+            textTransform: 'uppercase',
+          }}>
+          Desenvolvido com propósito
+        </Text>
       </View>
     </View>
   );
