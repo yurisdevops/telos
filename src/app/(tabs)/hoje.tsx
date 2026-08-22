@@ -84,6 +84,20 @@ import { formatLastPerformance, useLastPerformance } from '@/lib/use-last-perfor
 import { colors } from '@/theme/tokens';
 
 const DEFAULT_REST_SECONDS = 90;
+// Aquecimento (Ajuste 1) é uma série EXTRA, não um toggle numa série
+// existente — precisa da própria sequência de numeroSerie, independente da
+// grade 1..seriesAlvo das séries válidas (pra nunca colidir com ela). Uma
+// base bem negativa deixa qualquer sessão real (nunca chega a 1000 séries
+// de aquecimento) com espaço de sobra, e mantém um ORDENAMENTO GLOBAL
+// simples: `ORDER BY numeroSerie ASC` já põe todo aquecimento (bem negativo)
+// antes de toda série válida (positiva), sem precisar de sort por 2 chaves.
+// handleAddWarmup sempre soma 1 ao MAIOR numeroSerie de aquecimento
+// existente; handleRemoveWarmup renumera os que sobram pra nunca deixar
+// buraco — as duas garantias juntas mantêm a sequência sempre densa
+// (BASE, BASE+1, BASE+2...), o que é o que permite o rótulo "Aquec. N" e o
+// atalho de teclado "próximo campo" (numeroSerie+1) continuarem corretos
+// mesmo depois de remover um aquecimento do meio.
+const WARMUP_NUMERO_SERIE_BASE = -1000;
 // Padrão longo e repetido (não o pulso único do expo-haptics) — pra ser
 // percebido com o celular na bancada. Repete até o usuário fechar o overlay
 // ou até o teto de segurança abaixo, o que vier primeiro.
@@ -1220,6 +1234,7 @@ function SessionExecution({
           key={`${item.kind}-${item.itemId}`}
           item={item}
           sessionId={session.id}
+          sessionConcluded={session.concluida}
           logs={logsByExercise.get(item.exerciseId) ?? EMPTY_LOGS}
           onSkip={handleSkip}
           onUnskip={handleUnskip}
@@ -1450,6 +1465,7 @@ const ExerciseSessionCard = memo(
   function ExerciseSessionCard({
     item,
     sessionId,
+    sessionConcluded,
     logs,
     onSkip,
     onUnskip,
@@ -1458,6 +1474,7 @@ const ExerciseSessionCard = memo(
   }: {
     item: SessionExerciseItem;
     sessionId: number;
+    sessionConcluded: boolean;
     logs: LogEntry[];
     onSkip: (workoutDayExerciseId: number) => void;
     onUnskip: (skipId: number) => void;
@@ -1532,6 +1549,74 @@ const ExerciseSessionCard = memo(
     }, [loadSuggestion]);
 
     const seriesNumbers = Array.from({ length: item.seriesAlvo }, (_, i) => i + 1);
+
+    // Aquecimento: séries EXTRAS (não um toggle numa série existente), numa
+    // sequência própria bem negativa (WARMUP_NUMERO_SERIE_BASE) — sempre
+    // ordenadas antes das séries válidas por causa disso (ver comentário na
+    // constante). `logs` já vem reativo (useLiveQuery no pai), então
+    // adicionar/remover atualiza esta lista sozinho.
+    const warmupLogs = useMemo(
+      () => logs.filter((log) => log.aquecimento).sort((a, b) => a.numeroSerie - b.numeroSerie),
+      [logs]
+    );
+
+    const handleAddWarmup = async () => {
+      try {
+        await db.insert(setLogs).values({
+          sessionId,
+          exerciseId: item.exerciseId,
+          numeroSerie: WARMUP_NUMERO_SERIE_BASE + warmupLogs.length,
+          reps: 0,
+          carga: 0,
+          aquecimento: true,
+        });
+      } catch (err) {
+        reportError('Erro ao adicionar aquecimento', err);
+      }
+    };
+
+    // Renumera os aquecimentos restantes pra nunca deixar buraco na
+    // sequência (ver comentário longo em WARMUP_NUMERO_SERIE_BASE) — sem
+    // isso, handleAddWarmup (baseado em `warmupLogs.length`) poderia
+    // reatribuir um numeroSerie já em uso por um aquecimento que sobrou no
+    // meio, colidindo. Uma transação só: apaga e renumera atomicamente.
+    const handleRemoveWarmup = (logId: number) => {
+      Alert.alert('Remover aquecimento', 'Remover esta série de aquecimento?', [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Remover',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              db.transaction((tx) => {
+                tx.delete(setLogs).where(eq(setLogs.id, logId)).run();
+                const remaining = tx
+                  .select()
+                  .from(setLogs)
+                  .where(
+                    and(
+                      eq(setLogs.sessionId, sessionId),
+                      eq(setLogs.exerciseId, item.exerciseId),
+                      eq(setLogs.aquecimento, true)
+                    )
+                  )
+                  .orderBy(setLogs.numeroSerie)
+                  .all();
+                remaining.forEach((log, index) => {
+                  const target = WARMUP_NUMERO_SERIE_BASE + index;
+                  if (log.numeroSerie !== target) {
+                    tx.update(setLogs).set({ numeroSerie: target }).where(eq(setLogs.id, log.id)).run();
+                  }
+                });
+              });
+            } catch (err) {
+              reportError('Erro ao remover aquecimento', err);
+            }
+          },
+        },
+      ]);
+    };
+
     // Aquecimento não conta como série de trabalho — "X/Y séries completas",
     // o auto-colapso (isComplete) e o botão de pular (canSkip, abaixo) usam
     // só as séries de trabalho (workLogs), nunca as de aquecimento. Mesmo
@@ -1675,6 +1760,34 @@ const ExerciseSessionCard = memo(
               <Label className="flex-1 text-center">Carga</Label>
             </View>
 
+            {!sessionConcluded && (
+              <Button variant="secondary" className="mb-3 self-start" onPress={handleAddWarmup}>
+                <View className="flex-row items-center gap-1">
+                  <Ionicons name="flame-outline" size={14} color={colors.muted} />
+                  <Text className="font-label text-xs uppercase text-muted">+ Aquecimento</Text>
+                </View>
+              </Button>
+            )}
+
+            {warmupLogs.map((log, index) => (
+              <SetRow
+                key={log.numeroSerie}
+                sessionId={sessionId}
+                exerciseId={item.exerciseId}
+                numeroSerie={log.numeroSerie}
+                isLastSerie={index === warmupLogs.length - 1}
+                existing={log}
+                onRequestRest={handleRequestRest}
+                suggestedRestSeconds={suggestedRestSeconds}
+                showRestButton={false}
+                accessoryViewId={accessoryViewId}
+                registerRepsInput={registerRepsInput}
+                focusReps={focusReps}
+                setAdvance={setAdvance}
+                onRemove={() => handleRemoveWarmup(log.id)}
+              />
+            ))}
+
             {seriesNumbers.map((numeroSerie) => (
               <SetRow
                 key={numeroSerie}
@@ -1714,6 +1827,7 @@ const ExerciseSessionCard = memo(
   },
   (prev, next) =>
     prev.sessionId === next.sessionId &&
+    prev.sessionConcluded === next.sessionConcluded &&
     itemsEqual(prev.item, next.item) &&
     logsAreEqual(prev.logs, next.logs)
 );
@@ -1731,6 +1845,7 @@ function SetRow({
   registerRepsInput,
   focusReps,
   setAdvance,
+  onRemove,
 }: {
   sessionId: number;
   exerciseId: number;
@@ -1744,6 +1859,12 @@ function SetRow({
   registerRepsInput: (numeroSerie: number, ref: TextInput | null) => void;
   focusReps: (numeroSerie: number) => void;
   setAdvance: (advance: { run: () => void; label: string }) => void;
+  // Presente só nas linhas de aquecimento (ver ExerciseSessionCard) — série
+  // válida nunca recebe essa prop, então nunca mostra o X (comportamento
+  // preservado). Removido daqui, não é mais um toggle: aquecimento agora é
+  // uma série EXTRA que o pai cria/apaga (handleAddWarmup/handleRemoveWarmup),
+  // nunca uma série existente que vira aquecimento e volta.
+  onRemove?: () => void;
 }) {
   const [reps, setReps] = useState(existing !== undefined ? String(existing.reps) : '');
   // Carga gravada como 0 (sentinela) numa série de peso corporal não é um
@@ -1755,22 +1876,22 @@ function SetRow({
     existing !== undefined && !existing.pesoCorporal ? String(existing.carga) : ''
   );
   const [pesoCorporal, setPesoCorporal] = useState(existing?.pesoCorporal ?? false);
-  const [aquecimento, setAquecimento] = useState(existing?.aquecimento ?? false);
+  // Não é mais um toggle — a linha OU é uma série de aquecimento (criada via
+  // handleAddWarmup, sempre com `existing` já preenchido) OU não é, e isso
+  // nunca muda durante a vida deste SetRow. Const simples, não estado.
+  const aquecimento = existing?.aquecimento ?? false;
   const [logId, setLogId] = useState<number | null>(existing?.id ?? null);
   const [rpe, setRpe] = useState<number | null>(existing?.rpe ?? null);
   const isFilled = logId !== null;
   const rpeCategory = rpeValueToCategory(rpe);
   const cargaInputRef = useRef<TextInput>(null);
 
-  // Aceita overrides explícitos de pesoCorporal/aquecimento pro caso dos
-  // toggles: como setState é assíncrono, o handler do toggle não pode
-  // confiar no valor já atualizado no mesmo tick — passa o valor novo
-  // direto. Os dois campos coexistem livremente (sem exclusão mútua), mesmo
-  // padrão de rpe+pesoCorporal já coexistindo hoje — uma série de
-  // aquecimento em peso corporal é incomum mas válida.
-  const commit = async (pesoCorporalOverride?: boolean, aquecimentoOverride?: boolean) => {
+  // Aceita um override explícito de pesoCorporal pro caso do toggle: como
+  // setState é assíncrono, o handler não pode confiar no valor já
+  // atualizado no mesmo tick — passa o valor novo direto. `aquecimento` (a
+  // const acima) sempre vai junto, fixo — nunca muda por aqui.
+  const commit = async (pesoCorporalOverride?: boolean) => {
     const effectivePesoCorporal = pesoCorporalOverride ?? pesoCorporal;
-    const effectiveAquecimento = aquecimentoOverride ?? aquecimento;
 
     // reps and carga are NOT NULL columns, so a row can't be persisted
     // without reps. Carga só é exigida quando NÃO é peso corporal — peso
@@ -1796,7 +1917,7 @@ function SetRow({
             reps: repsNum,
             carga: cargaNum,
             pesoCorporal: effectivePesoCorporal,
-            aquecimento: effectiveAquecimento,
+            aquecimento,
           })
           .where(eq(setLogs.id, logId));
       } else {
@@ -1809,7 +1930,7 @@ function SetRow({
             reps: repsNum,
             carga: cargaNum,
             pesoCorporal: effectivePesoCorporal,
-            aquecimento: effectiveAquecimento,
+            aquecimento,
           })
           .returning();
         setLogId(created.id);
@@ -1823,13 +1944,7 @@ function SetRow({
     const next = !pesoCorporal;
     setPesoCorporal(next);
     if (next) setCarga('');
-    commit(next, undefined);
-  };
-
-  const handleToggleAquecimento = () => {
-    const next = !aquecimento;
-    setAquecimento(next);
-    commit(undefined, next);
+    commit(next);
   };
 
   // Realce de RPE + descanso ao concluir a série normalmente (ver abaixo) —
@@ -1948,14 +2063,14 @@ function SetRow({
   return (
     <View className={`mb-3 ${aquecimento ? 'opacity-60' : ''}`}>
       <View className="flex-row items-center gap-3">
-        <Label className={`w-16 ${isFilled ? 'text-accent' : ''}`}>{aquecimento ? `Aquec. ${numeroSerie}` : `Série ${numeroSerie}`}</Label>
-        <Pressable
-          onPress={handleToggleAquecimento}
-          hitSlop={8}
-          className="p-1"
-          accessibilityLabel="Marcar série como aquecimento">
-          <Ionicons name="flame-outline" size={20} color={aquecimento ? colors.accent : colors.muted} />
-        </Pressable>
+        <Label className={`w-16 ${isFilled ? 'text-accent' : ''}`}>
+          {aquecimento ? `Aquec. ${numeroSerie - WARMUP_NUMERO_SERIE_BASE + 1}` : `Série ${numeroSerie}`}
+        </Label>
+        {onRemove && (
+          <Pressable onPress={onRemove} hitSlop={8} className="p-1" accessibilityLabel="Remover série de aquecimento">
+            <Ionicons name="close-circle-outline" size={20} color={colors.muted} />
+          </Pressable>
+        )}
         <View className="flex-1">
           <Input
             ref={setRepsInputRef}

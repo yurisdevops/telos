@@ -162,3 +162,26 @@ export async function getCardioHistory(limit = 10): Promise<CardioHistoryItem[]>
 
   return items.sort((a, b) => b.data.localeCompare(a.data)).slice(0, limit);
 }
+
+/**
+ * Apaga uma sessão de cardio separada (modo B) inteira, blocos primeiro
+ * (cardioLogs.cardioSessionId referencia cardioSessions, mesma ordem
+ * filho-antes-do-pai já usada em toda deleção deste app) — reusada tanto
+ * pelo histórico do Progresso (CardioSection) quanto por cardio/sessao.tsx
+ * (que antes duplicava essas 2 chamadas inline).
+ */
+export async function deleteCardioSession(id: number): Promise<void> {
+  await db.delete(cardioLogs).where(eq(cardioLogs.cardioSessionId, id));
+  await db.delete(cardioSessions).where(eq(cardioSessions.id, id));
+}
+
+/**
+ * Apaga só os blocos de cardio de UM treino de força (modo A) — nunca a
+ * `sessions` em si, que continua existindo (o treino de musculação não é
+ * cardio, só teve um bloco dentro dele). `sessionId` sozinho já identifica
+ * exatamente os blocos certos (cada linha de cardioLogs pertence a uma única
+ * sessão), sem precisar de filtro por data adicional.
+ */
+export async function deleteCardioLogsForSession(sessionId: number): Promise<void> {
+  await db.delete(cardioLogs).where(eq(cardioLogs.sessionId, sessionId));
+}

@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import { ScreenTitle } from '@/components/ui/screen-title';
 import { db } from '@/db';
 import { cardioLogs, cardioSessions } from '@/db/schema';
+import { deleteCardioSession } from '@/db/cardio-stats';
 import { INTENSIDADES_CARDIO, MODALIDADES_CARDIO } from '@/lib/cardio';
 import { colors } from '@/theme/tokens';
 
@@ -78,8 +79,9 @@ export default function CardioSessaoScreen() {
     }
   };
 
-  // Filhos antes do pai (cardioLogs referencia cardioSessions) — mesma
-  // ordem já usada em handleCancel de hoje.tsx pra sessão de força.
+  // Deleção (filhos antes do pai) extraída pra deleteCardioSession em
+  // db/cardio-stats.ts — reusada também pelo botão de apagar no histórico
+  // do Progresso (CardioSection), em vez de duplicar as 2 chamadas aqui.
   const handleCancel = () => {
     Alert.alert(
       'Cancelar sessão de cardio',
@@ -91,8 +93,7 @@ export default function CardioSessaoScreen() {
           style: 'destructive',
           onPress: async () => {
             try {
-              await db.delete(cardioLogs).where(eq(cardioLogs.cardioSessionId, cardioSessionIdNum));
-              await db.delete(cardioSessions).where(eq(cardioSessions.id, cardioSessionIdNum));
+              await deleteCardioSession(cardioSessionIdNum);
               router.back();
             } catch (err) {
               reportError('Erro ao cancelar sessão de cardio', err);
