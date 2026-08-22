@@ -10,6 +10,11 @@ export type ExerciseHistorySet = {
   carga: number;
   rpe: number | null;
   pesoCorporal: boolean;
+  // Aquecimento aparece no histórico (não é filtrado daqui) — quem exibe
+  // decide como marcar visualmente; só sai de cálculos derivados (ex: o
+  // gráfico de evolução de carga em exercicio/[id].tsx), mesmo critério de
+  // pesoCorporal ali.
+  aquecimento: boolean;
   exerciseWgerId: number;
   exerciseNome: string;
 };
@@ -117,6 +122,7 @@ export async function fetchCombinedExerciseHistory(currentExerciseId: number): P
         carga: setLogs.carga,
         rpe: setLogs.rpe,
         pesoCorporal: setLogs.pesoCorporal,
+        aquecimento: setLogs.aquecimento,
       })
       .from(setLogs)
       .innerJoin(sessions, eq(setLogs.sessionId, sessions.id))

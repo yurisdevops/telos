@@ -33,7 +33,8 @@ async function computeSessionDensities(): Promise<{ data: string; densidade: num
         eq(sessions.concluida, true),
         isNotNull(sessions.horaInicio),
         isNotNull(sessions.horaFim),
-        eq(setLogs.pesoCorporal, false)
+        eq(setLogs.pesoCorporal, false),
+        eq(setLogs.aquecimento, false)
       )
     )
     .groupBy(sessions.id);

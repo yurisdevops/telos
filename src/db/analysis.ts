@@ -31,7 +31,10 @@ type SeriesRow = { exerciseId: number; nome: string; categoria: string; musculos
 // ambas: sessões concluídas, janela de 4 semanas completas, contagem de
 // SÉRIES (nunca volume-carga), sem filtrar `pesoCorporal` (série de peso
 // corporal é série de trabalho pra essa contagem, mesmo critério de
-// MuscleSeriesVolumeSection no Progresso).
+// MuscleSeriesVolumeSection no Progresso). `aquecimento` É filtrado, mesmo
+// com `pesoCorporal` não sendo — comportamento divergente proposital: uma
+// série de aquecimento não é volume de treino pra nenhum critério, mas uma
+// série de peso corporal é (só não tem carga associada).
 async function fetchSeriesRowsForWindow(startIso: string, endIso: string): Promise<SeriesRow[]> {
   const rows = await db
     .select({
@@ -44,7 +47,14 @@ async function fetchSeriesRowsForWindow(startIso: string, endIso: string): Promi
     .from(setLogs)
     .innerJoin(sessions, eq(setLogs.sessionId, sessions.id))
     .innerJoin(exercises, eq(setLogs.exerciseId, exercises.id))
-    .where(and(eq(sessions.concluida, true), gte(sessions.data, startIso), lt(sessions.data, endIso)))
+    .where(
+      and(
+        eq(sessions.concluida, true),
+        gte(sessions.data, startIso),
+        lt(sessions.data, endIso),
+        eq(setLogs.aquecimento, false)
+      )
+    )
     .groupBy(setLogs.exerciseId);
 
   return rows.map((row) => ({ ...row, sets: Number(row.sets) }));

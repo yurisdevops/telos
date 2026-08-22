@@ -253,6 +253,7 @@ type LogEntry = {
   carga: number;
   rpe: number | null;
   pesoCorporal: boolean;
+  aquecimento: boolean;
 };
 
 type SessionExerciseItem = {
@@ -405,6 +406,7 @@ function SessionExecution({
         carga: log.carga,
         rpe: log.rpe,
         pesoCorporal: log.pesoCorporal,
+        aquecimento: log.aquecimento,
       });
       map.set(log.exerciseId, list);
     }
@@ -478,30 +480,42 @@ function SessionExecution({
 
   const activeItems = items.filter((item) => !item.skipped);
   const totalSeries = activeItems.reduce((sum, item) => sum + item.seriesAlvo, 0);
+  // Aquecimento não conta como série de trabalho concluída — a barra mostra
+  // progresso de séries de TRABALHO, mesmo critério de volume/PR/análise
+  // (ver ExerciseSessionCard.completedCount, que segue a mesma regra).
   const completedSeries = activeItems.reduce(
-    (sum, item) => sum + Math.min(logsByExercise.get(item.exerciseId)?.length ?? 0, item.seriesAlvo),
+    (sum, item) =>
+      sum +
+      Math.min(
+        logsByExercise.get(item.exerciseId)?.filter((log) => !log.aquecimento).length ?? 0,
+        item.seriesAlvo
+      ),
     0
   );
 
-  // Volume total em kg (Σ reps×carga), excluindo peso corporal — mesma regra
-  // já aplicada nos cálculos de Progresso (carga 0 por convenção não é carga
-  // real). `logs` já é a query única de set_logs da sessão, sem query nova.
+  // Volume total em kg (Σ reps×carga), excluindo peso corporal E aquecimento
+  // — mesma regra já aplicada nos cálculos de Progresso (carga 0 por
+  // convenção não é carga real; aquecimento não é série de trabalho). `logs`
+  // já é a query única de set_logs da sessão, sem query nova.
   const volumeKg = useMemo(
     () =>
       Math.round(
-        (logs ?? []).filter((log) => !log.pesoCorporal).reduce((sum, log) => sum + log.reps * log.carga, 0)
+        (logs ?? [])
+          .filter((log) => !log.pesoCorporal && !log.aquecimento)
+          .reduce((sum, log) => sum + log.reps * log.carga, 0)
       ),
     [logs]
   );
 
-  // Grupos musculares treinados — soma séries FEITAS (não alvo) por músculo,
-  // pra cada exercício ativo, e ordena por relevância (mais séries primeiro).
-  // Tudo já em memória (items + logsByExercise), sem query nova. Top 4 pra
-  // não poluir o card — um full body facilmente passa disso.
+  // Grupos musculares treinados — soma séries FEITAS (não alvo, excluindo
+  // aquecimento) por músculo, pra cada exercício ativo, e ordena por
+  // relevância (mais séries primeiro). Tudo já em memória (items +
+  // logsByExercise), sem query nova. Top 4 pra não poluir o card — um full
+  // body facilmente passa disso.
   const grupos = useMemo(() => {
     const seriesByMuscle = new Map<string, number>();
     for (const item of activeItems) {
-      const seriesFeitas = logsByExercise.get(item.exerciseId)?.length ?? 0;
+      const seriesFeitas = logsByExercise.get(item.exerciseId)?.filter((log) => !log.aquecimento).length ?? 0;
       if (seriesFeitas === 0) continue;
       let musculosList: string[];
       try {
@@ -1261,7 +1275,8 @@ function logsAreEqual(a: LogEntry[], b: LogEntry[]) {
       match.reps !== log.reps ||
       match.carga !== log.carga ||
       match.rpe !== log.rpe ||
-      match.pesoCorporal !== log.pesoCorporal
+      match.pesoCorporal !== log.pesoCorporal ||
+      match.aquecimento !== log.aquecimento
     ) {
       return false;
     }
@@ -1355,7 +1370,14 @@ const ExerciseSessionCard = memo(
     }, [loadSuggestion]);
 
     const seriesNumbers = Array.from({ length: item.seriesAlvo }, (_, i) => i + 1);
-    const completedCount = logs.length;
+    // Aquecimento não conta como série de trabalho — "X/Y séries completas",
+    // o auto-colapso (isComplete) e o botão de pular (canSkip, abaixo) usam
+    // só as séries de trabalho (workLogs), nunca as de aquecimento. Mesmo
+    // padrão de `weightedLogs`/`allPesoCorporal` logo abaixo: const simples,
+    // não useMemo — cálculo barato, recomputado a cada render como o resto
+    // deste bloco.
+    const workLogs = logs.filter((log) => !log.aquecimento);
+    const completedCount = workLogs.length;
     const isComplete = completedCount === item.seriesAlvo;
     const isStarted = completedCount > 0;
 
@@ -1373,12 +1395,15 @@ const ExerciseSessionCard = memo(
     }`;
 
     // Resumo do card colapsado (só relevante quando isComplete, mas o cálculo
-    // em si é barato e já vem de `logs`, sem query nova). Peso corporal sai do
-    // cálculo de maior carga (é 0 por convenção, não uma carga real) — se
-    // TODAS as séries forem peso corporal, mostra "PC" em vez de "0kg".
-    const weightedLogs = logs.filter((log) => !log.pesoCorporal);
+    // em si é barato e já vem de `workLogs`, sem query nova). Parte de
+    // `workLogs` (não `logs`) — aquecimento não deveria influenciar "maior
+    // carga" nem "só peso corporal" do resumo, mesmo critério do resto deste
+    // arquivo. Peso corporal sai do cálculo de maior carga (é 0 por
+    // convenção, não uma carga real) — se TODAS as séries de trabalho forem
+    // peso corporal, mostra "PC" em vez de "0kg".
+    const weightedLogs = workLogs.filter((log) => !log.pesoCorporal);
     const maiorCarga = weightedLogs.length > 0 ? Math.max(...weightedLogs.map((log) => log.carga)) : 0;
-    const allPesoCorporal = logs.length > 0 && logs.every((log) => log.pesoCorporal);
+    const allPesoCorporal = workLogs.length > 0 && workLogs.every((log) => log.pesoCorporal);
     const completedSummaryLabel =
       maiorCarga > 0
         ? `${item.seriesAlvo}× · ${maiorCarga}kg`
@@ -1568,17 +1593,22 @@ function SetRow({
     existing !== undefined && !existing.pesoCorporal ? String(existing.carga) : ''
   );
   const [pesoCorporal, setPesoCorporal] = useState(existing?.pesoCorporal ?? false);
+  const [aquecimento, setAquecimento] = useState(existing?.aquecimento ?? false);
   const [logId, setLogId] = useState<number | null>(existing?.id ?? null);
   const [rpe, setRpe] = useState<number | null>(existing?.rpe ?? null);
   const isFilled = logId !== null;
   const rpeCategory = rpeValueToCategory(rpe);
   const cargaInputRef = useRef<TextInput>(null);
 
-  // Aceita um override explícito de pesoCorporal pro caso do toggle: como
-  // setState é assíncrono, o handler do toggle não pode confiar no valor de
-  // `pesoCorporal` já atualizado no mesmo tick — passa o valor novo direto.
-  const commit = async (pesoCorporalOverride?: boolean) => {
+  // Aceita overrides explícitos de pesoCorporal/aquecimento pro caso dos
+  // toggles: como setState é assíncrono, o handler do toggle não pode
+  // confiar no valor já atualizado no mesmo tick — passa o valor novo
+  // direto. Os dois campos coexistem livremente (sem exclusão mútua), mesmo
+  // padrão de rpe+pesoCorporal já coexistindo hoje — uma série de
+  // aquecimento em peso corporal é incomum mas válida.
+  const commit = async (pesoCorporalOverride?: boolean, aquecimentoOverride?: boolean) => {
     const effectivePesoCorporal = pesoCorporalOverride ?? pesoCorporal;
+    const effectiveAquecimento = aquecimentoOverride ?? aquecimento;
 
     // reps and carga are NOT NULL columns, so a row can't be persisted
     // without reps. Carga só é exigida quando NÃO é peso corporal — peso
@@ -1600,7 +1630,12 @@ function SetRow({
       if (logId) {
         await db
           .update(setLogs)
-          .set({ reps: repsNum, carga: cargaNum, pesoCorporal: effectivePesoCorporal })
+          .set({
+            reps: repsNum,
+            carga: cargaNum,
+            pesoCorporal: effectivePesoCorporal,
+            aquecimento: effectiveAquecimento,
+          })
           .where(eq(setLogs.id, logId));
       } else {
         const [created] = await db
@@ -1612,6 +1647,7 @@ function SetRow({
             reps: repsNum,
             carga: cargaNum,
             pesoCorporal: effectivePesoCorporal,
+            aquecimento: effectiveAquecimento,
           })
           .returning();
         setLogId(created.id);
@@ -1625,7 +1661,13 @@ function SetRow({
     const next = !pesoCorporal;
     setPesoCorporal(next);
     if (next) setCarga('');
-    commit(next);
+    commit(next, undefined);
+  };
+
+  const handleToggleAquecimento = () => {
+    const next = !aquecimento;
+    setAquecimento(next);
+    commit(undefined, next);
   };
 
   // Realce de RPE + descanso ao concluir a série normalmente (ver abaixo) —
@@ -1742,9 +1784,16 @@ function SetRow({
   };
 
   return (
-    <View className="mb-3">
+    <View className={`mb-3 ${aquecimento ? 'opacity-60' : ''}`}>
       <View className="flex-row items-center gap-3">
         <Label className={`w-16 ${isFilled ? 'text-accent' : ''}`}>{`Série ${numeroSerie}`}</Label>
+        <Pressable
+          onPress={handleToggleAquecimento}
+          hitSlop={8}
+          className="p-1"
+          accessibilityLabel="Marcar série como aquecimento">
+          <Ionicons name="flame-outline" size={20} color={aquecimento ? colors.accent : colors.muted} />
+        </Pressable>
         <View className="flex-1">
           <Input
             ref={setRepsInputRef}

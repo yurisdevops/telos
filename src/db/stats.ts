@@ -11,7 +11,8 @@ import { getTodayDateString, getWeekStartIso, parseLocalIsoDate, toLocalIsoDate 
  * barra, contagem por semana) que não têm nada a ver com um único número de
  * resumo; extrair dali arriscaria o comportamento do gráfico pra ganhar
  * pouco. Mesmo critério de volume que o resto do app: pesoCorporal=true
- * não entra (não é carga de verdade).
+ * não entra (não é carga de verdade), aquecimento=true também não (não é
+ * série de trabalho).
  */
 export async function computeCurrentWeekVolume(): Promise<number> {
   const weekStartIso = getWeekStartIso(getTodayDateString());
@@ -28,6 +29,7 @@ export async function computeCurrentWeekVolume(): Promise<number> {
       and(
         eq(sessions.concluida, true),
         eq(setLogs.pesoCorporal, false),
+        eq(setLogs.aquecimento, false),
         gte(sessions.data, weekStartIso),
         lt(sessions.data, weekEndIso)
       )

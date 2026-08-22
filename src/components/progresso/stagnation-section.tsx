@@ -28,7 +28,12 @@ async function computeStagnation(): Promise<StagnationRow[]> {
     .innerJoin(sessions, eq(setLogs.sessionId, sessions.id))
     .innerJoin(exercises, eq(setLogs.exerciseId, exercises.id))
     .where(
-      and(eq(sessions.concluida, true), eq(setLogs.pesoCorporal, false), eq(sessions.foraDaAcademia, false))
+      and(
+        eq(sessions.concluida, true),
+        eq(setLogs.pesoCorporal, false),
+        eq(setLogs.aquecimento, false),
+        eq(sessions.foraDaAcademia, false)
+      )
     )
     .groupBy(setLogs.exerciseId, sessions.data);
 

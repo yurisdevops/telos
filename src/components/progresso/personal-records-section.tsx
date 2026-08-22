@@ -19,7 +19,12 @@ function usePersonalRecords(): PrRow[] | undefined {
         .from(setLogs)
         .innerJoin(sessions, eq(setLogs.sessionId, sessions.id))
         .where(
-          and(eq(sessions.concluida, true), eq(setLogs.pesoCorporal, false), eq(sessions.foraDaAcademia, false))
+          and(
+            eq(sessions.concluida, true),
+            eq(setLogs.pesoCorporal, false),
+            eq(setLogs.aquecimento, false),
+            eq(sessions.foraDaAcademia, false)
+          )
         )
         .groupBy(setLogs.exerciseId);
 
@@ -38,6 +43,7 @@ function usePersonalRecords(): PrRow[] | undefined {
               eq(setLogs.carga, row.maxCarga),
               eq(sessions.concluida, true),
               eq(setLogs.pesoCorporal, false),
+              eq(setLogs.aquecimento, false),
               eq(sessions.foraDaAcademia, false)
             )
           )

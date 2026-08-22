@@ -4,7 +4,13 @@ import { db } from '@/db';
 import { sessions, setLogs } from '@/db/schema';
 import { useDbQuery } from '@/lib/use-db-query';
 
-type LastPerformanceSet = { numeroSerie: number; reps: number; carga: number; pesoCorporal: boolean };
+type LastPerformanceSet = {
+  numeroSerie: number;
+  reps: number;
+  carga: number;
+  pesoCorporal: boolean;
+  aquecimento: boolean;
+};
 
 /** Séries do último treino concluído em que esse exercício apareceu (exclui a
  * sessão atual, já que ela ainda não está concluída ao ser exibida). */
@@ -38,6 +44,7 @@ export function useLastPerformance(
           reps: setLogs.reps,
           carga: setLogs.carga,
           pesoCorporal: setLogs.pesoCorporal,
+          aquecimento: setLogs.aquecimento,
         })
         .from(setLogs)
         .where(and(eq(setLogs.exerciseId, exerciseId), eq(setLogs.sessionId, lastSessionId)))
@@ -50,15 +57,26 @@ export function useLastPerformance(
 
 /** [{reps:12,carga:55}, {reps:12,carga:55}] -> "3x12 · 55kg"; séries
  * variadas -> "55kg×12 / 50kg×10". Peso corporal grava carga 0 por convenção
- * — nunca mostra "0kg" (enganoso, parece uma carga real), mostra "PC". */
+ * — nunca mostra "0kg" (enganoso, parece uma carga real), mostra "PC".
+ * Aquecimento NÃO é filtrado daqui (decisão: o usuário quer ver que aqueceu
+ * com 40kg antes de trabalhar com 80kg) — só ganha o prefixo "(A)", mesmo
+ * vocabulário terso de "PC" já usado nesta função. Também entra no critério
+ * de uniformidade abaixo: uma sessão com séries de aquecimento E de trabalho
+ * nunca colapsa pro formato resumido "3x12 · 55kg" (perderia a distinção),
+ * sempre cai no formato "por série" onde o "(A)" aparece. */
 export function formatLastPerformance(sets: LastPerformanceSet[]): string | null {
   if (sets.length === 0) return null;
 
-  const formatCarga = (s: LastPerformanceSet) => (s.pesoCorporal ? 'PC' : `${s.carga}kg`);
+  const formatCarga = (s: LastPerformanceSet) =>
+    `${s.aquecimento ? '(A) ' : ''}${s.pesoCorporal ? 'PC' : `${s.carga}kg`}`;
 
   const [first, ...rest] = sets;
   const uniform = rest.every(
-    (s) => s.reps === first.reps && s.carga === first.carga && s.pesoCorporal === first.pesoCorporal
+    (s) =>
+      s.reps === first.reps &&
+      s.carga === first.carga &&
+      s.pesoCorporal === first.pesoCorporal &&
+      s.aquecimento === first.aquecimento
   );
 
   if (uniform) {

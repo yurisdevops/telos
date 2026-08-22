@@ -41,7 +41,7 @@ export async function findSessionPrs(sessionId: number): Promise<SessionPr[]> {
   const sessionMaxRows = await db
     .select({ exerciseId: setLogs.exerciseId, maxCarga: sql<number>`max(${setLogs.carga})` })
     .from(setLogs)
-    .where(and(eq(setLogs.sessionId, sessionId), eq(setLogs.pesoCorporal, false)))
+    .where(and(eq(setLogs.sessionId, sessionId), eq(setLogs.pesoCorporal, false), eq(setLogs.aquecimento, false)))
     .groupBy(setLogs.exerciseId);
 
   if (sessionMaxRows.length === 0) return [];
@@ -54,6 +54,7 @@ export async function findSessionPrs(sessionId: number): Promise<SessionPr[]> {
       and(
         eq(sessions.concluida, true),
         eq(setLogs.pesoCorporal, false),
+        eq(setLogs.aquecimento, false),
         eq(sessions.foraDaAcademia, false),
         ne(sessions.id, sessionId)
       )
@@ -77,7 +78,8 @@ export async function findSessionPrs(sessionId: number): Promise<SessionPr[]> {
           eq(setLogs.sessionId, sessionId),
           eq(setLogs.exerciseId, row.exerciseId),
           eq(setLogs.carga, row.maxCarga),
-          eq(setLogs.pesoCorporal, false)
+          eq(setLogs.pesoCorporal, false),
+          eq(setLogs.aquecimento, false)
         )
       )
       .limit(1);

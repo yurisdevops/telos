@@ -53,12 +53,14 @@ export default function ExercicioDetailScreen() {
 
   const evolutionByDay = useMemo(() => {
     if (!history) return [];
-    // Peso corporal (carga 0 por convenção) sai do gráfico de evolução de
-    // carga — senão um dia só com séries de peso corporal afundaria o
-    // gráfico com um "0" que não representa carga nenhuma.
+    // Peso corporal (carga 0 por convenção) e aquecimento saem do gráfico de
+    // evolução de carga — peso corporal porque um dia só com séries de peso
+    // corporal afundaria o gráfico com um "0" que não representa carga
+    // nenhuma; aquecimento porque não representa a carga de trabalho do dia
+    // (mesmo critério usado em toda análise/PR/volume do app).
     const maxByDate = new Map<string, number>();
     for (const s of history.sets) {
-      if (s.pesoCorporal) continue;
+      if (s.pesoCorporal || s.aquecimento) continue;
       maxByDate.set(s.data, Math.max(maxByDate.get(s.data) ?? -Infinity, s.carga));
     }
     return [...maxByDate.entries()]
@@ -336,10 +338,13 @@ export default function ExercicioDetailScreen() {
                   .map((set) => (
                     <View key={set.numeroSerie} className="flex-row items-center justify-between py-1">
                       <Label>{`Série ${set.numeroSerie}`}</Label>
-                      <Text className="font-body-medium text-sm text-text">
-                        {`${set.reps} reps · ${set.pesoCorporal ? 'PC' : `${set.carga}kg`}`}
-                        {set.rpe != null && <Text className="text-muted">{`  · RPE ${set.rpe}`}</Text>}
-                      </Text>
+                      <View className="flex-row items-center gap-1">
+                        {set.aquecimento && <Ionicons name="flame" size={12} color={colors.muted} />}
+                        <Text className="font-body-medium text-sm text-text">
+                          {`${set.reps} reps · ${set.pesoCorporal ? 'PC' : `${set.carga}kg`}`}
+                          {set.rpe != null && <Text className="text-muted">{`  · RPE ${set.rpe}`}</Text>}
+                        </Text>
+                      </View>
                     </View>
                   ))}
               </Card>

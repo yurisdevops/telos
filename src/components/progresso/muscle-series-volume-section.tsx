@@ -14,7 +14,11 @@ const REFERENCE_MAX = 20;
 
 /** Contagem de SÉRIES (não tonelagem) por grupo muscular na semana atual —
  * a referência de volume que a literatura de hipertrofia usa (10-20
- * séries/semana por músculo), mostrada como faixa visual atrás da barra. */
+ * séries/semana por músculo), mostrada como faixa visual atrás da barra.
+ * `pesoCorporal` NÃO é filtrado (série de peso corporal é série de trabalho
+ * pra essa contagem, mesmo critério de db/analysis.ts) — `aquecimento` É,
+ * comportamento divergente proposital (aquecimento nunca é volume de
+ * treino, peso corporal é). */
 export function MuscleSeriesVolumeSection() {
   const weekStartIso = useMemo(() => getWeekStartIso(getTodayDateString()), []);
 
@@ -29,7 +33,7 @@ export function MuscleSeriesVolumeSection() {
         .from(setLogs)
         .innerJoin(sessions, eq(setLogs.sessionId, sessions.id))
         .innerJoin(exercises, eq(setLogs.exerciseId, exercises.id))
-        .where(and(eq(sessions.concluida, true), gte(sessions.data, weekStartIso)))
+        .where(and(eq(sessions.concluida, true), gte(sessions.data, weekStartIso), eq(setLogs.aquecimento, false)))
         .groupBy(setLogs.exerciseId),
     ['set_logs', 'sessions'],
     [weekStartIso]

@@ -25,7 +25,7 @@ export function WeeklyVolumeSection() {
         .select({ data: sessions.data, volume: sql<number>`sum(${setLogs.reps} * ${setLogs.carga})` })
         .from(setLogs)
         .innerJoin(sessions, eq(setLogs.sessionId, sessions.id))
-        .where(and(eq(sessions.concluida, true), eq(setLogs.pesoCorporal, false)))
+        .where(and(eq(sessions.concluida, true), eq(setLogs.pesoCorporal, false), eq(setLogs.aquecimento, false)))
         .groupBy(sessions.data),
     ['set_logs', 'sessions'],
     []
