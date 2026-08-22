@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useState, type ComponentProps, type ReactNode } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
@@ -7,6 +7,11 @@ import { colors } from '@/theme/tokens';
 
 type CollapsibleSectionProps = {
   title: string;
+  // Opcional — ícone à esquerda do título (ex: CardioSection usa
+  // 'flash-outline'). Ausente por padrão, sem mudar nada pros 3 usos já
+  // existentes (Análise de volume/Medidas corporais/Histórico de treinos,
+  // todos no Perfil) que nunca passaram essa prop.
+  icon?: ComponentProps<typeof Ionicons>['name'];
   children: ReactNode;
 };
 
@@ -25,7 +30,7 @@ type CollapsibleSectionProps = {
  * barata) isso é preferível a manter uma seção escondida "viva" recebendo
  * atualizações à toa.
  */
-export function CollapsibleSection({ title, children }: CollapsibleSectionProps) {
+export function CollapsibleSection({ title, icon, children }: CollapsibleSectionProps) {
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -35,7 +40,10 @@ export function CollapsibleSection({ title, children }: CollapsibleSectionProps)
         className="flex-row items-center justify-between"
         accessibilityRole="button"
         accessibilityState={{ expanded }}>
-        <Text className="font-card-title text-lg text-text">{title}</Text>
+        <View className="flex-row items-center gap-2">
+          {icon && <Ionicons name={icon} size={18} color={colors.accent} />}
+          <Text className="font-card-title text-lg text-text">{title}</Text>
+        </View>
         <Ionicons name={expanded ? 'chevron-up' : 'chevron-down'} size={20} color={colors.muted} />
       </Pressable>
 
