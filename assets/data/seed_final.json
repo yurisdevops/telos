@@ -10,7 +10,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Glúteos",
+      "Posterior de coxa",
+      "Lombar"
+    ],
     "descricao": "Segure o kettlebell com as duas mãos, pés na largura dos ombros. Faça a dobradiça de quadril levando o peso entre as pernas e impulsione com os glúteos até a altura do peito, braços relaxados.",
     "dica": "A força vem do quadril, não dos braços: contraia forte os glúteos no topo e deixe o peso descer sozinho para o próximo balanço.",
     "nivel": "avançado"
@@ -63,7 +67,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Ombros",
+      "Antebraços",
+      "Tríceps"
+    ],
     "descricao": "Segure um peso em cada mão com os braços estendidos lateralmente na altura dos ombros e mantenha a posição isométrica pelo tempo determinado.",
     "dica": "Use pouca carga e foque em não deixar os braços caírem: o estímulo é a resistência isométrica de deltoides, não o peso máximo.",
     "nivel": "iniciante"
@@ -79,7 +87,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Oblíquos",
+      "Lombar",
+      "Ombros"
+    ],
     "descricao": "Ajoelhado, segure a barra no chão com pegada na largura dos ombros. Role a barra para a frente estendendo o corpo com o abdômen contraído e retorne puxando com o core.",
     "dica": "Mantenha o quadril levemente à frente e as costelas 'fechadas': o alongamento máximo do abdômen no ponto mais distante é onde está o estímulo — vá só até onde controla a volta.",
     "nivel": "avançado"
@@ -190,7 +202,10 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Oblíquos",
+      "Lombar"
+    ],
     "descricao": "Em prancha ou posição de quatro apoios, mantenha a coluna neutra e o abdômen contraído resistindo a qualquer movimento do tronco pelo tempo determinado.",
     "dica": "Imagine aproximar as costelas do quadril e respire sem perder a rigidez: estabilizar é resistir ao movimento, não prender o ar.",
     "nivel": "iniciante"
@@ -478,7 +493,11 @@
     "musculos": [
       "Bíceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Dorsais",
+      "Ombros",
+      "Antebraços"
+    ],
     "descricao": "Da posição de prancha com antebraços no chão, estenda um braço de cada vez até a prancha alta e retorne aos antebraços, alternando o braço que inicia.",
     "dica": "Quadril o mais parado possível: o desafio é o core resistir à rotação enquanto os braços fazem o movimento.",
     "nivel": "intermediário"
@@ -587,7 +606,9 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio"
+    ],
     "descricao": "Sentado de frente para o encosto do voador (ou com as manoplas invertidas), abra os braços para trás contra a resistência, apertando as escápulas.",
     "dica": "Movimento guiado pelos deltoides posteriores: abra até a linha do corpo, segure 1 segundo e retorne devagar — carga baixa e execução perfeita.",
     "nivel": "iniciante"
@@ -603,7 +624,10 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Abdômen"
+    ],
     "descricao": "Em pé ao lado da polia baixa, cotovelo colado ao tronco flexionado a 90°, gire o antebraço para fora contra a resistência e retorne devagar.",
     "dica": "Carga leve e cotovelo grudado no corpo: é exercício de manguito rotador, saúde de ombro — a qualidade importa mais que o peso.",
     "nivel": "iniciante"
@@ -733,7 +757,10 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Oblíquos",
+      "Lombar"
+    ],
     "descricao": "Deitado com a lombar apoiada na bola suíça e os pés no chão, faça o abdominal elevando o tronco e retornando com controle sobre a bola.",
     "dica": "A bola permite estender o tronco além do neutro na descida: use esse alongamento extra do abdômen e suba só até tirar as escápulas do apoio.",
     "nivel": "iniciante"
@@ -749,7 +776,10 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Oblíquos",
+      "Pescoço"
+    ],
     "descricao": "• Deite-se de barriga para cima no chão com os joelhos dobrados. • Curve os ombros em direção a pélvis. As mãos podem ficar atrás ou do lado do pescoço ou cruzadas sobre o peito. • Repita",
     "dica": "Suba enrolando vértebra por vértebra e expire no esforço: mãos apenas apoiadas na nuca, sem puxar o pescoço.",
     "nivel": "iniciante"
@@ -765,7 +795,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Oblíquos",
+      "Quadríceps",
+      "Pescoço"
+    ],
     "descricao": "No banco declinado com os pés presos, cruze os braços no peito e suba o tronco contraindo o abdômen, descendo devagar.",
     "dica": "Suba enrolando a coluna vértebra por vértebra em vez de 'sentar' com o quadril: o abdominal flexiona o tronco, não o quadril.",
     "nivel": "iniciante"
@@ -781,7 +815,10 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Oblíquos",
+      "Lombar"
+    ],
     "descricao": "Na máquina de abdominal, segure as manoplas e flexione o tronco contra a resistência aproximando as costelas do quadril, retornando controlado.",
     "dica": "Expire durante a flexão e segure 1 segundo o pico: a máquina permite progressão de carga real no abdômen — trate como qualquer músculo.",
     "nivel": "iniciante"
@@ -797,7 +834,10 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Oblíquos",
+      "Lombar"
+    ],
     "descricao": "Ajoelhado de frente para a polia alta segurando a corda ao lado da cabeça, flexione o tronco levando os cotovelos em direção aos joelhos e retorne devagar.",
     "dica": "O quadril fica parado: o movimento é só do tronco enrolando. Retorne até o abdômen alongar por completo sem soltar a tensão.",
     "nivel": "iniciante"
@@ -813,7 +853,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Quadríceps",
+      "Oblíquos",
+      "Lombar"
+    ],
     "descricao": "Deitado com as pernas elevadas e joelhos a 90°, faça o abdominal elevando o tronco em direção aos joelhos e desça controladamente.",
     "dica": "As pernas elevadas tiram o flexor de quadril do jogo: o movimento fica curto e concentrado no reto abdominal.",
     "nivel": "iniciante"
@@ -850,7 +894,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Lombar",
+      "Glúteos",
+      "Ombros"
+    ],
     "descricao": "Deitado de costas com braços estendidos ao teto e joelhos a 90°, estenda lentamente o braço e a perna opostos em direção ao chão sem deixar a lombar descolar, e retorne.",
     "dica": "A lombar colada no chão é a regra do jogo: se ela levantar, reduza a amplitude — o deadbug ensina o core a resistir à extensão.",
     "nivel": "intermediário"
@@ -866,7 +914,11 @@
     "musculos": [
       "Bíceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Antebraços",
+      "Ombros",
+      "Trapézio"
+    ],
     "descricao": "Pendure-se na barra fixa com os braços estendidos e sustente o corpo pelo tempo determinado, mantendo os ombros levemente ativos.",
     "dica": "Deixe o corpo alongar mas sem 'desligar' os ombros por completo: escápulas levemente engajadas protegem a articulação e fortalecem a pegada.",
     "nivel": "intermediário"
@@ -939,7 +991,6 @@
       "Posterior de coxa"
     ],
     "musculos_secundarios": [
-      "Posterior de coxa",
       "Glúteos",
       "Dorsais",
       "Abdômen"
@@ -979,9 +1030,7 @@
       "Peito",
       "Tríceps"
     ],
-    "musculos_secundarios": [
-      "Tríceps"
-    ],
+    "musculos_secundarios": [],
     "descricao": "Levante-se em barras paralelas mantenha pressionado por 1 segundo, abaixe lentamente e controle por 4 segundos, depois volte sem descanso",
     "dica": "Tronco inclinado à frente pega mais peito; vertical, mais tríceps — desça até o ombro na linha do cotovelo.",
     "nivel": "intermediário"
@@ -1016,9 +1065,7 @@
     "musculos": [
       "Bíceps"
     ],
-    "musculos_secundarios": [
-      "Bíceps"
-    ],
+    "musculos_secundarios": [],
     "descricao": "Sentado com o cotovelo apoiado na parte interna da coxa, flexione o halter até a contração máxima do bíceps e desça devagar até esticar.",
     "dica": "É o exercício do pico de contração: aperte o bíceps no topo por 1–2 segundos e desça em 3 — carga moderada, execução cirúrgica.",
     "nivel": "iniciante"
@@ -1163,7 +1210,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Lombar",
+      "Glúteos",
+      "Quadríceps"
+    ],
     "descricao": "Deitado de costas com as mãos sob o quadril, eleve levemente as pernas e alterne pequenos chutes para cima e para baixo sem tocar o chão.",
     "dica": "Lombar pressionada contra o chão o tempo todo: se ela arquear, suba mais as pernas ou reduza o tempo.",
     "nivel": "intermediário"
@@ -1371,7 +1422,11 @@
       "Glúteos",
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Ombros",
+      "Oblíquos",
+      "Tríceps"
+    ],
     "descricao": "Da posição de quatro apoios, gire o corpo passando uma perna por baixo e estendendo-a para o lado oposto, retornando e alternando os lados.",
     "dica": "Movimento de mobilidade e core: faça devagar, com controle total da rotação — velocidade aqui só esconde a falta de estabilidade.",
     "nivel": "intermediário"
@@ -1424,7 +1479,9 @@
     "musculos": [
       "Bíceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Antebraços"
+    ],
     "descricao": "Segure dois halteres e sente-se em um banco com as costas retas, os ombros estão ligados rolados para trás. Seus amigos apostam para seu corpo. Dobre os braços e levante o peso com um movimento rápido. Não gire como homens, como acontece com os cachos. Sem nenhuma pausa, baixar o haltere com um movimento lento e controlado. Não balance o corpo durante o exercício, o bíceps deve fazer todo o trabalho aqui. Os cotovelos estão ao seu lado e não se movem.",
     "dica": "O martelo constrói o braquial que empurra o bíceps para cima: cotovelo parado e descida controlada em 2–3 segundos.",
     "nivel": "intermediário"
@@ -1474,7 +1531,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Antebraços",
+      "Dorsais",
+      "Oblíquos"
+    ],
     "descricao": "Pendurado na barra fixa, eleve as pernas estendidas (ou joelhos flexionados) até a linha do quadril ou acima, e desça com controle total.",
     "dica": "Enrole o quadril no final da subida para o abdômen trabalhar de verdade; descer devagar sem balançar é metade do exercício.",
     "nivel": "intermediário"
@@ -1547,7 +1608,11 @@
     "musculos": [
       "Dorsais"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Glúteos",
+      "Posterior de coxa",
+      "Abdômen"
+    ],
     "descricao": "Deitado de costas com os joelhos flexionados, eleve o quadril do chão contraindo os glúteos e desça sem relaxar completamente.",
     "dica": "Aperte os glúteos no topo por 1–2 segundos e desça em 2: tensão contínua, sem 'descansar' no chão entre repetições.",
     "nivel": "intermediário"
@@ -1583,7 +1648,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Oblíquos",
+      "Glúteos",
+      "Pescoço"
+    ],
     "descricao": "Deitado de costas, eleve pernas e ombros do chão formando um 'C' com o corpo, braços estendidos atrás da cabeça, e sustente a posição.",
     "dica": "Lombar pressionada no chão define a qualidade: se ela descolar, dobre os joelhos ou aproxime os braços do corpo.",
     "nivel": "intermediário"
@@ -1638,9 +1707,7 @@
     "musculos": [
       "Dorsais"
     ],
-    "musculos_secundarios": [
-      "Dorsais"
-    ],
+    "musculos_secundarios": [],
     "descricao": "Deitado de bruços num banco inclinado com halteres pendendo, puxe-os em direção ao quadril apertando as escápulas e desça alongando.",
     "dica": "O apoio no peito elimina roubo de tronco: 100% da puxada vem do dorsal — aperte as escápulas no topo por 1 segundo.",
     "nivel": "intermediário"
@@ -1656,7 +1723,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Ombros",
+      "Oblíquos",
+      "Glúteos"
+    ],
     "descricao": "Em prancha com as mãos elevadas num apoio, toque o chão à frente com uma mão de cada vez mantendo o quadril estável.",
     "dica": "O quadril não pode girar quando a mão sai do apoio: é anti-rotação de core disfarçada de exercício de braço.",
     "nivel": "intermediário"
@@ -1690,7 +1761,11 @@
     "musculos": [
       "Corpo inteiro"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Lombar",
+      "Glúteo médio (abdutores)"
+    ],
     "descricao": "Corra em ritmo confortável e constante, mantendo passada natural e respiração controlada.",
     "dica": "Ritmo de conversa: se não consegue falar frases completas correndo, desacelere — consistência vale mais que velocidade.",
     "nivel": "iniciante"
@@ -1972,10 +2047,7 @@
       "Glúteos",
       "Quadríceps"
     ],
-    "musculos_secundarios": [
-      "Panturrilhas",
-      "Glúteos"
-    ],
+    "musculos_secundarios": [],
     "descricao": "No leg press, posicione os pés na plataforma na largura dos ombros, desça controladamente flexionando os joelhos e empurre de volta sem estender por completo.",
     "dica": "Desça até onde a lombar permanece colada no encosto (se o quadril enrolar, passou): amplitude honesta com carga controlada.",
     "nivel": "iniciante"
@@ -2046,7 +2118,10 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Quadríceps",
+      "Oblíquos"
+    ],
     "descricao": "Posição inicial: Deite-se de costas, com os pés juntos, e os braços ao seu lado. Passos: • Dobre os joelhos, depois os endireite para apontar para cima. • Mantenha as pernas retas, abaixe-as juntas, sem tocar o chão. Quanto mais baixo você for, mais intenso será o exercício. • Levante as duas pernas juntas para apontar para cima novamente. • Repita a partir do passo 2.",
     "dica": "Lombar colada no chão define a amplitude: desça em 3–4 segundos — se ela arquear, dobre os joelhos.",
     "nivel": "intermediário"
@@ -2062,7 +2137,10 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Quadríceps",
+      "Oblíquos"
+    ],
     "descricao": "Deitado de costas com as mãos ao lado do corpo, eleve as pernas estendidas até a vertical e desça devagar sem tocar o chão.",
     "dica": "A descida é o exercício: 3–4 segundos baixando com a lombar colada no chão — se ela arquear, dobre os joelhos.",
     "nivel": "intermediário"
@@ -2078,7 +2156,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Lombar",
+      "Oblíquos",
+      "Glúteo médio (abdutores)"
+    ],
     "descricao": "Em pé, eleve uma perna estendida à frente o mais alto possível mantendo o tronco ereto, e desça controlado.",
     "dica": "Tronco parado e movimento só da perna: trabalha flexores de quadril e o controle que protege sua lombar.",
     "nivel": "intermediário"
@@ -2132,7 +2214,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Ombros",
+      "Tríceps",
+      "Quadríceps"
+    ],
     "descricao": "Sentado no chão ou entre apoios, eleve as pernas estendidas à frente mantendo o corpo em 'L' e sustente a posição.",
     "dica": "Empurre o chão 'para baixo' com as mãos e aponte os pés: o L-hold é força de core, flexores de quadril e ombros de uma vez só.",
     "nivel": "intermediário"
@@ -2221,7 +2307,9 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio"
+    ],
     "descricao": "Deitado de lado com o cotovelo apoiado no tronco e flexionado a 90°, gire o antebraço para cima contra a resistência do halter e desça devagar.",
     "dica": "Carga bem leve: é manguito rotador. Duas séries caprichadas aqui valem mais que qualquer suplemento para a saúde do seu ombro.",
     "nivel": "intermediário"
@@ -2275,7 +2363,9 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Oblíquos"
+    ],
     "descricao": "Da posição sentada do abdominal, desça o tronco em direção ao chão o mais lentamente possível, usando as mãos para voltar à posição inicial.",
     "dica": "Só a fase negativa: desça em 4–5 segundos resistindo com o abdômen — excelente para quem ainda não faz o movimento completo com controle.",
     "nivel": "iniciante"
@@ -2442,7 +2532,11 @@
     "musculos": [
       "Dorsais"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Lombar",
+      "Ombros"
+    ],
     "descricao": "Deitado de bruços com os braços à frente ou ao lado, retraia as escápulas elevando levemente os braços do chão, segure e retorne.",
     "dica": "Aperte as escápulas como se segurasse um lápis entre elas por 2 segundos: fortalecimento postural puro de trapézio médio e romboides.",
     "nivel": "intermediário"
@@ -2532,7 +2626,11 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Lombar",
+      "Abdômen"
+    ],
     "descricao": "Com o tronco inclinado à frente, eleve os halteres lateralmente com os cotovelos levemente flexionados até a linha das costas, e desça devagar.",
     "dica": "Mindinhos levemente para cima e movimento curto e preciso: o deltoide posterior é pequeno — carga leve e muitas repetições de qualidade.",
     "nivel": "intermediário"
@@ -2586,9 +2684,7 @@
     "musculos": [
       "Bíceps"
     ],
-    "musculos_secundarios": [
-      "Bíceps"
-    ],
+    "musculos_secundarios": [],
     "descricao": "Em pé com pegada pronada na barra ou halteres, flexione os cotovelos mantendo os punhos neutros e desça devagar.",
     "dica": "Excelente finalizador de braço: pico de 1 segundo no topo e descida lenta queimam braquiorradial de forma segura.",
     "nivel": "iniciante"
@@ -2624,7 +2720,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Glúteos",
+      "Posterior de coxa",
+      "Tríceps"
+    ],
     "descricao": "Sentado com as mãos apoiadas atrás do quadril, eleve o quadril até o corpo formar uma linha reta de calcanhares a ombros, e sustente ou repita.",
     "dica": "Empurre o chão com as mãos e aperte os glúteos no topo: abre o peitoral e fortalece a cadeia posterior de uma vez.",
     "nivel": "intermediário"
@@ -2660,7 +2760,10 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Oblíquos",
+      "Quadríceps"
+    ],
     "descricao": "Sentado na cadeira romana com os pés presos, incline o tronco para trás até a tensão máxima do abdômen e retorne sem relaxar por completo.",
     "dica": "Desça só até onde mantém o controle e as costelas 'fechadas': a volta lenta é onde o abdômen mais trabalha.",
     "nivel": "iniciante"
@@ -2771,7 +2874,11 @@
     "musculos": [
       "Corpo inteiro"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Glúteo médio (abdutores)",
+      "Oblíquos",
+      "Adutores"
+    ],
     "descricao": "Corra mantendo postura ereta, passada confortável e aterrissagem suave sob o corpo.",
     "dica": "Cadência alta e passos curtos poupam joelhos: aumente o volume semanal em no máximo ~10% para progredir sem lesão.",
     "nivel": "iniciante"
@@ -2787,7 +2894,11 @@
     "musculos": [
       "Corpo inteiro"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Glúteo médio (abdutores)",
+      "Pescoço",
+      "Ombros"
+    ],
     "descricao": "Alterne períodos de corrida intensa com períodos de recuperação leve, conforme o protocolo do treino.",
     "dica": "O descanso faz parte do treino: respeite a recuperação para conseguir intensidade real nos tiros — intervalado é qualidade, não pressa.",
     "nivel": "iniciante"
@@ -2803,7 +2914,11 @@
     "musculos": [
       "Corpo inteiro"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Glúteo médio (abdutores)",
+      "Adutores",
+      "Ombros"
+    ],
     "descricao": "Corra na esteira com leve inclinação (1–2%) para simular a resistência da rua, mantendo passada natural.",
     "dica": "Não segure no apoio: se precisar segurar, reduza velocidade ou inclinação — o corpo precisa estabilizar sozinho.",
     "nivel": "iniciante"
@@ -2896,7 +3011,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Adutores",
+      "Glúteo médio (abdutores)",
+      "Quadríceps"
+    ],
     "descricao": "Deitado de costas com as pernas elevadas, cruze-as alternadamente como uma tesoura mantendo a lombar no chão.",
     "dica": "Quanto mais baixas as pernas, mais difícil: encontre a altura onde a lombar continua colada e trabalhe ali.",
     "nivel": "intermediário"
@@ -2931,9 +3050,7 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [
-      "Abdômen"
-    ],
+    "musculos_secundarios": [],
     "descricao": "Na máquina de flexão lateral, incline o tronco para o lado contra a resistência e retorne controlado, trabalhando os dois lados.",
     "dica": "Movimento puro no plano lateral, sem girar: os oblíquos encurtam de um lado enquanto alongam do outro — sinta os dois.",
     "nivel": "intermediário"
@@ -3025,7 +3142,10 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Pescoço"
+    ],
     "descricao": "Posicão inicial: Sente-se ou fique de pé com as costas retas. Passos: • Levante os ombros o máximo possível e segure por 5 segundos. • Solte os ombros de volta para uma posição relaxada. • Repita.",
     "dica": "Só sobe e desce, sem girar os ombros: pico de 1–2 segundos no topo — encolhimento é pico de contração ou nada.",
     "nivel": "intermediário"
@@ -3041,7 +3161,11 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Antebraços",
+      "Lombar"
+    ],
     "descricao": "Em pé segurando a barra à frente das coxas, eleve os ombros em direção às orelhas o mais alto possível e desça devagar.",
     "dica": "Só sobe e desce, sem girar os ombros: pico de 1–2 segundos no topo — encolhimento é pico de contração ou não é nada.",
     "nivel": "iniciante"
@@ -3075,9 +3199,7 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [
-      "Abdômen"
-    ],
+    "musculos_secundarios": [],
     "descricao": "Deitado de lado ou em pé, flexione o tronco lateralmente contraindo o oblíquo e retorne à posição inicial.",
     "dica": "Movimento curto e preciso: pense em aproximar a costela do quadril do mesmo lado.",
     "nivel": "iniciante"
@@ -3093,9 +3215,7 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [
-      "Abdômen"
-    ],
+    "musculos_secundarios": [],
     "descricao": "Em pé com um halter numa das mãos, incline o tronco para o lado do halter e retorne pela força do oblíquo oposto.",
     "dica": "Só um halter de cada vez (dois se anulam): quem trabalha é o oblíquo do lado CONTRÁRIO ao peso, freando e puxando de volta.",
     "nivel": "intermediário"
@@ -3111,7 +3231,11 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Oblíquos",
+      "Abdômen",
+      "Trapézio"
+    ],
     "descricao": "Deitado de lado com o cotovelo apoiado no tronco a 90°, gire o antebraço para cima segurando um halter leve e desça devagar.",
     "dica": "Rotação externa pura de manguito: carga mínima, execução lenta — é prevenção, não ego.",
     "nivel": "intermediário"
@@ -3147,7 +3271,11 @@
       "Peito",
       "Tríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Oblíquos",
+      "Glúteos"
+    ],
     "descricao": "Em posição de flexão, transfira o peso do corpo para um braço, desça, suba e alterne para o outro lado.",
     "dica": "Progressão para flexão unilateral: quanto mais peso num braço só, mais o peitoral daquele lado assume.",
     "nivel": "intermediário"
@@ -3181,9 +3309,7 @@
     "musculos": [
       "Panturrilhas"
     ],
-    "musculos_secundarios": [
-      "Panturrilhas"
-    ],
+    "musculos_secundarios": [],
     "descricao": "Sentado na máquina com os joelhos sob as almofadas, eleve os calcanhares o máximo possível e desça até o alongamento completo.",
     "dica": "Joelho dobrado isola o sóleo: pausa de 2 segundos no alongamento embaixo e pico no topo — o sóleo responde a repetições e paciência.",
     "nivel": "intermediário"
@@ -3199,7 +3325,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Quadríceps",
+      "Pescoço",
+      "Lombar"
+    ],
     "descricao": "Deitado com os joelhos flexionados, suba o tronco por completo até a posição sentada e desça com controle.",
     "dica": "Suba enrolando (queixo ao peito primeiro): se os pés precisam ser segurados com força, o flexor de quadril está roubando o show.",
     "nivel": "iniciante"
@@ -3215,7 +3345,11 @@
     "musculos": [
       "Panturrilhas"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Ombros",
+      "Antebraços"
+    ],
     "descricao": "Gire a corda com os punhos e salte com os dois pés na ponta dos pés, mantendo saltos baixos e ritmados.",
     "dica": "Salto de 2–3 cm no máximo, punhos girando (não os braços): eficiência primeiro, velocidade depois.",
     "nivel": "iniciante"
@@ -3249,7 +3383,11 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Tríceps",
+      "Abdômen"
+    ],
     "descricao": "Num movimento explosivo único, puxe a barra do chão até acima da cabeça, recebendo-a com os braços estendidos em agachamento parcial ou completo.",
     "dica": "Movimento olímpico técnico: aprenda por partes (puxada alta, recebimento, overhead) com barra vazia antes de somar carga.",
     "nivel": "avançado"
@@ -3284,7 +3422,10 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Oblíquos",
+      "Lombar"
+    ],
     "descricao": "Deitado, realize o abdominal levando o cotovelo em direção ao joelho oposto elevado, alternando os lados.",
     "dica": "A rotação no final da subida ativa os oblíquos: gire com o tronco, não só com o cotovelo.",
     "nivel": "iniciante"
@@ -3375,7 +3516,11 @@
     "musculos": [
       "Panturrilhas"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Lombar",
+      "Glúteos"
+    ],
     "descricao": "Em pé na máquina ou num degrau, eleve os calcanhares até a ponta dos pés e desça até o alongamento máximo da panturrilha.",
     "dica": "Pausa de 2 segundos embaixo (alongamento) e 1 no topo (pico): panturrilha odeia pressa e ama amplitude completa.",
     "nivel": "intermediário"
@@ -3391,7 +3536,11 @@
     "musculos": [
       "Antebraços"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Bíceps",
+      "Abdômen",
+      "Ombros"
+    ],
     "descricao": "Segurando um bastão com uma corda e peso pendurado, enrole a corda girando os punhos até o peso subir, e desenrole controladamente.",
     "dica": "Braços na horizontal e giro completo dos punhos: queima antebraço como poucos — a descida controlada é metade do trabalho.",
     "nivel": "intermediário"
@@ -3516,7 +3665,11 @@
       "Glúteos",
       "Dorsais"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Lombar",
+      "Ombros",
+      "Abdômen"
+    ],
     "descricao": "Deitado de bruços com os braços à frente, eleve simultaneamente braços e pernas do chão contraindo a cadeia posterior, segure e desça.",
     "dica": "Segure 2–3 segundos no topo apertando glúteos e lombar: qualidade da contração vale mais que altura da elevação.",
     "nivel": "intermediário"
@@ -3532,7 +3685,11 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Quadríceps",
+      "Glúteos",
+      "Abdômen"
+    ],
     "descricao": "Do agachamento frontal com a barra ou halteres nos ombros, suba e use o impulso para empurrar o peso acima da cabeça num movimento contínuo.",
     "dica": "Um movimento só, fluido: a força das pernas 'joga' a barra para cima — respire no topo, não no meio.",
     "nivel": "intermediário"
@@ -3658,10 +3815,7 @@
       "Ombros",
       "Glúteos"
     ],
-    "musculos_secundarios": [
-      "Ombros",
-      "Glúteos"
-    ],
+    "musculos_secundarios": [],
     "descricao": "Deitado com um kettlebell estendido acima do corpo, levante-se até ficar em pé passando por posições intermediárias, sempre com o braço travado, e retorne pelo mesmo caminho.",
     "dica": "Aprenda a sequência sem peso primeiro: olhos no kettlebell o tempo todo — é o exercício de estabilidade de ombro e core mais completo que existe.",
     "nivel": "avançado"
@@ -3677,7 +3831,11 @@
     "musculos": [
       "Peito"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Ombros",
+      "Dorsais"
+    ],
     "descricao": "Puxe a barra explosivamente do chão até recebê-la na frente dos ombros em posição de agachamento parcial, e fique de pé.",
     "dica": "Extensão total de quadril antes de 'puxar com os braços': o power clean é salto com barra — técnica antes de carga, sempre.",
     "nivel": "avançado"
@@ -3730,7 +3888,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Dorsais",
+      "Antebraços",
+      "Ombros"
+    ],
     "descricao": "Em pé ou na polia, realize a flexão lateral ou rotação alta do tronco enfatizando a porção superior dos oblíquos externos.",
     "dica": "Movimento curto com o tronco alto: pense em aproximar as costelas do quadril em diagonal.",
     "nivel": "intermediário"
@@ -3802,7 +3964,11 @@
     "musculos": [
       "Panturrilhas"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Lombar",
+      "Glúteo médio (abdutores)"
+    ],
     "descricao": "• Fique de pé no chão ou na borda de um degrau para aumentar o alcance do movimento. Levante um pé, colocando a parte superior sobre sua panturrilha. • Levante os calcanhares até ficar de pé sobre os dedos do pé. • Fique nesta posição por três segundos, depois abaixe o pé sem tocar o chão com seu calcanhar.",
     "dica": "Unilateral revela diferenças entre as pernas: pausa de 2 segundos no alongamento embaixo e pico completo em cima.",
     "nivel": "intermediário"
@@ -3818,7 +3984,11 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Tríceps",
+      "Abdômen",
+      "Antebraços"
+    ],
     "descricao": "De frente ou de costas para a parede, suba os pés apoiando-os nela até ficar em parada de mão, e sustente a posição.",
     "dica": "Empurre o chão 'para longe' (ombros elevados) e aperte glúteos e abdômen: a linha reta é o objetivo, não o tempo.",
     "nivel": "avançado"
@@ -3858,7 +4028,11 @@
       "Peito",
       "Tríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Abdômen",
+      "Ombros"
+    ],
     "descricao": "De costas para a parede com braços em 'W' encostados nela, deslize-os para cima até esticar e retorne mantendo o contato de punhos e cotovelos.",
     "dica": "Se punhos ou cotovelos descolarem da parede, vá só até onde consegue: é mobilidade torácica e de ombro sendo construída aos poucos.",
     "nivel": "intermediário"
@@ -3986,7 +4160,11 @@
     "musculos": [
       "Bíceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Antebraços",
+      "Dorsais",
+      "Abdômen"
+    ],
     "descricao": "Pendure-se num agarre esférico (sloper) e sustente o peso do corpo pelo tempo determinado.",
     "dica": "Pegada de atrito, não de dedos: ombros ativos e corpo parado — específico para escalada e força de mão aberta.",
     "nivel": "intermediário"
@@ -4020,7 +4198,11 @@
     "musculos": [
       "Bíceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Antebraços",
+      "Dorsais",
+      "Ombros"
+    ],
     "descricao": "Pendure-se numa borda de 20mm com os dedos em posição controlada e sustente pelo tempo determinado.",
     "dica": "Protocolo de escalador: ombros ativos, cotovelos levemente flexionados e progressão MUITO gradual — tendões de dedos levam meses, não semanas.",
     "nivel": "intermediário"
@@ -4092,7 +4274,10 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Antebraços"
+    ],
     "descricao": "Deitado de bruços no banco inclinado com halteres pendendo, abra os braços em arco para trás apertando as escápulas.",
     "dica": "O apoio do peito isola o deltoide posterior por completo: carga leve, cotovelos quase retos e pausa de 1 segundo atrás.",
     "nivel": "iniciante"
@@ -4145,7 +4330,11 @@
     "musculos": [
       "Corpo inteiro"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Glúteo médio (abdutores)",
+      "Abdômen",
+      "Oblíquos"
+    ],
     "descricao": "Corra em intensidade leve onde consegue conversar em frases completas, mantendo a frequência cardíaca na zona 2 (~60–70% da máxima).",
     "dica": "A zona 2 constrói a base aeróbica que sustenta todo o resto: é para parecer 'fácil demais' — essa é exatamente a ideia.",
     "nivel": "iniciante"
@@ -4272,7 +4461,11 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Antebraços",
+      "Abdômen",
+      "Trapézio"
+    ],
     "descricao": "Segure uma anilha à frente do corpo com os braços estendidos e gire-a de um lado para o outro como um volante.",
     "dica": "Braços parados, giro controlado: ombros e core estabilizam enquanto os antebraços 'dirigem' — carga leve e movimentos amplos.",
     "nivel": "intermediário"
@@ -4459,7 +4652,11 @@
     "musculos": [
       "Peito"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Ombros",
+      "Abdômen",
+      "Tríceps"
+    ],
     "descricao": "Suspenso ou em pé entre polias altas, cruze os braços à frente do corpo em arco descendente e retorne controlado.",
     "dica": "Cruze alternando qual braço passa por cima: pico de contração na porção inferior e interna do peitoral.",
     "nivel": "iniciante"
@@ -4532,7 +4729,11 @@
     "musculos": [
       "Corpo inteiro"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Oblíquos",
+      "Pescoço"
+    ],
     "descricao": "Nade tiros de 50 metros em intensidade alta, com descanso definido entre as repetições.",
     "dica": "Técnica primeiro, velocidade depois: se a braçada desmontar no fim do tiro, aumente o descanso entre eles.",
     "nivel": "iniciante"
@@ -4605,7 +4806,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Quadríceps",
+      "Oblíquos",
+      "Ombros"
+    ],
     "descricao": "Deitado com a bola medicinal nas mãos estendidas atrás da cabeça, suba tronco e pernas simultaneamente levando a bola aos pés, e desça controlado.",
     "dica": "Suba tronco e pernas juntos formando o 'V': a bola adiciona alavanca — desça em 2–3 segundos sem deixar a lombar bater no chão.",
     "nivel": "iniciante"
@@ -4640,7 +4845,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Antebraços",
+      "Quadríceps",
+      "Dorsais"
+    ],
     "descricao": "Em pé ou pendurado, eleve os joelhos em direção ao peito e desça de forma controlada.",
     "dica": "Enrole o quadril no topo (não só levante os joelhos): é isso que transfere o trabalho para o abdômen.",
     "nivel": "intermediário"
@@ -4694,7 +4903,11 @@
     "musculos": [
       "Quadríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Glúteos",
+      "Glúteo médio (abdutores)",
+      "Posterior de coxa"
+    ],
     "descricao": "• Fique de pé de frente para uma cadeira • Suba na cadeira • Desça da cadeira • Repita",
     "dica": "Progrida um parâmetro por vez (carga, repetições ou amplitude): consistência semanal vence qualquer salto brusco.",
     "nivel": "intermediário"
@@ -4710,7 +4923,11 @@
     "musculos": [
       "Corpo inteiro"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Oblíquos",
+      "Lombar"
+    ],
     "descricao": "• Corra no lugar, colocando os joelhos o mais alto o confortável e trocando de pernas a um ritmo rápido",
     "dica": "Enrole o quadril no topo, não só levante os joelhos: é isso que transfere o trabalho para o abdômen.",
     "nivel": "iniciante"
@@ -4726,7 +4943,11 @@
     "musculos": [
       "Quadríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Glúteos",
+      "Glúteo médio (abdutores)",
+      "Abdômen"
+    ],
     "descricao": "• Fique de pé com as costas retas • Dê um grande passo adiante com sua perna esquerda • Desça com sua pélvis até quase tocar o chão com o seu joelho direito • Leve sua pélvis de volta para cima • Retorne para a posição de pé, dando um passo atrás • Repita, trocando de pernas a cada vez",
     "dica": "Os dois joelhos a 90° no fundo e tronco vertical: passo curto demais estressa o joelho da frente.",
     "nivel": "intermediário"
@@ -4742,7 +4963,11 @@
     "musculos": [
       "Bíceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Ombros",
+      "Abdômen",
+      "Oblíquos"
+    ],
     "descricao": "• Faça uma flexão de braços pradrão1.a Deite-se de barriga para baixo1.b Coloque suas mãos perto dos ouvidos1.c Use suas mão para levantar a barriga até que os braços estejam retos, mantendo as costas retas1.d Dobre os braços até que o peito quase toque o chão, certificando-se de que as costas estejam retas1.e Repita a partir do passo 1.c • Gire seu corpo para o lado para que as costas fiquem retas, de modo que a mão inferior que sustenta o corpo fique totalmente estendida, e apenas a mão inferior e o pé toquem o chão • Repita, mudando de lado no passo 2 cada vez",
     "dica": "A rotação no topo abre o peito e desafia o core: gire acompanhando a mão com o olhar, sem deixar o quadril cair.",
     "nivel": "intermediário"
@@ -4758,7 +4983,11 @@
     "musculos": [
       "Quadríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Glúteos",
+      "Adutores",
+      "Glúteo médio (abdutores)"
+    ],
     "descricao": "• Fique de pé e dê um passo lateral largo, apenas maior que a largura dos ombros. • Dobre um joelho até que sua coxa fique parelela ao chão. O joelho dobrado deve estar em linha com o pé. • Empurre de volta para a posição inicial e repita.",
     "dica": "Calcanhar da perna dobrada no chão e a outra bem estendida: mobilidade de adutores junto com força unilateral.",
     "nivel": "intermediário"
@@ -4774,7 +5003,11 @@
     "musculos": [
       "Quadríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Glúteos",
+      "Adutores",
+      "Glúteo médio (abdutores)"
+    ],
     "descricao": "• Fique de pé e dê um passo lateral largo, apenas maior que a largura dos ombros. • Dobre um joelho até que sua coxa fique parelela ao chão. O joelho dobrado deve estar em linha com o pé. • Empurre de volta para a posição inicial e repita.",
     "dica": "Desça na perna dobrada mantendo a estendida reta: compare os dois lados e trabalhe mais o mais rígido.",
     "nivel": "intermediário"
@@ -4790,7 +5023,11 @@
     "musculos": [
       "Quadríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Glúteos",
+      "Glúteo médio (abdutores)",
+      "Posterior de coxa"
+    ],
     "descricao": "• Fique de pé em frente a uma cadeira e dê um grande passo. Coloque a parte superior de um de seus pés sobre a cadeira. • Dobre o joelho da frente, equilibrando-se com os braços até que o joelho de trás quase toque o chão • Empurre de volta para a posição inicial e repita.",
     "dica": "90% do peso na perna da frente: tronco inclinado pega mais glúteo, vertical mais quadríceps — escolha e mantenha.",
     "nivel": "intermediário"
@@ -4806,7 +5043,11 @@
     "musculos": [
       "Quadríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Glúteos",
+      "Glúteo médio (abdutores)",
+      "Posterior de coxa"
+    ],
     "descricao": "• Fique de pé em frente a uma cadeira e dê um grande passo. Coloque a parte superior de um de seus pés sobre a cadeira. • Dobre o joelho da frente, equilibrando-se com os braços até que o joelho de trás quase toque o chão • Empurre de volta para a posição inicial e repita.",
     "dica": "O pé de trás só equilibra, não empurra: quem sobe é o glúteo e o quadríceps da perna da frente.",
     "nivel": "intermediário"
@@ -4822,7 +5063,11 @@
     "musculos": [
       "Quadríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Glúteos",
+      "Posterior de coxa",
+      "Lombar"
+    ],
     "descricao": "• Fique em posição de quatro. • Empurre um pé para trás até que esteja totalmente estendido, concentrando-se nos músculos dos glúteos. • Fique por um segundo depois retorne à posição inicial. • Repita, alternando os pés",
     "dica": "Pico de 2 segundos com o glúteo espremido: se a lombar arquear, encurte a amplitude — o glúteo é quem trabalha.",
     "nivel": "intermediário"
@@ -4838,7 +5083,11 @@
     "musculos": [
       "Quadríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Glúteos",
+      "Posterior de coxa",
+      "Glúteo médio (abdutores)"
+    ],
     "descricao": "• Fique de pé com as costas retas • Dê um grande passo para frente com sua perna esquerda • Leve sua pélvis para baixo até quase tocar o chão com seu joelho direito • Leve sua pélvis de volta para cima • Repita a partir do passo 3.",
     "dica": "Posição fixa, sem passo: desça reto entre as duas pernas — ótimo para aprender o afundo sem desequilíbrio.",
     "nivel": "intermediário"
@@ -4854,7 +5103,11 @@
     "musculos": [
       "Quadríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Glúteos",
+      "Glúteo médio (abdutores)",
+      "Adutores"
+    ],
     "descricao": "• Fique de pé com as costas retas • Dê um grande passo para frente com sua perna esquerda • Leve sua pélvis para baixo até quase tocar o chão com seu joelho direito • Leve sua pélvis de volta para cima • Repita a partir do passo 3.",
     "dica": "Tronco vertical e descida controlada em 2–3 segundos: alterne qual perna começa a cada série.",
     "nivel": "intermediário"
@@ -4870,7 +5123,11 @@
     "musculos": [
       "Corpo inteiro"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Lombar",
+      "Antebraços"
+    ],
     "descricao": "Este exercício requer uma corda de salto. Certifique-se de que o comprimento da corda é ajustado à sua altura. Uma maneira de verificar é agarrar ambas as pegas com uma mão e ficar no meio da corda pendurada no chão com um pé. Se a corda (excluindo as pegas) chegar mesmo abaixo do seu peito, o seu comprimento é o correcto. Uma corda mais curta seria perigosa, pois poderia atingir-se a si próprio, e uma corda mais comprida seria uma má forma. • Coloque os pés juntos, dobre um pouco os joelhos, mantenha a cabeça e o corpo direitos, mantenha os cotovelos para dentro, abra os braços. • Rodar apenas os pulsos com força suficiente para fazer girar a corda. • Saltem só com força suficiente para passar a corda por baixo dos pés. • Repita a partir do passo 2.",
     "dica": "Salto de 2–3 cm no máximo e punhos girando (não os braços): eficiência primeiro, velocidade depois.",
     "nivel": "iniciante"
@@ -4886,7 +5143,11 @@
     "musculos": [
       "Bíceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Ombros",
+      "Trapézio",
+      "Abdômen"
+    ],
     "descricao": "• Fique em pé com as costas retas. • Mantendo os braços esticados, traga-os à sua frente, mova-os para baixo, atrás das costas, depois sobre a cabeça e de volta à posição inicial. • Continue circulando seus braços conforme descrito na etapa 2.",
     "dica": "Círculos amplos e lentos: aquecimento de ombro que prepara qualquer treino de empurrar ou puxar.",
     "nivel": "intermediário"
@@ -4902,7 +5163,11 @@
     "musculos": [
       "Bíceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Ombros",
+      "Dorsais",
+      "Trapézio"
+    ],
     "descricao": "• Fique em pé com as costas retas. • Mantendo os braços esticados, leve-os à sua frente, levante-os acima da cabeça e, a seguir, continue o movimento atrás das costas e desça até a posição inicial. • Continue circulando seus braços conforme descrito na etapa 2.",
     "dica": "O sentido para trás corrige postura e ativa o trapézio médio: prefira este quando estiver em dúvida.",
     "nivel": "intermediário"
@@ -4918,7 +5183,11 @@
     "musculos": [
       "Peito"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Ombros",
+      "Tríceps",
+      "Abdômen"
+    ],
     "descricao": "Posição inicial: Começar na posição vertical de flexão, ou na prancha alta.As mãos devem estar diretamente abaixo dos seus ombros.Manter a cabeça alinhada com as costas, virada para o chão.Os pés devem ter a distância entre os quadris. Passos: • Mova um joelho em direção ao centro do corpo, em direção aos cotovelos, mantendo a outra perna estendida. • Num movimento de salto rápido, endireite a perna dobrada para fora e puxe o outro joelho em direção ao seu corpo. • Continue a repetir o passo 2, alternando as pernas. Notas: Ao longo do exercício, as costas devem permanecer o mais reto o possível - evite uma corcunda ou uma curvatura nas costas.",
     "dica": "Quadril baixo e estável enquanto os joelhos alternam: se o bumbum subir, reduza a velocidade e resgate a postura.",
     "nivel": "intermediário"
@@ -4934,7 +5203,11 @@
     "musculos": [
       "Peito"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Ombros",
+      "Tríceps"
+    ],
     "descricao": "Posição inicial: Fique de pé reto, com os pés afastados alinhados ao quadris. Passos: • Se agache e se apoie com as mãos no chão entre os joelhos e a frente de seus pés, mantendo as costas retas. • Mantendo as mãos no chão, pule jogando as pernas para trás para a posição de prancha altas • Pule os pés para frente para voltar à posição de agachamento. • Repita.",
     "dica": "Sem a flexão, o foco é o ritmo contínuo: suba e desça mantendo a cadência — cardio puro sem descanso.",
     "nivel": "avançado"
@@ -4950,7 +5223,11 @@
     "musculos": [
       "Quadríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Glúteos",
+      "Glúteo médio (abdutores)",
+      "Abdômen"
+    ],
     "descricao": "Posição inicial: Fique de pé reto, com os pés afastados. Passos: • Dê um passo para trás com uma perna para que você possa dobrar-se confortavelmente a um ângulo de 90 graus. • Dobre lentamente ambos os joelhos para formar ângulos de 90 graus. • Retorne para a posição inicial. • Repita, alternando as pernas.",
     "dica": "Passo para trás é mais amigável ao joelho: o peso fica na perna da frente — empurre o chão com ela para voltar.",
     "nivel": "intermediário"
@@ -4985,7 +5262,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Ombros",
+      "Tríceps",
+      "Glúteos"
+    ],
     "descricao": "Posição inicial: Entre na posição de prancha alta:as mãos e os dedos dos pés devem tocar o chão, as costas, os braços e as pernas devem estar retos.Para chegar a essa posição, você pode deitar de bruços, colocar as mãos voltadas para baixo ao lado da cabeça e levantar os braços até que estejam retos. Passos: • Mantenha a posição inicial durante todo o exercício.",
     "dica": "Mãos sob os ombros e corpo em linha reta: aperte glúteos e abdômen — a prancha alta é a base de toda flexão.",
     "nivel": "intermediário"
@@ -5001,7 +5282,9 @@
     "musculos": [
       "Dorsais"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Lombar"
+    ],
     "descricao": "Posição inicial: Comece de quatro, joelhos, dedos dos pés e mãos tocando o chão. Seus dois dedões dos pés devem estar se tocando. Passos: • Mova os joelhos para que fiquem aproximadamente na largura do quadril. • Ao expirar, mova a pélvis para trás para se sentar sobre os calcanhares. Suas mãos ainda devem estar tocando o chão. • Relaxe a parte superior do corpo, abaixando a testa até o chão e deixando as mãos avançarem naturalmente. • Permaneça nesta postura. Dicas: • Para sair da postura, passe os braços para trás sob os ombros e mova a parte superior do corpo para cima, para uma posição sentada.",
     "dica": "Respire fundo levando o ar para as costas: 30–60 segundos que soltam lombar, quadril e ombros de uma vez.",
     "nivel": "intermediário"
@@ -5036,7 +5319,11 @@
     "musculos": [
       "Dorsais"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Ombros",
+      "Trapézio",
+      "Peito"
+    ],
     "descricao": "Posicão inicial: Sente-se ou fique de pé com as costas retas. Passos: • Coloque as mãos nos ombros. • Gire repetidamente ambas as articulações dos ombros em um movimento circular em um ritmo moderado.",
     "dica": "Círculos lentos e completos: aqueça a articulação antes de qualquer treino de ombro ou peito.",
     "nivel": "intermediário"
@@ -5052,7 +5339,10 @@
     "musculos": [
       "Dorsais"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Ombros",
+      "Trapézio"
+    ],
     "descricao": "Posicão inicial: Sente-se ou fique de pé com as costas retas. Passos: • Coloque as mãos nos ombros. • Gire repetidamente ambas as articulações dos ombros em um movimento circular em um ritmo moderado.",
     "dica": "A rotação para trás combate a postura fechada do dia a dia: amplitude total, ombros longe das orelhas.",
     "nivel": "intermediário"
@@ -5068,7 +5358,11 @@
     "musculos": [
       "Dorsais"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Bíceps",
+      "Antebraços",
+      "Ombros"
+    ],
     "descricao": "Posicão inicial: Sente-se ou fique de pé com as costas retas. Passos: • Coloque os dedos no queixo para incliná-lo para dentro lentamente, movendo a cabeça para trás para alinhá-la com a coluna. • Segure por 5 segundos. • Volte à posição normal da cabeça e repita.",
     "dica": "Recolha o queixo como se fizesse papada, sem inclinar a cabeça: fortalece a cervical profunda e melhora a postura.",
     "nivel": "intermediário"
@@ -5084,7 +5378,10 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Pescoço",
+      "Trapézio"
+    ],
     "descricao": "Posição inicial: Sente-se ou fique em pé com as costas retas e com os ombros para baixo. Passos: • Sente-se ou levante-se ereto, ombros caídos. • Vire a cabeça para o lado o máximo possível. Pare quando você atingir um limite e segure por 5 segundos. • Retorne à posição central e repita, mudando de lado.",
     "dica": "Gire devagar até o limite confortável e sustente: sem forçar — o pescoço pede suavidade sempre.",
     "nivel": "intermediário"
@@ -5100,7 +5397,9 @@
     "musculos": [
       "Pescoço"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio"
+    ],
     "descricao": "Posição inicial: Sente-se ou fique em pé com as costas retas. Passos: • Incline a cabeça para o lado e segure por 8 segundos para alongar a lateral do pescoço. • Com a mão mais próxima no topo da cabeça, puxe suavemente para alongar ainda mais. Segure por 8 segundos. • Vire o queixo para o ombro. Segure por 8 segundos. • Solte e retorne à posição inicial.",
     "dica": "Deixe o peso da cabeça alongar e o ombro oposto 'pesar' para baixo: 20–30 segundos respirando fundo.",
     "nivel": "iniciante"
@@ -5116,7 +5415,9 @@
     "musculos": [
       "Pescoço"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio"
+    ],
     "descricao": "Posição inicial: Sente-se ou fique em pé com as costas retas. Passos: • Incline a cabeça para o lado e segure por 8 segundos para alongar a lateral do pescoço. • Com a mão mais próxima no topo da cabeça, puxe suavemente para alongar ainda mais. Segure por 8 segundos. • Vire o queixo para o ombro. Segure por 8 segundos. • Solte e retorne à posição inicial.",
     "dica": "Segurar o banco com a mão livre intensifica sem precisar puxar mais: mantenha 20–30 segundos por lado.",
     "nivel": "iniciante"
@@ -5132,7 +5433,11 @@
     "musculos": [
       "Pescoço"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Abdômen",
+      "Lombar"
+    ],
     "descricao": "Posição inicial: Sente-se ereto em uma cadeira ou em um travesseiro firme. Passos: • Expire e incline a cabeça para frente, queixo no peito, colocando as mãos atrás da cabeça. • Use as mãos para puxar a cabeça levemente para baixo. Segure por 5 segundos. • Puxe os ombros para trás e para baixo usando os músculos das costas. Isso deve aumentar o alongamento do pescoço. Segure por 5 segundos. • Agora empurre suavemente a cabeça para cima, enquanto também a puxa para baixo com as mãos. Equilibre as duas forças para que sua cabeça não se mova. Segure por pelo menos 5 segundos. • Leve os dedos à testa e use-os para mover suavemente a cabeça de volta à posição original.",
     "dica": "Ombros relaxados e respiração contínua: nunca force a amplitude na cervical — desconforto leve é o limite.",
     "nivel": "iniciante"
@@ -5148,7 +5453,9 @@
     "musculos": [
       "Pescoço"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio"
+    ],
     "descricao": "Posição inicial: Sente-se ou fique em pé com as costas retas. Passos: • Abra bem a boca. • Incline lentamente a cabeça para trás com a boca aberta. Se sentir necessidade de apoio, junte as mãos atrás da cabeça. • Feche e abra a boca muito lentamente. • Ao final, retorne lentamente à posição inicial e feche a boca.",
     "dica": "Alongue a parte frontal sem estender demais o pescoço para trás: amplitude curta e controlada.",
     "nivel": "iniciante"
@@ -5218,7 +5525,10 @@
     "musculos": [
       "Dorsais"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Pescoço",
+      "Trapézio"
+    ],
     "descricao": "Gire a cabeça lentamente em círculos completos no sentido horário, com amplitude confortável.",
     "dica": "Círculos lentos e pequenos primeiro, ampliando aos poucos: pescoço não gosta de pressa nem de amplitude forçada.",
     "nivel": "intermediário"
@@ -5234,7 +5544,10 @@
     "musculos": [
       "Dorsais"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Pescoço",
+      "Trapézio"
+    ],
     "descricao": "Gire a cabeça lentamente em círculos completos no sentido anti-horário, mantendo os ombros relaxados.",
     "dica": "Ombros longe das orelhas durante todo o giro: se estalar ou doer, reduza a amplitude.",
     "nivel": "intermediário"
@@ -5250,7 +5563,10 @@
     "musculos": [
       "Dorsais"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Pescoço",
+      "Trapézio"
+    ],
     "descricao": "Gire a cabeça em meio-círculo à frente, de um ombro ao outro, sem estender o pescoço para trás.",
     "dica": "O meio círculo frontal é a versão segura: evita a compressão da extensão total atrás.",
     "nivel": "intermediário"
@@ -5266,7 +5582,10 @@
     "musculos": [
       "Dorsais"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Pescoço",
+      "Trapézio"
+    ],
     "descricao": "Incline a cabeça levando a orelha em direção ao ombro, sustente e alterne os lados.",
     "dica": "Deixe o peso da cabeça fazer o trabalho: 20–30 segundos por lado respirando fundo.",
     "nivel": "intermediário"
@@ -5319,7 +5638,11 @@
     "musculos": [
       "Panturrilhas"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Glúteo médio (abdutores)",
+      "Abdômen",
+      "Oblíquos"
+    ],
     "descricao": "• Fique de pé no chão ou na borda de um degrau para aumentar o alcance do movimento. Levante um pé, colocando a parte superior sobre sua panturrilha. • Levante os calcanhares até ficar de pé sobre os dedos do pé. • Fique nesta posição por três segundos, depois abaixe o pé sem tocar o chão com seu calcanhar.",
     "dica": "Mesma contagem para os dois lados: pausa de 2 segundos no alongamento embaixo e ponta dos pés no topo.",
     "nivel": "intermediário"
@@ -5374,7 +5697,11 @@
     "musculos": [
       "Dorsais"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Oblíquos",
+      "Abdômen",
+      "Lombar"
+    ],
     "descricao": "Em quatro apoios com uma mão atrás da cabeça, gire o cotovelo esquerdo em direção ao teto abrindo o tronco, e retorne passando o cotovelo por baixo.",
     "dica": "Siga o cotovelo com o olhar: a rotação torácica melhora agachamento, supino e postura — vá até o limite confortável e respire.",
     "nivel": "intermediário"
@@ -5390,7 +5717,11 @@
     "musculos": [
       "Dorsais"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Oblíquos",
+      "Abdômen",
+      "Lombar"
+    ],
     "descricao": "Em quatro apoios com a mão direita atrás da cabeça, gire o cotovelo direito ao teto e retorne por baixo do corpo.",
     "dica": "Quadril parado sobre os joelhos: o giro deve vir da torácica, não da lombar.",
     "nivel": "intermediário"
@@ -5443,7 +5774,10 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Abdômen"
+    ],
     "descricao": "Segurando um bastão ou elástico com pegada bem aberta à frente do corpo, leve-o por cima da cabeça até atrás do quadril e retorne, sem dobrar os cotovelos.",
     "dica": "Pegada aberta o suficiente para não forçar: estreite aos poucos ao longo das semanas — é o melhor termômetro de mobilidade de ombro.",
     "nivel": "intermediário"
@@ -5478,7 +5812,11 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Lombar",
+      "Abdômen"
+    ],
     "descricao": "Deitado de bruços, eleve os braços formando as letras Y, W e T em sequência, segurando cada posição.",
     "dica": "Polegares para o teto e 2 segundos por letra: fortalecimento fino de trapézio inferior e manguito — carga zero ou mínima.",
     "nivel": "iniciante"
@@ -5535,7 +5873,11 @@
     "musculos": [
       "Dorsais"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Ombros",
+      "Glúteos"
+    ],
     "descricao": "Com halteres pendendo à frente das coxas, faça um pequeno mergulho de quadril e puxe-os explosivamente até recebê-los nos ombros.",
     "dica": "Extensão de quadril primeiro, braços depois: receba os halteres 'macios' nos ombros com joelhos flexionados.",
     "nivel": "avançado"
@@ -5591,7 +5933,11 @@
       "Abdômen",
       "Tríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Lombar",
+      "Ombros",
+      "Posterior de coxa"
+    ],
     "descricao": "Da posição em V invertido com o quadril alto, flexione os cotovelos descendo a cabeça em direção ao chão e empurre de volta.",
     "dica": "Meio caminho para a flexão de parada de mão: quanto mais vertical o tronco, mais os ombros assumem.",
     "nivel": "intermediário"
@@ -5657,7 +6003,11 @@
       "Quadríceps",
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Lombar",
+      "Antebraços"
+    ],
     "descricao": "No remoergômetro, empurre com as pernas, incline levemente o tronco para trás e finalize puxando a manopla ao abdômen, revertendo a sequência na volta.",
     "dica": "Ordem sagrada: pernas → tronco → braços na ida, braços → tronco → pernas na volta — 60% da força vem das pernas.",
     "nivel": "iniciante"
@@ -5710,7 +6060,10 @@
     "musculos": [
       "Dorsais"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Lombar",
+      "Abdômen"
+    ],
     "descricao": "Sentado com o tronco inclinado à frente sobre as coxas, eleve os halteres lateralmente para trás com cotovelos semiflexionados.",
     "dica": "O apoio do tronco nas coxas elimina o embalo: carga leve, subida até a linha das costas e descida em 2–3 segundos.",
     "nivel": "intermediário"
@@ -5726,9 +6079,7 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [
-      "Abdômen"
-    ],
+    "musculos_secundarios": [],
     "descricao": "Em prancha lateral, eleve e desça o quadril de forma controlada, repetindo o movimento.",
     "dica": "Da versão estática para a dinâmica: suba até a linha reta perfeita e desça sem tocar o chão — o oblíquo trabalha o tempo todo.",
     "nivel": "intermediário"
@@ -5831,7 +6182,11 @@
       "Quadríceps",
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Lombar",
+      "Oblíquos",
+      "Glúteo médio (abdutores)"
+    ],
     "descricao": "Caminhe em ritmo constante e postura ereta, com passada natural.",
     "dica": "A caminhada é a base esquecida do condicionamento: ritmo acelerado com braços ativos já eleva o gasto significativamente.",
     "nivel": "iniciante"
@@ -5847,7 +6202,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Lombar",
+      "Oblíquos",
+      "Quadríceps"
+    ],
     "descricao": "Sentado na borda do banco com o tronco levemente inclinado para trás, recolha os joelhos ao peito e estenda as pernas sem tocar o chão.",
     "dica": "Aproxime costelas e joelhos ao mesmo tempo: o abdômen fecha dos dois lados — estenda devagar mantendo os pés no ar.",
     "nivel": "intermediário"
@@ -5939,7 +6298,11 @@
     "musculos": [
       "Bíceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Dorsais",
+      "Antebraços",
+      "Abdômen"
+    ],
     "descricao": "Período de descanso ativo ou passivo entre esforços, conforme o protocolo do treino cronometrado.",
     "dica": "Descanso é parte do treino: respeite os tempos — recuperar de menos degrada a qualidade dos próximos esforços.",
     "nivel": "intermediário"
@@ -5974,7 +6337,11 @@
     "musculos": [
       "Quadríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Antebraços",
+      "Trapézio",
+      "Abdômen"
+    ],
     "descricao": "Segure um halter pesado em cada mão ao lado do corpo e caminhe em linha reta com postura ereta e passos firmes.",
     "dica": "Ombros para trás e core travado: a caminhada do fazendeiro constrói pegada, trapézio e postura — pese de verdade a mão.",
     "nivel": "intermediário"
@@ -6199,7 +6566,11 @@
       "Posterior de coxa",
       "Glúteos"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Glúteo médio (abdutores)",
+      "Abdômen",
+      "Lombar"
+    ],
     "descricao": "Em pé numa perna só, incline o tronco à frente estendendo a outra perna atrás até formar um T, e retorne pela força do glúteo e posterior.",
     "dica": "Braços abertos ajudam o equilíbrio: quadril nivelado (não deixe girar) e volta puxada pelo glúteo da perna de apoio.",
     "nivel": "intermediário"
@@ -6424,7 +6795,11 @@
     "musculos": [
       "Panturrilhas"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Lombar",
+      "Glúteos"
+    ],
     "descricao": "Sentado ou em pé com o calcanhar apoiado, eleve a ponta do pé em direção à canela contra a resistência e retorne.",
     "dica": "O músculo esquecido da canela: fortalecer o tibial anterior previne canelite e melhora a passada — leve e com muitas repetições.",
     "nivel": "intermediário"
@@ -6478,7 +6853,11 @@
     "musculos": [
       "Panturrilhas"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Glúteo médio (abdutores)",
+      "Abdômen",
+      "Quadríceps"
+    ],
     "descricao": "Em pé na perna esquerda, eleve o calcanhar até a ponta do pé e desça até o alongamento completo, série completa antes de trocar.",
     "dica": "Unilateral revela diferenças: mesma contagem para os dois lados e pausa de 2 segundos no alongamento embaixo.",
     "nivel": "intermediário"
@@ -6494,7 +6873,11 @@
     "musculos": [
       "Corpo inteiro"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Lombar",
+      "Glúteo médio (abdutores)"
+    ],
     "descricao": "Pedale em ritmo e resistência definidos pelo protocolo do treino, mantendo cadência constante.",
     "dica": "Varie entre sessões longas leves e curtas intensas: o mix constrói base e potência sem sobrecarregar os joelhos.",
     "nivel": "iniciante"
@@ -6528,7 +6911,11 @@
     "musculos": [
       "Dorsais"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Lombar",
+      "Oblíquos",
+      "Abdômen"
+    ],
     "descricao": "Deitado de bruços, eleve uma perna flexionada e cruze-a por cima do corpo em direção à mão oposta, alternando os lados.",
     "dica": "Mobilidade de quadril e lombar com alongamento do quadríceps: movimento lento, respirando — sem forçar o giro.",
     "nivel": "intermediário"
@@ -6563,7 +6950,11 @@
     "musculos": [
       "Bíceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Tríceps",
+      "Peito",
+      "Ombros"
+    ],
     "descricao": "Em posição de flexão com as mãos na largura dos ombros, execute flexões com o corpo rígido e amplitude completa.",
     "dica": "A largura neutra equilibra peito e tríceps: desça em 2 segundos até o peito quase tocar e suba forte.",
     "nivel": "intermediário"
@@ -6579,7 +6970,11 @@
     "musculos": [
       "Dorsais"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Lombar",
+      "Trapézio",
+      "Ombros"
+    ],
     "descricao": "Deitado de bruços com os braços abertos em T, eleve peito e braços do chão com os polegares para cima, segure e desça.",
     "dica": "2–3 segundos de sustentação apertando as escápulas: fortalecimento postural puro — o 'antídoto' do dia sentado.",
     "nivel": "intermediário"
@@ -6675,7 +7070,11 @@
     "musculos": [
       "Bíceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Peito",
+      "Tríceps",
+      "Antebraços"
+    ],
     "descricao": "Em posição de flexão apoiado nas pontas dos dedos, desça o peito e empurre de volta.",
     "dica": "Específico para força de dedos (escalada, artes marciais): comece nos joelhos — a articulação precisa de adaptação gradual.",
     "nivel": "intermediário"
@@ -6730,7 +7129,11 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Tríceps",
+      "Trapézio",
+      "Abdômen"
+    ],
     "descricao": "Em pé, bata palmas acima da cabeça estendendo os braços por completo, em ritmo contínuo.",
     "dica": "Movimento de aquecimento e coordenação: braços realmente estendidos lá em cima, ativando ombros por completo.",
     "nivel": "intermediário"
@@ -6820,7 +7223,11 @@
       "Peito",
       "Tríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Ombros",
+      "Antebraços",
+      "Abdômen"
+    ],
     "descricao": "Deitado no banco com halteres em pegada neutra e cotovelos junto ao corpo, desça-os ao lado do peito e empurre de volta.",
     "dica": "Pegada neutra + cotovelos fechados = tríceps e peito interno: os halteres se tocam no topo com aperto proposital.",
     "nivel": "intermediário"
@@ -6855,7 +7262,10 @@
     "musculos": [
       "Tríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Ombros",
+      "Abdômen"
+    ],
     "descricao": "Eleve o braço direito, dobre o cotovelo levando a mão às costas e empurre suavemente o cotovelo com a outra mão, sustentando o alongamento do tríceps.",
     "dica": "20–30 segundos respirando: para intensificar, incline levemente o tronco para o lado oposto.",
     "nivel": "iniciante"
@@ -6871,7 +7281,9 @@
     "musculos": [
       "Tríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Ombros"
+    ],
     "descricao": "Eleve o braço esquerdo, dobre o cotovelo atrás da cabeça e ajude com a outra mão, sustentando o alongamento.",
     "dica": "Cotovelo apontando para o teto, não para o lado: o alongamento deve aparecer atrás do braço, sem dor no ombro.",
     "nivel": "iniciante"
@@ -6944,7 +7356,11 @@
       "Bíceps",
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Tríceps",
+      "Antebraços",
+      "Lombar"
+    ],
     "descricao": "Agachado com as mãos no chão e os joelhos apoiados nos cotovelos, transfira o peso à frente até os pés saírem do chão, equilibrando-se.",
     "dica": "Olhe para o chão à frente (não para os pés) e transfira o peso devagar: é o primeiro passo do equilíbrio sobre as mãos.",
     "nivel": "intermediário"
@@ -6960,7 +7376,11 @@
     "musculos": [
       "Panturrilhas"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Lombar",
+      "Oblíquos"
+    ],
     "descricao": "De frente para a parede com uma perna atrás estendida e o calcanhar no chão, incline o corpo à frente alongando a panturrilha.",
     "dica": "Calcanhar de trás pregado no chão e joelho estendido: 20–30 segundos — alonga o gastrocnêmio.",
     "nivel": "iniciante"
@@ -6976,7 +7396,10 @@
     "musculos": [
       "Panturrilhas"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Lombar"
+    ],
     "descricao": "Na mesma posição do alongamento de panturrilha, dobre levemente o joelho de trás mantendo o calcanhar no chão.",
     "dica": "O joelho dobrado desloca o alongamento para o sóleo (mais profundo): essencial para a mobilidade do agachamento.",
     "nivel": "iniciante"
@@ -6992,7 +7415,11 @@
     "musculos": [
       "Quadríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Glúteos",
+      "Posterior de coxa"
+    ],
     "descricao": "Sentado com o elástico preso à frente e enrolado no pé, puxe a ponta do pé em direção à canela contra a resistência e retorne.",
     "dica": "Fortalece o tibial anterior: movimento completo e controlado — previne canelite e entorses.",
     "nivel": "intermediário"
@@ -7008,7 +7435,11 @@
     "musculos": [
       "Panturrilhas"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Antebraços",
+      "Abdômen",
+      "Lombar"
+    ],
     "descricao": "Sentado com o elástico na sola do pé segurando as pontas, empurre a ponta do pé à frente contra a resistência e retorne devagar.",
     "dica": "A volta lenta é o segredo: a panturrilha trabalha excentricamente no retorno — controle total.",
     "nivel": "intermediário"
@@ -7059,7 +7490,11 @@
       "Dorsais",
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Ombros",
+      "Bíceps",
+      "Glúteos"
+    ],
     "descricao": "Pendurado na barra com os braços estendidos e escápulas ativas, eleve o corpo reto até a horizontal, de frente para o teto, e sustente.",
     "dica": "Anos de progressão em segundos de sustentação: tuck → tuck avançado → uma perna → completo — braços sempre retos.",
     "nivel": "avançado"
@@ -7075,7 +7510,10 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Ombros",
+      "Dorsais"
+    ],
     "descricao": "De joelhos segurando as alças do TRX à frente, deslize os braços para cima e à frente estendendo o corpo, e retorne pela força do core.",
     "dica": "Costelas fechadas e quadril à frente: vá só até onde volta sem arquear a lombar — o abdômen alonga sob tensão.",
     "nivel": "intermediário"
@@ -7166,9 +7604,7 @@
     "musculos": [
       "Bíceps"
     ],
-    "musculos_secundarios": [
-      "Bíceps"
-    ],
+    "musculos_secundarios": [],
     "descricao": "Segurando as alças do TRX com o corpo inclinado para trás, flexione os cotovelos puxando as mãos ao peito com as palmas para você.",
     "dica": "Cotovelos baixos e junto ao corpo diferenciam do padrão de remada: o bíceps comanda a subida — corpo rígido em prancha.",
     "nivel": "iniciante"
@@ -7206,7 +7642,6 @@
       "Ombros",
       "Posterior de coxa",
       "Panturrilhas",
-      "Dorsais",
       "Tríceps"
     ],
     "descricao": "Sentado com as mãos atrás do quadril e pés no chão, eleve o quadril até o corpo formar uma mesa, e sustente ou repita.",
@@ -7312,7 +7747,11 @@
     "musculos": [
       "Quadríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Panturrilhas",
+      "Antebraços",
+      "Abdômen"
+    ],
     "descricao": "Sentado com o elástico na sola do pé, deixe-o tracionar a ponta do pé em flexão plantar e sustente o alongamento da canela e do tibial.",
     "dica": "O alongamento aparece na frente da canela: suave e sustentado — região que ninguém alonga e todo corredor deveria.",
     "nivel": "iniciante"
@@ -7421,7 +7860,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Ombros",
+      "Tríceps",
+      "Dorsais"
+    ],
     "descricao": "Da prancha com os ombros à frente das mãos, transfira o peso adiante e para trás controlando com ombros e core.",
     "dica": "Balanço controlado rumo à planche: pés leves — quanto mais peso vai para as mãos, mais real o exercício fica.",
     "nivel": "avançado"
@@ -7437,9 +7880,7 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [
-      "Abdômen"
-    ],
+    "musculos_secundarios": [],
     "descricao": "Deitado de costas, estenda os braços ao teto e 'alcance' para cima descolando as escápulas do chão, retornando devagar.",
     "dica": "Movimento curto de serrátil: as escápulas deslizam para frente sem os braços dobrarem — ombros saudáveis agradecem.",
     "nivel": "intermediário"
@@ -7455,9 +7896,7 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [
-      "Abdômen"
-    ],
+    "musculos_secundarios": [],
     "descricao": "Da posição de prancha com apoio deslocado, transfira o peso lateralmente de um braço ao outro com controle.",
     "dica": "Transferência lenta e ombros firmes: prepara o corpo para apoios unilaterais — qualidade acima de amplitude.",
     "nivel": "avançado"
@@ -7549,7 +7988,11 @@
       "Glúteos",
       "Dorsais"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Posterior de coxa",
+      "Abdômen",
+      "Lombar"
+    ],
     "descricao": "Deitado de costas com um pé apoiado e a outra perna estendida, eleve o quadril com uma perna e desça controlado.",
     "dica": "Ponte unilateral: quadril nivelado o tempo todo — se ele girar, encoste a mão no chão e refaça.",
     "nivel": "intermediário"
@@ -7909,7 +8352,10 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Abdômen"
+    ],
     "descricao": "Em pé com halteres ao lado do corpo, eleve os ombros verticalmente em direção às orelhas e desça devagar.",
     "dica": "Pico de 1–2 segundos no topo: o trapézio responde à pausa, não ao balanço — punhos apenas seguram.",
     "nivel": "intermediário"
@@ -8007,7 +8453,10 @@
     "musculos": [
       "Dorsais"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Lombar"
+    ],
     "descricao": "Role a região muscular alvo lentamente sobre o rolo de liberação, pausando 20–30 segundos nos pontos de maior tensão.",
     "dica": "Devagar e respirando: o objetivo é o sistema nervoso 'soltar' a região — dor intensa demais faz o efeito contrário.",
     "nivel": "iniciante"
@@ -8115,7 +8564,11 @@
       "Glúteos",
       "Quadríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Lombar",
+      "Adutores"
+    ],
     "descricao": "Pedale na bicicleta reclinada mantendo a lombar apoiada no encosto e cadência constante.",
     "dica": "A posição reclinada poupa lombar e joelhos: ideal para volume aeróbico longo ou recuperação ativa.",
     "nivel": "iniciante"
@@ -8280,7 +8733,11 @@
     "musculos": [
       "Posterior de coxa"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Lombar",
+      "Glúteos"
+    ],
     "descricao": "Sentado com uma perna estendida e a outra dobrada, incline o tronco sobre a perna estendida sustentando o alongamento do posterior.",
     "dica": "Coluna longa dobrando pelo quadril: alcançar o pé importa menos que sentir atrás da coxa — 20–30s por perna.",
     "nivel": "iniciante"
@@ -8296,7 +8753,10 @@
     "musculos": [
       "Posterior de coxa"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Lombar"
+    ],
     "descricao": "Sentado com as pernas estendidas juntas, incline o tronco à frente deslizando as mãos em direção aos pés e sustente.",
     "dica": "O teste clássico de flexibilidade: expire ao avançar e ganhe 1 cm por vez — consistência diária vence intensidade.",
     "nivel": "intermediário"
@@ -8312,7 +8772,11 @@
     "musculos": [
       "Posterior de coxa"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Glúteo médio (abdutores)",
+      "Adutores",
+      "Abdômen"
+    ],
     "descricao": "Em pé apoiado numa parede, balance uma perna cruzando à frente do corpo e abrindo lateralmente, em ritmo controlado.",
     "dica": "Balanço dinâmico de adutores e abdutores: amplitude cresce a cada repetição — perfeito antes de treino de pernas.",
     "nivel": "intermediário"
@@ -8328,7 +8792,10 @@
     "musculos": [
       "Posterior de coxa"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Adutores",
+      "Lombar"
+    ],
     "descricao": "Em pé com as pernas bem afastadas, incline o tronco à frente pelo quadril com a coluna longa, sustentando o alongamento de adutores e posteriores.",
     "dica": "A panqueca em pé prepara a sentada: peso nos calcanhares e quadril indo para trás enquanto o tronco desce.",
     "nivel": "intermediário"
@@ -8363,7 +8830,11 @@
     "musculos": [
       "Posterior de coxa"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Glúteos",
+      "Abdômen",
+      "Lombar"
+    ],
     "descricao": "Sentado com uma perna dobrada sobre a outra estendida, incline o tronco à frente intensificando o alongamento do posterior da perna de baixo.",
     "dica": "A perna cruzada 'trava' o quadril e aprofunda o alongamento: respire e não force além do desconforto leve.",
     "nivel": "intermediário"
@@ -8397,7 +8868,11 @@
     "musculos": [
       "Posterior de coxa"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Lombar",
+      "Abdômen",
+      "Glúteos"
+    ],
     "descricao": "Em pé com uma perna cruzada à frente da outra, incline o tronco à frente sustentando o alongamento lateral do posterior e da banda iliotibial.",
     "dica": "O cruzamento desloca o alongamento para a face lateral da coxa: troque o cruzamento e compare os lados.",
     "nivel": "iniciante"
@@ -8494,7 +8969,11 @@
     "musculos": [
       "Glúteos"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Lombar",
+      "Glúteo médio (abdutores)"
+    ],
     "descricao": "Em prancha, eleve uma perna estendida do chão, segure brevemente e alterne, mantendo o quadril estável.",
     "dica": "A perna sobe SEM o quadril girar ou a lombar arquear: pequena elevação com glúteo contraído já cumpre a missão.",
     "nivel": "intermediário"
@@ -8510,9 +8989,7 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [
-      "Abdômen"
-    ],
+    "musculos_secundarios": [],
     "descricao": "Deitado com os joelhos dobrados e o tronco levemente elevado, toque alternadamente os calcanhares com as mãos flexionando o tronco lateralmente.",
     "dica": "Ombros fora do chão o tempo todo: o oblíquo encurta de cada lado no toque — ritmo controlado, sem pressa.",
     "nivel": "intermediário"
@@ -8528,7 +9005,10 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Oblíquos",
+      "Lombar"
+    ],
     "descricao": "Deitado com as mãos na cabeça, alterne levando o cotovelo ao joelho oposto enquanto estende a outra perna, em movimento de pedalada.",
     "dica": "Gire o TRONCO até o cotovelo encontrar o joelho (não puxe o pescoço): a pedalada lenta vale o dobro da rápida.",
     "nivel": "iniciante"
@@ -8564,7 +9044,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Pescoço",
+      "Oblíquos",
+      "Antebraços"
+    ],
     "descricao": "Deitado segurando um halter ou anilha no peito (ou estendido acima), execute o abdominal elevando o tronco e descendo controlado.",
     "dica": "Abdômen também progride com carga: mesmo movimento perfeito de sempre, agora com peso — aumente como em qualquer músculo.",
     "nivel": "iniciante"
@@ -8598,7 +9082,10 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Oblíquos",
+      "Quadríceps"
+    ],
     "descricao": "Em prancha ou posição de V invertido, toque a ponta do pé oposto com uma mão de cada vez, alternando.",
     "dica": "Quadril sobe no toque e volta à prancha com controle: mobilidade de posterior e core no mesmo movimento.",
     "nivel": "intermediário"
@@ -8614,9 +9101,7 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [
-      "Abdômen"
-    ],
+    "musculos_secundarios": [],
     "descricao": "Em pé com um peso numa das mãos, flexione o tronco lateralmente e retorne pela contração do oblíquo do lado oposto.",
     "dica": "Peso num lado só e tronco deslizando no plano lateral: quem trabalha é sempre o oblíquo contrário ao peso.",
     "nivel": "iniciante"
@@ -8632,7 +9117,11 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Antebraços",
+      "Abdômen"
+    ],
     "descricao": "Em pé com halteres ao lado do corpo, gire os ombros em círculos para trás de forma controlada.",
     "dica": "Círculos amplos e lentos para TRÁS: aquecimento de ombro e ativação de trapézio — o sentido para trás corrige, para frente piora.",
     "nivel": "intermediário"
@@ -8648,7 +9137,10 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Antebraços",
+      "Trapézio"
+    ],
     "descricao": "Segure uma ou duas anilhas pela borda com a ponta dos dedos (pegada de pinça) e sustente pelo tempo determinado.",
     "dica": "Força de pinça pura: polegar contra dedos — comece com anilhas leves e lisas, e progrida em tempo antes de peso.",
     "nivel": "intermediário"
@@ -9133,7 +9625,11 @@
       "Ombros",
       "Tríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Oblíquos",
+      "Peito"
+    ],
     "descricao": "Em base de luta com a guarda alta, desfira socos alternados à frente girando o quadril junto com cada golpe.",
     "dica": "O soco nasce no pé e passa pelo quadril: o braço é só a entrega — mantenha a outra mão protegendo o queixo.",
     "nivel": "intermediário"
@@ -9317,7 +9813,11 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Lombar",
+      "Abdômen"
+    ],
     "descricao": "De frente para a polia dupla alta, cruze os cabos e abra os braços para trás em arco na altura dos ombros.",
     "dica": "Braços quase estendidos 'abrindo cortinas': posterior de ombro com tensão do início ao fim — leve e caprichado.",
     "nivel": "iniciante"
@@ -9352,7 +9852,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Ombros",
+      "Oblíquos",
+      "Tríceps"
+    ],
     "descricao": "Em prancha com os pés em discos deslizantes, deslize os joelhos em direção aos cotovelos alternadamente ou juntos, e retorne.",
     "dica": "Quadril baixo durante o deslize: o abdômen puxa e freia — os discos não perdoam impulso.",
     "nivel": "intermediário"
@@ -9368,7 +9872,10 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Oblíquos",
+      "Pescoço"
+    ],
     "descricao": "Deitado com as solas dos pés unidas e joelhos abertos, execute o abdominal elevando o tronco em direção aos pés.",
     "dica": "A posição borboleta desliga o flexor de quadril: o que sobe é só o abdômen — mãos deslizando pelo chão até os pés.",
     "nivel": "iniciante"
@@ -9384,7 +9891,10 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Oblíquos",
+      "Lombar"
+    ],
     "descricao": "Sentado com o tronco inclinado para trás, gire o tronco em espiral levando as mãos de um lado ao outro em movimento contínuo.",
     "dica": "O giro em espiral acorda os oblíquos em todos os ângulos: lento e contínuo, sem 'jogar' os braços.",
     "nivel": "intermediário"
@@ -9400,7 +9910,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Lombar",
+      "Oblíquos",
+      "Glúteos"
+    ],
     "descricao": "Deitado, eleve o tronco poucos centímetros do chão com os braços estendidos à frente e sustente a posição de tensão.",
     "dica": "A 'levitação' é isometria de reto abdominal: ombros fora do chão, olhar nos joelhos e respiração curta constante.",
     "nivel": "iniciante"
@@ -9416,7 +9930,10 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Oblíquos",
+      "Pescoço"
+    ],
     "descricao": "Deitado com as mãos na cabeça, suba o tronco impulsionando os cotovelos à frente e desça controlado.",
     "dica": "Os cotovelos 'lançam' o movimento mas o abdômen conclui: não puxe a nuca — o impulso é dos cotovelos, não das mãos.",
     "nivel": "iniciante"
@@ -9561,7 +10078,11 @@
     "musculos": [
       "Dorsais"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Lombar",
+      "Trapézio",
+      "Ombros"
+    ],
     "descricao": "No banco de hiperextensão, suba o tronco e no topo eleve os braços em Y, depois em W, antes de descer.",
     "dica": "Lombar + trapézio inferior num combo: sustente o Y e o W por 1 segundo cada — carga zero, ganho postural enorme.",
     "nivel": "intermediário"
@@ -9765,7 +10286,11 @@
     "musculos": [
       "Glúteos"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Posterior de coxa",
+      "Abdômen",
+      "Adutores"
+    ],
     "descricao": "Deitado com halteres em pegada neutra e os cotovelos deslizando rente ao corpo, empurre-os do peito baixo para cima em trajetória vertical.",
     "dica": "Variação de cotovelos colados que vira meio-termo entre supino e extensão: peito interno e tríceps — controle no toque embaixo.",
     "nivel": "intermediário"
@@ -9802,7 +10327,11 @@
       "Peito",
       "Tríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Lombar",
+      "Trapézio"
+    ],
     "descricao": "No smith com o banco a ~60–75°, desça a barra à parte alta do peito e empurre de volta pela trilha.",
     "dica": "Entre o supino e o desenvolvimento: peitoral superior e deltoide anterior dividem a conta — descida lenta ao alto do peito.",
     "nivel": "intermediário"
@@ -9909,7 +10438,11 @@
     "musculos": [
       "Glúteos"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Adutores",
+      "Quadríceps",
+      "Oblíquos"
+    ],
     "descricao": "Com um elástico nos tornozelos ou coxas em posição de meio agachamento, dê passos laterais mantendo a tensão constante.",
     "dica": "Nunca deixe os pés se juntarem por completo: a tensão contínua faz o glúteo médio queimar — passos curtos e firmes.",
     "nivel": "intermediário"
@@ -9925,7 +10458,11 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Tríceps",
+      "Abdômen",
+      "Antebraços"
+    ],
     "descricao": "Equilibre-se em parada de mão livre ou na parede com os braços estendidos e o corpo alinhado.",
     "dica": "Dedos 'agarrando' o chão fazem os micro-ajustes: ombros empurrando o chão e corpo em linha — pratique de frente para a parede.",
     "nivel": "avançado"
@@ -10106,7 +10643,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Dorsais",
+      "Antebraços",
+      "Oblíquos"
+    ],
     "descricao": "Pendurado na barra, eleve as pernas estendidas até os pés tocarem a barra e desça controladamente.",
     "dica": "Enrole o quadril depois que as pernas passam da horizontal: sem balanço — a descida lenta separa os fortes.",
     "nivel": "intermediário"
@@ -10160,7 +10701,10 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Antebraços",
+      "Trapézio"
+    ],
     "descricao": "Cruze um braço à frente do peito e puxe-o suavemente com o outro, sustentando o alongamento do deltoide posterior.",
     "dica": "Ombros longe das orelhas e 20–30 segundos por lado: alonga o posterior de ombro que o treino de empurrar encurta.",
     "nivel": "iniciante"
@@ -10253,7 +10797,11 @@
       "Glúteos",
       "Quadríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Lombar",
+      "Glúteo médio (abdutores)"
+    ],
     "descricao": "Na escada rolante de exercício, suba degraus em ritmo constante e postura ereta.",
     "dica": "Solte os apoios e suba com as pernas: pendurar-se no corrimão rouba metade do exercício.",
     "nivel": "iniciante"
@@ -10368,7 +10916,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Lombar",
+      "Ombros",
+      "Dorsais"
+    ],
     "descricao": "Ajoelhado segurando a roda no chão, role-a à frente estendendo o corpo com o abdômen contraído e retorne pela força do core.",
     "dica": "Quadril levemente à frente e costelas fechadas: vá só até onde volta sem arquear — a roda pune o ego rápido.",
     "nivel": "iniciante"
@@ -10384,7 +10936,11 @@
     "musculos": [
       "Corpo inteiro"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Oblíquos",
+      "Lombar"
+    ],
     "descricao": "Nade no estilo e intensidade definidos pelo treino, focando técnica de braçada e respiração ritmada.",
     "dica": "Expire dentro da água continuamente: prender o ar é o erro nº1 — técnica antes de metros.",
     "nivel": "iniciante"
@@ -10479,7 +11035,11 @@
     "musculos": [
       "Corpo inteiro"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Oblíquos",
+      "Glúteo médio (abdutores)"
+    ],
     "descricao": "Execute corrida em ritmo forte contínuo ou em blocos, conforme o protocolo do treino.",
     "dica": "Ritmo 'confortavelmente difícil': consegue falar palavras soltas mas não frases — o limiar que constrói motor aeróbico.",
     "nivel": "iniciante"
@@ -10516,7 +11076,11 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Tríceps",
+      "Trapézio",
+      "Abdômen"
+    ],
     "descricao": "Deitado no banco, empurre a barra ou halteres do peito com os cotovelos fechados terminando com um encolhimento de ombros no topo.",
     "dica": "O encolhimento final ativa o serrátil e o trapézio no lockout: empurre 'além' da extensão — ombros descolando do banco.",
     "nivel": "intermediário"
@@ -10534,7 +11098,10 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Antebraços"
+    ],
     "descricao": "Deitado de lado com o cotovelo de baixo apoiado no tronco a 90°, gire o antebraço em direção ao abdômen contra a resistência.",
     "dica": "Rotação interna de manguito: carga leve — equilibra o trabalho de rotação externa que todo ombro saudável precisa.",
     "nivel": "intermediário"
@@ -10594,7 +11161,11 @@
     "musculos": [
       "Pescoço"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Ombros",
+      "Trapézio",
+      "Abdômen"
+    ],
     "descricao": "Execute alongamentos para braços, ombros e pescoço em sequência, sustentando cada um por 20–30 segundos.",
     "dica": "Ombros longe das orelhas em todos: a região cervical pede suavidade — alongue após o treino ou no fim do dia.",
     "nivel": "iniciante"
@@ -10610,7 +11181,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Pescoço",
+      "Lombar",
+      "Oblíquos"
+    ],
     "descricao": "Sentado ou em pé com a postura ereta, inspire profundamente pelo nariz expandindo o abdômen, e expire devagar pela boca.",
     "dica": "4 segundos inspirando, 6–8 expirando: a expiração longa ativa o 'freio' do sistema nervoso — 5 ciclos já mudam o estado.",
     "nivel": "iniciante"
@@ -10661,9 +11236,7 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [
-      "Ombros"
-    ],
+    "musculos_secundarios": [],
     "descricao": "Em pé com halteres, eleve os braços a 45° entre a frente e o lado (plano da escápula), polegares para cima, até a linha dos ombros.",
     "dica": "O plano escapular é o mais seguro do ombro: polegares ao teto e subida até a linha do ombro — saúde e deltoide juntos.",
     "nivel": "intermediário"
@@ -10736,7 +11309,11 @@
       "Ombros",
       "Dorsais"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Lombar",
+      "Abdômen"
+    ],
     "descricao": "Deitado de bruços ou inclinado, eleve os braços formando T, Y e I em sequência, sustentando cada posição.",
     "dica": "Polegares para cima e 2 segundos por letra: trapézio inferior e manguito — o kit postural completo sem carga.",
     "nivel": "intermediário"
@@ -10844,7 +11421,11 @@
       "Posterior de coxa",
       "Glúteos"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Lombar",
+      "Glúteo médio (abdutores)"
+    ],
     "descricao": "Em quatro apoios com um halter na dobra do joelho, eleve a perna flexionada em direção ao teto e retorne controlado.",
     "dica": "Empurre o 'céu' com a sola do pé: o halter na dobra transforma o chute clássico em exercício de carga real.",
     "nivel": "intermediário"
@@ -10860,7 +11441,11 @@
     "musculos": [
       "Corpo inteiro"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Oblíquos",
+      "Glúteo médio (abdutores)",
+      "Antebraços"
+    ],
     "descricao": "Pedale na bicicleta ergométrica no ritmo e resistência definidos pelo treino.",
     "dica": "Alterne dias de giro leve longo e tiros pesados curtos: os dois estímulos constroem pernas e fôlego.",
     "nivel": "iniciante"
@@ -10876,7 +11461,10 @@
     "musculos": [
       "Panturrilhas"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Antebraços",
+      "Quadríceps"
+    ],
     "descricao": "Sentado com um halter apoiado sobre o joelho, eleve o calcanhar ao máximo e desça até o alongamento.",
     "dica": "A versão caseira da máquina: pausa embaixo, pico em cima — o sóleo não sabe se é máquina ou halter, só sente o trabalho.",
     "nivel": "intermediário"
@@ -10997,7 +11585,11 @@
       "Ombros",
       "Peito"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Tríceps",
+      "Trapézio",
+      "Dorsais"
+    ],
     "descricao": "Puxe a barra do chão aos ombros num movimento fluido e empurre-a acima da cabeça, retornando por etapas.",
     "dica": "Do chão ao teto em duas explosões: quadril faz o clean, pernas ajudam o press — o exercício de força total com barra.",
     "nivel": "avançado"
@@ -11109,7 +11701,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Oblíquos",
+      "Lombar",
+      "Pescoço"
+    ],
     "descricao": "Deitado segurando um peso no peito ou estendido acima, execute o abdominal completo com descida controlada.",
     "dica": "Trate o abdômen como qualquer músculo: quando 15 ficarem fáceis, aumente o peso, não as repetições.",
     "nivel": "iniciante"
@@ -11438,9 +12034,7 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [
-      "Ombros"
-    ],
+    "musculos_secundarios": [],
     "descricao": "De costas para a parede com braços em W encostados, deslize-os para cima até esticar e retorne mantendo o contato.",
     "dica": "Punhos e cotovelos colados na parede o caminho inteiro: onde descolarem, ali está seu limite de mobilidade — trabalhe nele.",
     "nivel": "intermediário"
@@ -11456,7 +12050,10 @@
     "musculos": [
       "Glúteos"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Lombar"
+    ],
     "descricao": "Sentado, cruze o tornozelo sobre o joelho oposto formando um 4, e incline o tronco à frente sustentando o alongamento do glúteo.",
     "dica": "Coluna longa dobrando pelo quadril: o alongamento aparece no glúteo da perna cruzada — 20–30 segundos por lado.",
     "nivel": "intermediário"
@@ -11650,7 +12247,11 @@
     "musculos": [
       "Peito"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Ombros",
+      "Tríceps",
+      "Abdômen"
+    ],
     "descricao": "Sustente a posição intermediária de um exercício inclinado (flexão, prancha ou apoio) pelo tempo determinado.",
     "dica": "Isometria no ponto mais difícil do movimento: 10–20 segundos de tensão máxima ensinam o corpo a vencer o ponto de falha.",
     "nivel": "intermediário"
@@ -11818,7 +12419,11 @@
     "musculos": [
       "Tríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Antebraços",
+      "Lombar",
+      "Ombros"
+    ],
     "descricao": "Em pé ou em quatro apoios, estenda a perna para trás e para cima contraindo o glúteo no topo, e retorne devagar.",
     "dica": "A lombar não arqueia: o movimento acaba quando o glúteo contrai — 2 segundos de aperto no topo.",
     "nivel": "intermediário"
@@ -11892,7 +12497,11 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Dorsais",
+      "Lombar"
+    ],
     "descricao": "Em pé com o tronco levemente inclinado, abra os halteres para trás em arco na linha dos ombros, apertando o posterior.",
     "dica": "Cotovelos quase retos e polegares levemente para baixo: posterior de ombro com carga leve e volume — a receita certa.",
     "nivel": "iniciante"
@@ -11926,7 +12535,10 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Oblíquos"
+    ],
     "descricao": "Deitado de lado com o braço de baixo à frente a 90°, gire o antebraço em direção ao chão com a ajuda suave da outra mão.",
     "dica": "Alonga a rotação interna do ombro (cápsula posterior): suave e sem dor — essencial para quem faz muito supino.",
     "nivel": "iniciante"
@@ -11942,7 +12554,10 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Lombar"
+    ],
     "descricao": "Cruze o braço estendido à frente do peito e puxe-o com o outro braço, sustentando o alongamento posterior do ombro.",
     "dica": "Ombro baixo e 20–30 segundos: o clássico que equilibra todo o volume de empurrar.",
     "nivel": "iniciante"
@@ -11978,7 +12593,11 @@
       "Dorsais",
       "Peito"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Lombar",
+      "Abdômen",
+      "Trapézio"
+    ],
     "descricao": "Inclinado com um braço pendendo segurando um halter leve, deixe-o balançar em círculos pequenos de forma relaxada.",
     "dica": "Pendular de Codman: o braço NÃO trabalha, só balança — descompressão e mobilidade suave para ombros sensíveis.",
     "nivel": "intermediário"
@@ -11994,7 +12613,11 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Antebraços",
+      "Abdômen"
+    ],
     "descricao": "Com o cotovelo colado ao tronco a 90°, gire o antebraço para fora segurando um halter leve, deitado de lado ou em pé com cabo.",
     "dica": "Manguito rotador: leve, lento e frequente — o seguro do ombro se paga em anos de treino sem dor.",
     "nivel": "intermediário"
@@ -12030,7 +12653,11 @@
     "musculos": [
       "Bíceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Antebraços",
+      "Ombros",
+      "Abdômen"
+    ],
     "descricao": "Sentado ou deitado, estenda o pescoço contra resistência leve (mão, elástico ou peso) e retorne devagar.",
     "dica": "Pescoço treina como qualquer músculo, mas com paciência dobrada: amplitude curta, carga mínima e progressão lenta.",
     "nivel": "iniciante"
@@ -12177,7 +12804,11 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Peito",
+      "Dorsais",
+      "Abdômen"
+    ],
     "descricao": "Na polia na altura do cotovelo, com o braço colado ao tronco a 90°, gire o antebraço para DENTRO contra o cabo.",
     "dica": "Rotação interna com cabo: complemento da externa — cotovelo grudado e amplitude confortável.",
     "nivel": "iniciante"
@@ -12193,7 +12824,10 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Abdômen"
+    ],
     "descricao": "Na polia na altura do cotovelo, com o braço colado ao tronco a 90°, gire o antebraço para FORA contra o cabo.",
     "dica": "O cabo dá resistência constante ao manguito: leve, lento e toda semana — ombro blindado.",
     "nivel": "iniciante"
@@ -12458,7 +13092,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Oblíquos",
+      "Antebraços",
+      "Ombros"
+    ],
     "descricao": "Pendurado na barra com as pernas elevadas, gire-as de um lado ao outro como um limpador de para-brisa.",
     "dica": "Ombros travados e giro controlado: os oblíquos comandam e freiam — amplitude cresce com o controle.",
     "nivel": "intermediário"
@@ -12627,7 +13265,11 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Abdômen",
+      "Lombar"
+    ],
     "descricao": "Na polia baixa, puxe a manopla em diagonal ascendente até acima do ombro oposto formando um Y.",
     "dica": "Trapézio inferior no comando: o Y é o exercício postural que quase ninguém faz — leve e caprichado.",
     "nivel": "iniciante"
@@ -12662,7 +13304,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Ombros",
+      "Tríceps",
+      "Oblíquos"
+    ],
     "descricao": "Em prancha, estenda um braço à frente até a linha do corpo, pause e alterne, mantendo o quadril estável.",
     "dica": "O alcance desestabiliza — o core reestabiliza: quadril de mármore enquanto o braço 'flutua'.",
     "nivel": "intermediário"
@@ -12696,7 +13342,11 @@
     "musculos": [
       "Quadríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Glúteos",
+      "Abdômen",
+      "Posterior de coxa"
+    ],
     "descricao": "Execute o exercício na polia conforme o protocolo, mantendo a tensão do cabo durante toda a amplitude.",
     "dica": "O superpoder do cabo é a tensão contínua: não deixe o peso 'descansar' na pilha entre repetições.",
     "nivel": "iniciante"
@@ -12731,9 +13381,7 @@
     "musculos": [
       "Bíceps"
     ],
-    "musculos_secundarios": [
-      "Bíceps"
-    ],
+    "musculos_secundarios": [],
     "descricao": "Sentado de frente para a polia baixa com os antebraços apoiados, flexione os punhos elevando a barra e desça devagar.",
     "dica": "O cabo mantém tensão em todo o arco do punho: amplitude completa — deixe rolar até os dedos e feche tudo.",
     "nivel": "iniciante"
@@ -12749,7 +13397,10 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Oblíquos",
+      "Quadríceps"
+    ],
     "descricao": "Deitado com os joelhos dobrados, enrole o quadril elevando-o do chão em direção ao peito, e desça devagar.",
     "dica": "O quadril sobe enrolando, não empurrando com os pés: o abdômen baixo comanda — descida em 3 segundos.",
     "nivel": "iniciante"
@@ -12803,7 +13454,9 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio"
+    ],
     "descricao": "Sentado de frente para o encosto do peck deck com as manoplas invertidas, abra os braços para trás apertando as escápulas.",
     "dica": "O voador ao contrário: posterior de ombro isolado — pausa de 1 segundo atrás e volta em 3.",
     "nivel": "iniciante"
@@ -12819,7 +13472,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Oblíquos",
+      "Lombar",
+      "Antebraços"
+    ],
     "descricao": "Segure um peso pesado numa mão só e caminhe em linha reta com a postura perfeitamente ereta.",
     "dica": "O peso puxa para um lado — o core não deixa: ombros nivelados como se carregasse duas maletas invisíveis.",
     "nivel": "intermediário"
@@ -12948,7 +13605,10 @@
     "musculos": [
       "Panturrilhas"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Glúteo médio (abdutores)"
+    ],
     "descricao": "Em pé ou ajoelhado com o pé à frente, balance o joelho sobre a ponta do pé avançando e retornando, com o calcanhar no chão.",
     "dica": "O joelho 'passeia' sobre o pé sem o calcanhar subir: mobilidade de tornozelo que destrava o agachamento fundo.",
     "nivel": "intermediário"
@@ -13024,7 +13684,10 @@
       "Posterior de coxa",
       "Glúteos"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Lombar",
+      "Abdômen"
+    ],
     "descricao": "Deitado de bruços num banco alto com as pernas pendendo, eleve-as estendidas até a linha do corpo contraindo glúteos e lombar.",
     "dica": "A hiperextensão ao contrário: pernas sobem, tronco fica — glúteos e lombar sem compressão — pausa de 1 segundo em cima.",
     "nivel": "iniciante"
@@ -13040,7 +13703,10 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Lombar",
+      "Ombros"
+    ],
     "descricao": "Deitado de bruços, apoie-se nos antebraços elevando o peito com o quadril no chão, e sustente a posição.",
     "dica": "A extensão suave que a lombar aceita: ombros para trás e respiração funda — 20–30 segundos de alívio pós-treino.",
     "nivel": "intermediário"
@@ -13056,7 +13722,11 @@
     "musculos": [
       "Dorsais"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Oblíquos",
+      "Abdômen",
+      "Lombar"
+    ],
     "descricao": "Deitado de lado com os joelhos dobrados e braços estendidos juntos à frente, abra o braço de cima girando o tronco até o lado oposto, seguindo com o olhar.",
     "dica": "O livro abre na expiração: rotação torácica pura com o quadril parado — o alongamento que os ombros e a coluna imploram.",
     "nivel": "intermediário"
@@ -13111,7 +13781,11 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Dorsais",
+      "Antebraços"
+    ],
     "descricao": "Com o peito apoiado num banco inclinado, eleve os halteres lateralmente para trás na linha do posterior de ombro.",
     "dica": "O apoio mata o embalo: posterior de ombro puro — polegares levemente para baixo e pausa atrás.",
     "nivel": "intermediário"
@@ -13147,7 +13821,10 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Oblíquos",
+      "Quadríceps"
+    ],
     "descricao": "Deitado com as pernas elevadas a 90°, empurre-as ao teto elevando o quadril do chão, e desça devagar.",
     "dica": "Empurre o teto com os pés: o quadril sobe reto (não rola) — abdômen baixo no comando.",
     "nivel": "iniciante"
@@ -13163,7 +13840,9 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Lombar"
+    ],
     "descricao": "Deitado com os joelhos dobrados, 'sugue' o umbigo em direção à coluna contraindo o abdômen profundo, e sustente respirando.",
     "dica": "O transverso é o cinto natural: contraia sem prender o ar — 10 segundos por vez, é ativação, não força.",
     "nivel": "iniciante"
@@ -13238,7 +13917,11 @@
     "musculos": [
       "Peito"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Tríceps",
+      "Ombros",
+      "Abdômen"
+    ],
     "descricao": "Apoiado nas argolas com os braços estendidos ao lado do corpo, sustente a posição estabilizando as argolas.",
     "dica": "As argolas tremem — você não: gire-as levemente para fora (RTO) e transforme o apoio em ouro de estabilidade.",
     "nivel": "intermediário"
@@ -13273,7 +13956,11 @@
     "musculos": [
       "Dorsais"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Ombros",
+      "Lombar"
+    ],
     "descricao": "Inclinado com o braço pendendo, eleve-o em diagonal (em Y) até a linha do corpo com o polegar para cima.",
     "dica": "Trapézio inferior (trap-3) isolado: carga mínima e trajetória em Y — o músculo esquecido da postura.",
     "nivel": "intermediário"
@@ -13289,7 +13976,10 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Antebraços"
+    ],
     "descricao": "Deite de lado ou em pé e alongue a rotação externa do ombro levando o antebraço para trás com ajuda suave.",
     "dica": "Suave e sustentado: 20–30 segundos — rotadores alongados equilibram os internos encurtados pelo dia a dia.",
     "nivel": "iniciante"
@@ -13306,7 +13996,11 @@
       "Ombros",
       "Peito"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Tríceps",
+      "Abdômen"
+    ],
     "descricao": "Execute a sequência de exercícios de ombro com elástico: elevações, rotações e puxadas conforme o protocolo.",
     "dica": "O elástico é a academia de bolso do ombro: resistência progressiva no fim da amplitude — perfeito para aquecer e blindar.",
     "nivel": "iniciante"
@@ -13340,7 +14034,10 @@
     "musculos": [
       "Posterior de coxa"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Lombar"
+    ],
     "descricao": "Sentado ou deitado, alongue o posterior com o joelho levemente flexionado, inclinando o tronco pelo quadril.",
     "dica": "O joelho dobrado tira o nervo ciático da equação e foca o músculo: sinta atrás da coxa, não atrás do joelho.",
     "nivel": "iniciante"
@@ -13356,7 +14053,11 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Dorsais",
+      "Tríceps",
+      "Abdômen"
+    ],
     "descricao": "Sentado com as mãos apoiadas atrás do corpo, deslize o quadril à frente sustentando o alongamento da frente dos ombros.",
     "dica": "Alonga deltoide anterior e peitoral: ombros para trás e peito aberto — o antídoto do supino em excesso.",
     "nivel": "iniciante"
@@ -13390,7 +14091,10 @@
     "musculos": [
       "Adutores"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Lombar"
+    ],
     "descricao": "Sentado com as solas dos pés unidas, puxe-os em direção ao corpo e deixe os joelhos descerem, inclinando o tronco à frente.",
     "dica": "Cotovelos empurrando os joelhos suavemente para baixo: adutores alongando — respire e desça 1 cm por expiração.",
     "nivel": "iniciante"
@@ -13522,7 +14226,11 @@
     "musculos": [
       "Panturrilhas"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Tríceps",
+      "Ombros",
+      "Abdômen"
+    ],
     "descricao": "Sente com a panturrilha sobre o rolo e role lentamente do tornozelo ao joelho, pausando nos pontos sensíveis.",
     "dica": "Cruze a outra perna por cima para aumentar a pressão: 30–60 segundos por perna, respirando.",
     "nivel": "iniciante"
@@ -13538,7 +14246,10 @@
     "musculos": [
       "Posterior de coxa"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Lombar"
+    ],
     "descricao": "Sente com o posterior da coxa sobre o rolo e role do joelho ao glúteo lentamente, pausando onde sentir tensão.",
     "dica": "Gire levemente a perna para dentro e fora para varrer toda a região: devagar — pressa não solta músculo.",
     "nivel": "iniciante"
@@ -13554,7 +14265,11 @@
     "musculos": [
       "Panturrilhas"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Ombros",
+      "Lombar"
+    ],
     "descricao": "Ajoelhado com a canela sobre o rolo, role a face frontal/lateral da canela pausando nos pontos tensos.",
     "dica": "O tibial anterior agradece após corridas: pressão moderada — a canela é sensível, respeite.",
     "nivel": "iniciante"
@@ -13570,7 +14285,11 @@
     "musculos": [
       "Panturrilhas"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Ombros",
+      "Glúteo médio (abdutores)"
+    ],
     "descricao": "Deitado de lado com a face lateral da coxa sobre o rolo, role do quadril ao joelho lentamente.",
     "dica": "A banda IT é densa e reclama: pressão tolerável e passadas lentas — desconforto ok, dor aguda não.",
     "nivel": "iniciante"
@@ -13586,7 +14305,11 @@
     "musculos": [
       "Quadríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Lombar",
+      "Oblíquos"
+    ],
     "descricao": "De bruços com a frente da coxa sobre o rolo, role do quadril ao joelho pausando nos pontos de tensão.",
     "dica": "Um quadríceps por vez aumenta a precisão: 30–60 segundos — especialmente após treino de pernas.",
     "nivel": "iniciante"
@@ -13602,7 +14325,10 @@
     "musculos": [
       "Glúteos"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Ombros"
+    ],
     "descricao": "Sentado sobre o rolo com o tornozelo cruzado sobre o joelho oposto, role o glúteo do lado cruzado lentamente.",
     "dica": "A figura 4 sobre o rolo mira o piriforme: incline para o lado do glúteo rolado e respire nos pontos sensíveis.",
     "nivel": "iniciante"
@@ -13618,7 +14344,11 @@
     "musculos": [
       "Adutores"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Oblíquos",
+      "Lombar"
+    ],
     "descricao": "De bruços com a face interna da coxa sobre o rolo (perna aberta de lado), role do joelho à virilha devagar.",
     "dica": "Os adutores são os esquecidos da liberação: pressão suave — região sensível que retribui em mobilidade de agachamento.",
     "nivel": "iniciante"
@@ -13634,7 +14364,11 @@
     "musculos": [
       "Dorsais"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Oblíquos",
+      "Abdômen",
+      "Lombar"
+    ],
     "descricao": "Em pé ou sentado, eleve um braço e incline o tronco para o lado oposto, sustentando o alongamento da lateral do corpo.",
     "dica": "Cresça ANTES de inclinar: o alongamento é para cima e para o lado — respire na costela que abre.",
     "nivel": "iniciante"
@@ -13650,7 +14384,11 @@
     "musculos": [
       "Quadríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Glúteos",
+      "Glúteo médio (abdutores)",
+      "Abdômen"
+    ],
     "descricao": "Em pé com as mãos no quadril, gire-o em círculos amplos nos dois sentidos.",
     "dica": "Círculos crescentes: mobilidade de quadril em 30 segundos — perfeito antes de agachar.",
     "nivel": "intermediário"
@@ -13666,7 +14404,10 @@
     "musculos": [
       "Quadríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Adutores",
+      "Abdômen"
+    ],
     "descricao": "Deitado de costas com os braços abertos, cruze uma perna sobre o corpo até o lado oposto, mantendo os ombros no chão.",
     "dica": "Ombros pregados no chão: a rotação alonga lombar e glúteo — respire e deixe a gravidade trabalhar.",
     "nivel": "iniciante"
@@ -13682,7 +14423,11 @@
     "musculos": [
       "Quadríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Panturrilhas",
+      "Abdômen",
+      "Glúteos"
+    ],
     "descricao": "Sentado ou em pé, gire o tornozelo em círculos completos nos dois sentidos.",
     "dica": "Círculos lentos e completos: o tornozelo móvel protege o joelho — 10 por sentido, por pé.",
     "nivel": "intermediário"
@@ -13698,7 +14443,11 @@
     "musculos": [
       "Quadríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Panturrilhas",
+      "Glúteos",
+      "Abdômen"
+    ],
     "descricao": "Com o elástico preso à frente e enrolado no tornozelo, avance o joelho sobre o pé mantendo o calcanhar no chão.",
     "dica": "A banda 'puxa' o tálus e destrava a dorsiflexão: o upgrade da mobilidade de tornozelo para agachar fundo.",
     "nivel": "iniciante"
@@ -13751,7 +14500,10 @@
     "musculos": [
       "Glúteos"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Lombar"
+    ],
     "descricao": "Deitado de costas, cruze o tornozelo sobre o joelho oposto e puxe a coxa de trás em direção ao peito.",
     "dica": "A figura 4 deitada: o glúteo da perna cruzada alonga fundo — puxe na expiração e relaxe o pescoço.",
     "nivel": "iniciante"
@@ -13767,7 +14519,11 @@
     "musculos": [
       "Posterior de coxa"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Antebraços",
+      "Glúteos"
+    ],
     "descricao": "Deitado de costas com o elástico na sola do pé, estenda a perna ao teto puxando-a suavemente em direção ao corpo.",
     "dica": "Perna estendida e lombar no chão: o elástico faz o trabalho — 20–30 segundos respirando fundo.",
     "nivel": "iniciante"
@@ -13819,7 +14575,11 @@
     "musculos": [
       "Quadríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Glúteos",
+      "Glúteo médio (abdutores)"
+    ],
     "descricao": "Em pé ou deitado de lado, puxe o pé em direção ao glúteo mantendo os joelhos alinhados e o quadril neutro.",
     "dica": "Joelhos juntos e quadril à frente: o quadríceps alonga do joelho ao quadril — sem arquear a lombar.",
     "nivel": "iniciante"
@@ -13872,7 +14632,11 @@
     "musculos": [
       "Panturrilhas"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Lombar",
+      "Ombros"
+    ],
     "descricao": "Com as mãos na parede e uma perna atrás com o calcanhar no chão, avance o corpo alongando a panturrilha.",
     "dica": "Joelho de trás esticado (gastrocnêmio) ou dobrado (sóleo): 20–30 segundos em cada versão.",
     "nivel": "iniciante"
@@ -13888,7 +14652,10 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Dorsais"
+    ],
     "descricao": "Segurando o elástico à frente com os braços estendidos, puxe as escápulas para trás e para baixo sem dobrar os cotovelos.",
     "dica": "Só as escápulas se movem: aperte 2 segundos — a retração pura que ensina o corpo a 'abrir o peito'.",
     "nivel": "iniciante"
@@ -13976,7 +14743,11 @@
     "musculos": [
       "Glúteos"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Oblíquos",
+      "Adutores"
+    ],
     "descricao": "Sentado com uma perna dobrada à frente e outra ao lado (shinbox), gire o joelho de trás para dentro e para fora do chão.",
     "dica": "A rotação interna de quadril é a mobilidade mais negligenciada: transições lentas — o quadril destrava em semanas.",
     "nivel": "iniciante"
@@ -13993,7 +14764,11 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Lombar",
+      "Abdômen"
+    ],
     "descricao": "Deitado de bruços ou inclinado, forme as letras Y, T, W e L com os braços em sequência, sustentando cada uma.",
     "dica": "O alfabeto do ombro saudável: 2 segundos por letra com polegares para cima — trapézio inferior e manguito completos.",
     "nivel": "intermediário"
@@ -14027,7 +14802,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Oblíquos",
+      "Quadríceps",
+      "Lombar"
+    ],
     "descricao": "No banco declinado segurando o apoio atrás da cabeça, eleve as pernas estendidas e desça controladamente.",
     "dica": "O declive aumenta a amplitude contra a gravidade: desça devagar sem a lombar descolar do banco.",
     "nivel": "intermediário"
@@ -14191,7 +14970,11 @@
       "Glúteos",
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Posterior de coxa",
+      "Lombar",
+      "Glúteo médio (abdutores)"
+    ],
     "descricao": "Deitado com os joelhos dobrados, eleve o quadril até a linha do corpo contraindo os glúteos, e desça devagar.",
     "dica": "O glúteo sobe o quadril, a lombar só acompanha: 2 segundos de aperto no topo — a base de todo treino de glúteo.",
     "nivel": "intermediário"
@@ -14244,7 +15027,11 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Lombar",
+      "Oblíquos",
+      "Quadríceps"
+    ],
     "descricao": "Deitado de costas com as pernas elevadas, desenhe círculos amplos com os pés nos dois sentidos, mantendo a lombar no chão.",
     "dica": "Círculos lentos e lombar pregada: o abdômen inteiro estabiliza enquanto as pernas 'pedalam' o céu.",
     "nivel": "intermediário"
@@ -14334,7 +15121,11 @@
     "musculos": [
       "Peito"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Tríceps",
+      "Ombros",
+      "Dorsais"
+    ],
     "descricao": "Nas paralelas com os braços estendidos, sustente o corpo firme e parado pelo tempo determinado.",
     "dica": "Ombros deprimidos (longe das orelhas) e cotovelos travados: a isometria que constrói o mergulho.",
     "nivel": "intermediário"
@@ -14426,7 +15217,10 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Abdômen"
+    ],
     "descricao": "Eleve o braço apoiando-o numa superfície alta e afunde o tronco, alongando o ombro em flexão máxima.",
     "dica": "O overhead alonga onde o desenvolvimento cobra: afunde o peito devagar e respire — sem dor, só tensão.",
     "nivel": "iniciante"
@@ -14442,7 +15236,11 @@
     "musculos": [
       "Dorsais"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Ombros",
+      "Abdômen",
+      "Lombar"
+    ],
     "descricao": "Ajoelhado com as mãos apoiadas num banco à frente, afunde o peito em direção ao chão com os braços estendidos, alongando o dorsal.",
     "dica": "O 'lat stretch' profundo: quadril para trás e peito para baixo — o dorsal alonga da axila à cintura.",
     "nivel": "iniciante"
@@ -14477,7 +15275,9 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Oblíquos"
+    ],
     "descricao": "Na máquina de abdominal, flexione o tronco contra a resistência aproximando costelas e quadril, e retorne devagar.",
     "dica": "Expire ao flexionar e segure o pico: abdômen com carga progressiva — a máquina existe para isso.",
     "nivel": "iniciante"
@@ -14627,7 +15427,11 @@
     "musculos": [
       "Ombros"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Abdômen",
+      "Oblíquos"
+    ],
     "descricao": "De frente para a polia, puxe a manopla para trás em arco com um braço na altura do ombro, apertando o posterior.",
     "dica": "Unilateral com tensão contínua: o posterior de ombro trabalha sozinho — pico de 1 segundo e volta lenta.",
     "nivel": "iniciante"
@@ -14679,7 +15483,11 @@
     "musculos": [
       "Tríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Ombros",
+      "Abdômen",
+      "Trapézio"
+    ],
     "descricao": "De costas para a polia com a corda atrás da cabeça, estenda os cotovelos acima e à frente até a extensão completa, retornando devagar ao alongamento.",
     "dica": "A posição overhead alonga a cabeça longa ao máximo: desça em 3 segundos e abra a corda no final do movimento.",
     "nivel": "iniciante"
@@ -14733,7 +15541,10 @@
     "musculos": [
       "Panturrilhas"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Lombar",
+      "Abdômen"
+    ],
     "descricao": "Com o tronco inclinado à frente apoiado e a carga sobre o quadril, eleve os calcanhares ao máximo e desça até o alongamento completo da panturrilha.",
     "dica": "A inclinação do tronco alonga o gastrocnêmio e é o que diferencia o burrinho: pausa de 2 segundos embaixo.",
     "nivel": "iniciante"
@@ -14786,7 +15597,11 @@
     "musculos": [
       "Corpo inteiro"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Glúteo médio (abdutores)",
+      "Adutores",
+      "Antebraços"
+    ],
     "descricao": "Pedale na bicicleta de resistência a ar movimentando simultaneamente os braços nas alavancas, no ritmo e duração definidos pelo treino.",
     "dica": "A resistência cresce com a intensidade: 20–30 segundos máximos já bastam — é o cardio mais brutal da academia.",
     "nivel": "iniciante"
@@ -14877,7 +15692,11 @@
     "musculos": [
       "Panturrilhas"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Lombar",
+      "Trapézio"
+    ],
     "descricao": "Em pé na máquina com os ombros sob as almofadas e a ponta dos pés na plataforma, eleve os calcanhares ao máximo e desça até o alongamento.",
     "dica": "Joelho estendido = gastrocnêmio: pausa de 2 segundos embaixo e pico completo em cima — amplitude é tudo aqui.",
     "nivel": "iniciante"
@@ -14893,7 +15712,10 @@
     "musculos": [
       "Tríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Ombros",
+      "Antebraços"
+    ],
     "descricao": "Em pé de frente para a polia alta segurando a barra reta com pegada pronada, empurre-a para baixo até a extensão completa dos cotovelos e retorne controlado.",
     "dica": "Cotovelos soldados ao tronco: se eles abrirem, virou supino — pico de 1 segundo com os braços estendidos.",
     "nivel": "iniciante"
@@ -14982,7 +15804,11 @@
     "musculos": [
       "Quadríceps"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Lombar",
+      "Oblíquos"
+    ],
     "descricao": "Sentado na máquina com apenas uma perna sob a almofada, estenda o joelho até a contração máxima e desça controlado até o alongamento.",
     "dica": "Trabalhe primeiro o lado mais fraco e iguale as repetições: unilateral é o caminho honesto para corrigir assimetrias.",
     "nivel": "iniciante"
@@ -15092,7 +15918,10 @@
     "musculos": [
       "Abdômen"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Oblíquos",
+      "Lombar"
+    ],
     "descricao": "Ajoelhado no apoio móvel com as mãos nas manoplas, eleve os joelhos em direção ao peito pela contração do abdômen inferior, e retorne controlado.",
     "dica": "O movimento vem do enrolar do quadril, não do balanço: desça em 3 segundos resistindo à volta.",
     "nivel": "iniciante"
@@ -15201,7 +16030,10 @@
     "musculos": [
       "Panturrilhas"
     ],
-    "musculos_secundarios": [],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Lombar"
+    ],
     "descricao": "Em pé na máquina vertical com os ombros sob as almofadas e a ponta dos pés na plataforma, eleve os calcanhares e desça até o alongamento completo.",
     "dica": "Joelho estendido para pegar o gastrocnêmio: pausa de 2 segundos embaixo — a panturrilha só responde a amplitude total.",
     "nivel": "iniciante"
@@ -15224,37 +16056,627 @@
     "dica": "Vá até o alinhamento neutro e pause: hiperextensão não traz ganho, só risco — contração consciente é o objetivo.",
     "nivel": "iniciante"
   },
-  {"wgerId":90001,"nome":"Supino máquina iso-lateral","nome_en":"Iso-Lateral Chest Press","categoria":"Peito","equipamento":["Máquina"],"musculos":["Peito"],"musculos_secundarios":["Tríceps","Ombros"],"descricao":"Sentado na máquina iso-lateral, empurre os braços de forma independente até a extensão, controlando a volta.","dica":"Cada braço trabalha sozinho — não deixe o lado forte puxar o fraco. Comum em máquinas Hammer Strength e Life Fitness.","nivel":"iniciante"},
-  {"wgerId":90002,"nome":"Supino inclinado máquina iso-lateral","nome_en":"Iso-Lateral Incline Chest Press","categoria":"Peito","equipamento":["Máquina"],"musculos":["Peito"],"musculos_secundarios":["Ombros","Tríceps"],"descricao":"Na máquina inclinada iso-lateral, empurre para cima e à frente, focando a parte superior do peito.","dica":"O ângulo inclinado joga o estímulo pra porção clavicular. Comum em máquinas Hammer Strength e Matrix.","nivel":"iniciante"},
-  {"wgerId":90003,"nome":"Supino declinado máquina iso-lateral","nome_en":"Iso-Lateral Decline Chest Press","categoria":"Peito","equipamento":["Máquina"],"musculos":["Peito"],"musculos_secundarios":["Tríceps"],"descricao":"Na máquina declinada iso-lateral, empurre para baixo e à frente, focando a porção inferior do peito.","dica":"Puxe os ombros pra trás no banco pra isolar o peitoral inferior. Comum em máquinas Hammer Strength.","nivel":"iniciante"},
-  {"wgerId":90004,"nome":"Voador convergente na máquina","nome_en":"Converging Pec Fly Machine","categoria":"Peito","equipamento":["Máquina"],"musculos":["Peito"],"musculos_secundarios":["Ombros"],"descricao":"Com os cotovelos apoiados, junte os braços à frente num arco convergente até a contração do peito.","dica":"Pense em abraçar uma árvore — junte pelos cotovelos, não pelas mãos. Comum em máquinas Matrix e Life Fitness.","nivel":"iniciante"},
-  {"wgerId":90005,"nome":"Voador unilateral na máquina","nome_en":"Single-Arm Pec Fly Machine","categoria":"Peito","equipamento":["Máquina"],"musculos":["Peito"],"musculos_secundarios":["Ombros"],"descricao":"Execute o voador com um braço de cada vez, permitindo maior amplitude e foco em cada lado.","dica":"Segure o tronco firme contra o giro — é o unilateral que corrige assimetria de peito.","nivel":"intermediário"},
-  {"wgerId":90006,"nome":"Remada máquina iso-lateral","nome_en":"Iso-Lateral Row","categoria":"Costas","equipamento":["Máquina"],"musculos":["Dorsais"],"musculos_secundarios":["Bíceps","Trapézio"],"descricao":"Sentado com o peito apoiado, puxe os braços de forma independente, apertando as escápulas.","dica":"Puxe com o cotovelo, não com a mão. Comum em máquinas Hammer Strength e Life Fitness.","nivel":"iniciante"},
-  {"wgerId":90007,"nome":"Remada alta máquina iso-lateral","nome_en":"Iso-Lateral High Row","categoria":"Costas","equipamento":["Máquina"],"musculos":["Dorsais"],"musculos_secundarios":["Bíceps","Trapézio"],"descricao":"Com pegada alta e ângulo descendente, puxe para baixo e para trás, focando o dorsal superior.","dica":"O ângulo alto pega mais os redondos e a parte de cima das costas. Comum em máquinas Hammer Strength.","nivel":"iniciante"},
-  {"wgerId":90008,"nome":"Remada baixa máquina iso-lateral","nome_en":"Iso-Lateral Low Row","categoria":"Costas","equipamento":["Máquina"],"musculos":["Dorsais"],"musculos_secundarios":["Bíceps","Trapézio"],"descricao":"Com torso mais baixo e puxada horizontal, traga os braços à cintura apertando as escápulas.","dica":"Deixe a escápula correr — retraia no fim de cada repetição. Comum em máquinas Hammer Strength.","nivel":"iniciante"},
-  {"wgerId":90009,"nome":"Remada unilateral na máquina","nome_en":"Single-Arm Machine Row","categoria":"Costas","equipamento":["Máquina"],"musculos":["Dorsais"],"musculos_secundarios":["Bíceps"],"descricao":"Execute a remada na máquina com um braço de cada vez, com maior amplitude de escápula.","dica":"Deixe o ombro avançar na fase excêntrica pra alongar o dorsal. Corrige assimetria de costas.","nivel":"intermediário"},
-  {"wgerId":90010,"nome":"Puxada máquina iso-lateral","nome_en":"Iso-Lateral Lat Pulldown","categoria":"Costas","equipamento":["Máquina"],"musculos":["Dorsais"],"musculos_secundarios":["Bíceps"],"descricao":"Puxe os braços de forma independente de cima para baixo, levando os cotovelos à lateral do tronco.","dica":"Leve o cotovelo pro bolso, não a mão pro peito. Comum em máquinas Hammer Strength e Matrix.","nivel":"iniciante"},
-  {"wgerId":90011,"nome":"Levantamento terra máquina (lever T-bar)","nome_en":"Lever T-Bar Row Machine","categoria":"Costas","equipamento":["Máquina"],"musculos":["Dorsais"],"musculos_secundarios":["Trapézio","Bíceps","Lombar"],"descricao":"Com o peito apoiado no pad, puxe a alavanca em T para cima, apertando o meio das costas.","dica":"O apoio no peito tira a lombar da jogada — foque em espremer as escápulas. Comum em máquinas Matrix.","nivel":"iniciante"},
-  {"wgerId":90012,"nome":"Desenvolvimento máquina convergente","nome_en":"Converging Shoulder Press Machine","categoria":"Ombros","equipamento":["Máquina"],"musculos":["Ombros"],"musculos_secundarios":["Tríceps","Trapézio"],"descricao":"Sentado, empurre os braços para cima num caminho convergente até quase a extensão total.","dica":"O caminho convergente imita o arco natural do ombro. Comum em máquinas Matrix e Life Fitness.","nivel":"iniciante"},
-  {"wgerId":90013,"nome":"Desenvolvimento máquina iso-lateral","nome_en":"Iso-Lateral Shoulder Press","categoria":"Ombros","equipamento":["Máquina"],"musculos":["Ombros"],"musculos_secundarios":["Tríceps"],"descricao":"Empurre cada braço para cima de forma independente, sem que um lado ajude o outro.","dica":"Ótimo pra equilibrar ombros de forças diferentes. Comum em máquinas Hammer Strength.","nivel":"iniciante"},
-  {"wgerId":90014,"nome":"Desenvolvimento unilateral com halter","nome_en":"Single-Arm Dumbbell Shoulder Press","categoria":"Ombros","equipamento":["Halteres"],"musculos":["Ombros"],"musculos_secundarios":["Tríceps"],"descricao":"Sentado ou em pé, empurre um halter acima da cabeça de cada vez, controlando o tronco.","dica":"Ative o abdômen do lado oposto pra não tombar — é anti-rotação disfarçado de ombro.","nivel":"intermediário"},
-  {"wgerId":90015,"nome":"Elevação lateral com halteres","nome_en":"Dumbbell Lateral Raise","categoria":"Ombros","equipamento":["Halteres"],"musculos":["Ombros"],"musculos_secundarios":[],"descricao":"Em pé, eleve os halteres pelos lados até a altura dos ombros, cotovelos levemente flexionados.","dica":"Guie pelo cotovelo, não pela mão, e não passe da linha do ombro. O clássico do deltoide lateral.","nivel":"iniciante"},
-  {"wgerId":90016,"nome":"Elevação lateral unilateral na polia","nome_en":"Single-Arm Cable Lateral Raise","categoria":"Ombros","equipamento":["Polia"],"musculos":["Ombros"],"musculos_secundarios":[],"descricao":"De lado para a polia baixa, eleve o braço lateralmente contra a tração constante do cabo.","dica":"A polia mantém tensão embaixo, onde o halter não pega — suba devagar e controle a descida.","nivel":"intermediário"},
-  {"wgerId":90017,"nome":"Rosca direta máquina iso-lateral","nome_en":"Iso-Lateral / Elevated Biceps Curl Machine","categoria":"Braços","equipamento":["Máquina"],"musculos":["Bíceps"],"musculos_secundarios":[],"descricao":"Com os braços apoiados no pad, faça a rosca de forma independente em cada lado.","dica":"O apoio elimina o balanço — é bíceps puro. Comum em máquinas Hammer Strength e Matrix (elevated curl).","nivel":"iniciante"},
-  {"wgerId":90018,"nome":"Rosca direta unilateral na polia","nome_en":"Single-Arm Cable Curl","categoria":"Braços","equipamento":["Polia"],"musculos":["Bíceps"],"musculos_secundarios":[],"descricao":"Com um punho na polia baixa, faça a rosca de um braço por vez com tensão constante.","dica":"Deixe o cotovelo fixo ao lado do corpo — a polia mantém carga no alongamento.","nivel":"iniciante"},
-  {"wgerId":90019,"nome":"Rosca martelo unilateral","nome_en":"Single-Arm Hammer Curl","categoria":"Braços","equipamento":["Halteres"],"musculos":["Bíceps"],"musculos_secundarios":["Antebraços"],"descricao":"Com pegada neutra, faça a rosca martelo de um braço por vez, sem balançar o tronco.","dica":"A pegada neutra pega o braquial e o antebraço — foco total em um lado por vez.","nivel":"iniciante"},
-  {"wgerId":90020,"nome":"Extensão de tríceps na máquina","nome_en":"Machine Triceps Press / Extension","categoria":"Braços","equipamento":["Máquina"],"musculos":["Tríceps"],"musculos_secundarios":[],"descricao":"Sentado com o dorso apoiado, estenda os braços contra a resistência da máquina.","dica":"Trave o cotovelo no lugar e estenda só o antebraço. Comum em máquinas Matrix e Life Fitness.","nivel":"iniciante"},
-  {"wgerId":90021,"nome":"Tríceps francês unilateral na polia","nome_en":"Single-Arm Overhead Cable Triceps Extension","categoria":"Braços","equipamento":["Polia"],"musculos":["Tríceps"],"musculos_secundarios":[],"descricao":"De costas para a polia, com o cabo acima da cabeça, estenda o cotovelo de um braço por vez.","dica":"Cotovelo apontando pra frente e parado — a posição acima da cabeça alonga a cabeça longa do tríceps.","nivel":"intermediário"},
-  {"wgerId":90022,"nome":"Extensão de tríceps unilateral na polia","nome_en":"Single-Arm Cable Triceps Pushdown","categoria":"Braços","equipamento":["Polia"],"musculos":["Tríceps"],"musculos_secundarios":[],"descricao":"Com um punho na polia alta, empurre para baixo estendendo um braço de cada vez.","dica":"Gire levemente o punho no fim pra fechar a contração — corrige assimetria de tríceps.","nivel":"iniciante"},
-  {"wgerId":90023,"nome":"Encolhimento máquina iso-lateral","nome_en":"Iso-Lateral Shrug Machine","categoria":"Costas","equipamento":["Máquina"],"musculos":["Trapézio"],"musculos_secundarios":[],"descricao":"Segurando as pegadas, eleve os ombros em direção às orelhas de forma independente.","dica":"Suba reto e segure o pico — nada de rolar os ombros. Comum em máquinas Hammer Strength.","nivel":"iniciante"},
-  {"wgerId":90024,"nome":"Encolhimento unilateral com halter","nome_en":"Single-Arm Dumbbell Shrug","categoria":"Costas","equipamento":["Halteres"],"musculos":["Trapézio"],"musculos_secundarios":[],"descricao":"Com um halter na mão, eleve o ombro em direção à orelha, um lado por vez.","dica":"Segure algo com a outra mão pra estabilizar e isolar o trapézio de um lado.","nivel":"iniciante"},
-  {"wgerId":90025,"nome":"Crucifixo unilateral na máquina","nome_en":"Single-Arm Machine Fly","categoria":"Peito","equipamento":["Máquina"],"musculos":["Peito"],"musculos_secundarios":["Ombros"],"descricao":"No peck deck, execute a adução com um braço por vez, com amplitude aumentada.","dica":"Deixe o braço abrir bem atrás no início pra alongar o peitoral antes de fechar.","nivel":"intermediário"},
-  {"wgerId":90026,"nome":"Leg press unilateral","nome_en":"Single-Leg Leg Press","categoria":"Pernas","equipamento":["Máquina"],"musculos":["Quadríceps"],"musculos_secundarios":["Glúteos","Posterior de coxa"],"descricao":"No leg press, empurre a plataforma com uma perna de cada vez, controlando a descida.","dica":"Posicione o pé mais ao centro da plataforma — corrige diferença de força entre as pernas.","nivel":"intermediário"},
-  {"wgerId":90027,"nome":"Cadeira flexora unilateral","nome_en":"Single-Leg Leg Curl","categoria":"Pernas","equipamento":["Máquina"],"musculos":["Posterior de coxa"],"musculos_secundarios":["Panturrilhas"],"descricao":"Na cadeira ou mesa flexora, flexione o joelho de uma perna por vez até a contração.","dica":"Segure o pico 1 segundo e desça devagar — o posterior costuma ter assimetria escondida.","nivel":"intermediário"},
-  {"wgerId":90028,"nome":"Cadeira flexora ajoelhado","nome_en":"Kneeling Leg Curl","categoria":"Pernas","equipamento":["Máquina"],"musculos":["Posterior de coxa"],"musculos_secundarios":["Glúteos"],"descricao":"Ajoelhado na máquina, flexione uma perna contra a resistência, com o quadril estável.","dica":"A posição ajoelhada estica mais o posterior no início. Comum em máquinas Matrix (kneeling leg curl).","nivel":"intermediário"},
-  {"wgerId":90029,"nome":"Cadeira extensora reclinada","nome_en":"Reclining Leg Extension","categoria":"Pernas","equipamento":["Máquina"],"musculos":["Quadríceps"],"musculos_secundarios":[],"descricao":"Reclinado na máquina, estenda os joelhos contra a resistência, com o quadril recuado.","dica":"A reclinação alonga o reto femoral antes da extensão. Comum em máquinas Matrix.","nivel":"iniciante"},
-  {"wgerId":90030,"nome":"Agachamento pêndulo","nome_en":"Pendulum Squat","categoria":"Pernas","equipamento":["Máquina"],"musculos":["Quadríceps"],"musculos_secundarios":["Glúteos"],"descricao":"Na máquina pêndulo, agache seguindo o arco guiado, descendo em amplitude profunda.","dica":"O caminho em arco tira a pressão da lombar e joga tudo na coxa. Comum em máquinas Matrix.","nivel":"intermediário"},
-  {"wgerId":90031,"nome":"Agachamento no cinturão","nome_en":"Belt Squat","categoria":"Pernas","equipamento":["Máquina"],"musculos":["Quadríceps"],"musculos_secundarios":["Glúteos"],"descricao":"Com o cinturão preso ao quadril, agache sem carga na coluna, resistência vindo de baixo.","dica":"Carga no quadril, coluna livre — ótimo pra quem tem lombar sensível. Comum em máquinas Matrix.","nivel":"intermediário"},
-  {"wgerId":90032,"nome":"Panturrilha unilateral em pé","nome_en":"Single-Leg Standing Calf Raise","categoria":"Panturrilhas","equipamento":["Máquina"],"musculos":["Panturrilhas"],"musculos_secundarios":[],"descricao":"Em pé na máquina, eleve o calcanhar de uma perna por vez em amplitude completa.","dica":"Desça o calcanhar bem abaixo do degrau pra alongar antes de subir no pico.","nivel":"iniciante"},
-  {"wgerId":90033,"nome":"Abdução de quadril unilateral na máquina","nome_en":"Single-Leg Hip Abduction","categoria":"Pernas","equipamento":["Máquina"],"musculos":["Glúteo médio (abdutores)"],"musculos_secundarios":["Glúteos"],"descricao":"Na máquina abdutora, afaste uma perna por vez contra a resistência.","dica":"Incline levemente o tronco à frente pra pegar mais o glúteo médio de um lado.","nivel":"iniciante"}
+  {
+    "wgerId": 90001,
+    "nome": "Supino máquina iso-lateral",
+    "nome_en": "Iso-Lateral Chest Press",
+    "categoria": "Peito",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Peito"
+    ],
+    "musculos_secundarios": [
+      "Tríceps",
+      "Ombros"
+    ],
+    "descricao": "Sentado na máquina iso-lateral, empurre os braços de forma independente até a extensão, controlando a volta.",
+    "dica": "Cada braço trabalha sozinho — não deixe o lado forte puxar o fraco. Comum em máquinas Hammer Strength e Life Fitness.",
+    "nivel": "iniciante"
+  },
+  {
+    "wgerId": 90002,
+    "nome": "Supino inclinado máquina iso-lateral",
+    "nome_en": "Iso-Lateral Incline Chest Press",
+    "categoria": "Peito",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Peito"
+    ],
+    "musculos_secundarios": [
+      "Ombros",
+      "Tríceps"
+    ],
+    "descricao": "Na máquina inclinada iso-lateral, empurre para cima e à frente, focando a parte superior do peito.",
+    "dica": "O ângulo inclinado joga o estímulo pra porção clavicular. Comum em máquinas Hammer Strength e Matrix.",
+    "nivel": "iniciante"
+  },
+  {
+    "wgerId": 90003,
+    "nome": "Supino declinado máquina iso-lateral",
+    "nome_en": "Iso-Lateral Decline Chest Press",
+    "categoria": "Peito",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Peito"
+    ],
+    "musculos_secundarios": [
+      "Tríceps"
+    ],
+    "descricao": "Na máquina declinada iso-lateral, empurre para baixo e à frente, focando a porção inferior do peito.",
+    "dica": "Puxe os ombros pra trás no banco pra isolar o peitoral inferior. Comum em máquinas Hammer Strength.",
+    "nivel": "iniciante"
+  },
+  {
+    "wgerId": 90004,
+    "nome": "Voador convergente na máquina",
+    "nome_en": "Converging Pec Fly Machine",
+    "categoria": "Peito",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Peito"
+    ],
+    "musculos_secundarios": [
+      "Ombros"
+    ],
+    "descricao": "Com os cotovelos apoiados, junte os braços à frente num arco convergente até a contração do peito.",
+    "dica": "Pense em abraçar uma árvore — junte pelos cotovelos, não pelas mãos. Comum em máquinas Matrix e Life Fitness.",
+    "nivel": "iniciante"
+  },
+  {
+    "wgerId": 90005,
+    "nome": "Voador unilateral na máquina",
+    "nome_en": "Single-Arm Pec Fly Machine",
+    "categoria": "Peito",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Peito"
+    ],
+    "musculos_secundarios": [
+      "Ombros"
+    ],
+    "descricao": "Execute o voador com um braço de cada vez, permitindo maior amplitude e foco em cada lado.",
+    "dica": "Segure o tronco firme contra o giro — é o unilateral que corrige assimetria de peito.",
+    "nivel": "intermediário"
+  },
+  {
+    "wgerId": 90006,
+    "nome": "Remada máquina iso-lateral",
+    "nome_en": "Iso-Lateral Row",
+    "categoria": "Costas",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Dorsais"
+    ],
+    "musculos_secundarios": [
+      "Bíceps",
+      "Trapézio"
+    ],
+    "descricao": "Sentado com o peito apoiado, puxe os braços de forma independente, apertando as escápulas.",
+    "dica": "Puxe com o cotovelo, não com a mão. Comum em máquinas Hammer Strength e Life Fitness.",
+    "nivel": "iniciante"
+  },
+  {
+    "wgerId": 90007,
+    "nome": "Remada alta máquina iso-lateral",
+    "nome_en": "Iso-Lateral High Row",
+    "categoria": "Costas",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Dorsais"
+    ],
+    "musculos_secundarios": [
+      "Bíceps",
+      "Trapézio"
+    ],
+    "descricao": "Com pegada alta e ângulo descendente, puxe para baixo e para trás, focando o dorsal superior.",
+    "dica": "O ângulo alto pega mais os redondos e a parte de cima das costas. Comum em máquinas Hammer Strength.",
+    "nivel": "iniciante"
+  },
+  {
+    "wgerId": 90008,
+    "nome": "Remada baixa máquina iso-lateral",
+    "nome_en": "Iso-Lateral Low Row",
+    "categoria": "Costas",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Dorsais"
+    ],
+    "musculos_secundarios": [
+      "Bíceps",
+      "Trapézio"
+    ],
+    "descricao": "Com torso mais baixo e puxada horizontal, traga os braços à cintura apertando as escápulas.",
+    "dica": "Deixe a escápula correr — retraia no fim de cada repetição. Comum em máquinas Hammer Strength.",
+    "nivel": "iniciante"
+  },
+  {
+    "wgerId": 90009,
+    "nome": "Remada unilateral na máquina",
+    "nome_en": "Single-Arm Machine Row",
+    "categoria": "Costas",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Dorsais"
+    ],
+    "musculos_secundarios": [
+      "Bíceps"
+    ],
+    "descricao": "Execute a remada na máquina com um braço de cada vez, com maior amplitude de escápula.",
+    "dica": "Deixe o ombro avançar na fase excêntrica pra alongar o dorsal. Corrige assimetria de costas.",
+    "nivel": "intermediário"
+  },
+  {
+    "wgerId": 90010,
+    "nome": "Puxada máquina iso-lateral",
+    "nome_en": "Iso-Lateral Lat Pulldown",
+    "categoria": "Costas",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Dorsais"
+    ],
+    "musculos_secundarios": [
+      "Bíceps"
+    ],
+    "descricao": "Puxe os braços de forma independente de cima para baixo, levando os cotovelos à lateral do tronco.",
+    "dica": "Leve o cotovelo pro bolso, não a mão pro peito. Comum em máquinas Hammer Strength e Matrix.",
+    "nivel": "iniciante"
+  },
+  {
+    "wgerId": 90011,
+    "nome": "Levantamento terra máquina (lever T-bar)",
+    "nome_en": "Lever T-Bar Row Machine",
+    "categoria": "Costas",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Dorsais"
+    ],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Bíceps",
+      "Lombar"
+    ],
+    "descricao": "Com o peito apoiado no pad, puxe a alavanca em T para cima, apertando o meio das costas.",
+    "dica": "O apoio no peito tira a lombar da jogada — foque em espremer as escápulas. Comum em máquinas Matrix.",
+    "nivel": "iniciante"
+  },
+  {
+    "wgerId": 90012,
+    "nome": "Desenvolvimento máquina convergente",
+    "nome_en": "Converging Shoulder Press Machine",
+    "categoria": "Ombros",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Ombros"
+    ],
+    "musculos_secundarios": [
+      "Tríceps",
+      "Trapézio"
+    ],
+    "descricao": "Sentado, empurre os braços para cima num caminho convergente até quase a extensão total.",
+    "dica": "O caminho convergente imita o arco natural do ombro. Comum em máquinas Matrix e Life Fitness.",
+    "nivel": "iniciante"
+  },
+  {
+    "wgerId": 90013,
+    "nome": "Desenvolvimento máquina iso-lateral",
+    "nome_en": "Iso-Lateral Shoulder Press",
+    "categoria": "Ombros",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Ombros"
+    ],
+    "musculos_secundarios": [
+      "Tríceps"
+    ],
+    "descricao": "Empurre cada braço para cima de forma independente, sem que um lado ajude o outro.",
+    "dica": "Ótimo pra equilibrar ombros de forças diferentes. Comum em máquinas Hammer Strength.",
+    "nivel": "iniciante"
+  },
+  {
+    "wgerId": 90014,
+    "nome": "Desenvolvimento unilateral com halter",
+    "nome_en": "Single-Arm Dumbbell Shoulder Press",
+    "categoria": "Ombros",
+    "equipamento": [
+      "Halteres"
+    ],
+    "musculos": [
+      "Ombros"
+    ],
+    "musculos_secundarios": [
+      "Tríceps"
+    ],
+    "descricao": "Sentado ou em pé, empurre um halter acima da cabeça de cada vez, controlando o tronco.",
+    "dica": "Ative o abdômen do lado oposto pra não tombar — é anti-rotação disfarçado de ombro.",
+    "nivel": "intermediário"
+  },
+  {
+    "wgerId": 90015,
+    "nome": "Elevação lateral com halteres",
+    "nome_en": "Dumbbell Lateral Raise",
+    "categoria": "Ombros",
+    "equipamento": [
+      "Halteres"
+    ],
+    "musculos": [
+      "Ombros"
+    ],
+    "musculos_secundarios": [
+      "Trapézio",
+      "Abdômen",
+      "Lombar"
+    ],
+    "descricao": "Em pé, eleve os halteres pelos lados até a altura dos ombros, cotovelos levemente flexionados.",
+    "dica": "Guie pelo cotovelo, não pela mão, e não passe da linha do ombro. O clássico do deltoide lateral.",
+    "nivel": "iniciante"
+  },
+  {
+    "wgerId": 90016,
+    "nome": "Elevação lateral unilateral na polia",
+    "nome_en": "Single-Arm Cable Lateral Raise",
+    "categoria": "Ombros",
+    "equipamento": [
+      "Polia"
+    ],
+    "musculos": [
+      "Ombros"
+    ],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Oblíquos",
+      "Trapézio"
+    ],
+    "descricao": "De lado para a polia baixa, eleve o braço lateralmente contra a tração constante do cabo.",
+    "dica": "A polia mantém tensão embaixo, onde o halter não pega — suba devagar e controle a descida.",
+    "nivel": "intermediário"
+  },
+  {
+    "wgerId": 90017,
+    "nome": "Rosca direta máquina iso-lateral",
+    "nome_en": "Iso-Lateral / Elevated Biceps Curl Machine",
+    "categoria": "Braços",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Bíceps"
+    ],
+    "musculos_secundarios": [
+      "Antebraços",
+      "Ombros"
+    ],
+    "descricao": "Com os braços apoiados no pad, faça a rosca de forma independente em cada lado.",
+    "dica": "O apoio elimina o balanço — é bíceps puro. Comum em máquinas Hammer Strength e Matrix (elevated curl).",
+    "nivel": "iniciante"
+  },
+  {
+    "wgerId": 90018,
+    "nome": "Rosca direta unilateral na polia",
+    "nome_en": "Single-Arm Cable Curl",
+    "categoria": "Braços",
+    "equipamento": [
+      "Polia"
+    ],
+    "musculos": [
+      "Bíceps"
+    ],
+    "musculos_secundarios": [
+      "Antebraços",
+      "Abdômen",
+      "Ombros"
+    ],
+    "descricao": "Com um punho na polia baixa, faça a rosca de um braço por vez com tensão constante.",
+    "dica": "Deixe o cotovelo fixo ao lado do corpo — a polia mantém carga no alongamento.",
+    "nivel": "iniciante"
+  },
+  {
+    "wgerId": 90019,
+    "nome": "Rosca martelo unilateral",
+    "nome_en": "Single-Arm Hammer Curl",
+    "categoria": "Braços",
+    "equipamento": [
+      "Halteres"
+    ],
+    "musculos": [
+      "Bíceps"
+    ],
+    "musculos_secundarios": [
+      "Antebraços"
+    ],
+    "descricao": "Com pegada neutra, faça a rosca martelo de um braço por vez, sem balançar o tronco.",
+    "dica": "A pegada neutra pega o braquial e o antebraço — foco total em um lado por vez.",
+    "nivel": "iniciante"
+  },
+  {
+    "wgerId": 90020,
+    "nome": "Extensão de tríceps na máquina",
+    "nome_en": "Machine Triceps Press / Extension",
+    "categoria": "Braços",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Tríceps"
+    ],
+    "musculos_secundarios": [
+      "Antebraços",
+      "Abdômen",
+      "Ombros"
+    ],
+    "descricao": "Sentado com o dorso apoiado, estenda os braços contra a resistência da máquina.",
+    "dica": "Trave o cotovelo no lugar e estenda só o antebraço. Comum em máquinas Matrix e Life Fitness.",
+    "nivel": "iniciante"
+  },
+  {
+    "wgerId": 90021,
+    "nome": "Tríceps francês unilateral na polia",
+    "nome_en": "Single-Arm Overhead Cable Triceps Extension",
+    "categoria": "Braços",
+    "equipamento": [
+      "Polia"
+    ],
+    "musculos": [
+      "Tríceps"
+    ],
+    "musculos_secundarios": [
+      "Ombros",
+      "Abdômen",
+      "Antebraços"
+    ],
+    "descricao": "De costas para a polia, com o cabo acima da cabeça, estenda o cotovelo de um braço por vez.",
+    "dica": "Cotovelo apontando pra frente e parado — a posição acima da cabeça alonga a cabeça longa do tríceps.",
+    "nivel": "intermediário"
+  },
+  {
+    "wgerId": 90022,
+    "nome": "Extensão de tríceps unilateral na polia",
+    "nome_en": "Single-Arm Cable Triceps Pushdown",
+    "categoria": "Braços",
+    "equipamento": [
+      "Polia"
+    ],
+    "musculos": [
+      "Tríceps"
+    ],
+    "musculos_secundarios": [
+      "Ombros",
+      "Abdômen",
+      "Antebraços"
+    ],
+    "descricao": "Com um punho na polia alta, empurre para baixo estendendo um braço de cada vez.",
+    "dica": "Gire levemente o punho no fim pra fechar a contração — corrige assimetria de tríceps.",
+    "nivel": "iniciante"
+  },
+  {
+    "wgerId": 90023,
+    "nome": "Encolhimento máquina iso-lateral",
+    "nome_en": "Iso-Lateral Shrug Machine",
+    "categoria": "Costas",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Trapézio"
+    ],
+    "musculos_secundarios": [
+      "Antebraços",
+      "Pescoço",
+      "Abdômen"
+    ],
+    "descricao": "Segurando as pegadas, eleve os ombros em direção às orelhas de forma independente.",
+    "dica": "Suba reto e segure o pico — nada de rolar os ombros. Comum em máquinas Hammer Strength.",
+    "nivel": "iniciante"
+  },
+  {
+    "wgerId": 90024,
+    "nome": "Encolhimento unilateral com halter",
+    "nome_en": "Single-Arm Dumbbell Shrug",
+    "categoria": "Costas",
+    "equipamento": [
+      "Halteres"
+    ],
+    "musculos": [
+      "Trapézio"
+    ],
+    "musculos_secundarios": [
+      "Antebraços",
+      "Abdômen",
+      "Lombar"
+    ],
+    "descricao": "Com um halter na mão, eleve o ombro em direção à orelha, um lado por vez.",
+    "dica": "Segure algo com a outra mão pra estabilizar e isolar o trapézio de um lado.",
+    "nivel": "iniciante"
+  },
+  {
+    "wgerId": 90025,
+    "nome": "Crucifixo unilateral na máquina",
+    "nome_en": "Single-Arm Machine Fly",
+    "categoria": "Peito",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Peito"
+    ],
+    "musculos_secundarios": [
+      "Ombros"
+    ],
+    "descricao": "No peck deck, execute a adução com um braço por vez, com amplitude aumentada.",
+    "dica": "Deixe o braço abrir bem atrás no início pra alongar o peitoral antes de fechar.",
+    "nivel": "intermediário"
+  },
+  {
+    "wgerId": 90026,
+    "nome": "Leg press unilateral",
+    "nome_en": "Single-Leg Leg Press",
+    "categoria": "Pernas",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Quadríceps"
+    ],
+    "musculos_secundarios": [
+      "Glúteos",
+      "Posterior de coxa"
+    ],
+    "descricao": "No leg press, empurre a plataforma com uma perna de cada vez, controlando a descida.",
+    "dica": "Posicione o pé mais ao centro da plataforma — corrige diferença de força entre as pernas.",
+    "nivel": "intermediário"
+  },
+  {
+    "wgerId": 90027,
+    "nome": "Cadeira flexora unilateral",
+    "nome_en": "Single-Leg Leg Curl",
+    "categoria": "Pernas",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Posterior de coxa"
+    ],
+    "musculos_secundarios": [
+      "Panturrilhas"
+    ],
+    "descricao": "Na cadeira ou mesa flexora, flexione o joelho de uma perna por vez até a contração.",
+    "dica": "Segure o pico 1 segundo e desça devagar — o posterior costuma ter assimetria escondida.",
+    "nivel": "intermediário"
+  },
+  {
+    "wgerId": 90028,
+    "nome": "Cadeira flexora ajoelhado",
+    "nome_en": "Kneeling Leg Curl",
+    "categoria": "Pernas",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Posterior de coxa"
+    ],
+    "musculos_secundarios": [
+      "Glúteos"
+    ],
+    "descricao": "Ajoelhado na máquina, flexione uma perna contra a resistência, com o quadril estável.",
+    "dica": "A posição ajoelhada estica mais o posterior no início. Comum em máquinas Matrix (kneeling leg curl).",
+    "nivel": "intermediário"
+  },
+  {
+    "wgerId": 90029,
+    "nome": "Cadeira extensora reclinada",
+    "nome_en": "Reclining Leg Extension",
+    "categoria": "Pernas",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Quadríceps"
+    ],
+    "musculos_secundarios": [
+      "Abdômen",
+      "Lombar"
+    ],
+    "descricao": "Reclinado na máquina, estenda os joelhos contra a resistência, com o quadril recuado.",
+    "dica": "A reclinação alonga o reto femoral antes da extensão. Comum em máquinas Matrix.",
+    "nivel": "iniciante"
+  },
+  {
+    "wgerId": 90030,
+    "nome": "Agachamento pêndulo",
+    "nome_en": "Pendulum Squat",
+    "categoria": "Pernas",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Quadríceps"
+    ],
+    "musculos_secundarios": [
+      "Glúteos"
+    ],
+    "descricao": "Na máquina pêndulo, agache seguindo o arco guiado, descendo em amplitude profunda.",
+    "dica": "O caminho em arco tira a pressão da lombar e joga tudo na coxa. Comum em máquinas Matrix.",
+    "nivel": "intermediário"
+  },
+  {
+    "wgerId": 90031,
+    "nome": "Agachamento no cinturão",
+    "nome_en": "Belt Squat",
+    "categoria": "Pernas",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Quadríceps"
+    ],
+    "musculos_secundarios": [
+      "Glúteos"
+    ],
+    "descricao": "Com o cinturão preso ao quadril, agache sem carga na coluna, resistência vindo de baixo.",
+    "dica": "Carga no quadril, coluna livre — ótimo pra quem tem lombar sensível. Comum em máquinas Matrix.",
+    "nivel": "intermediário"
+  },
+  {
+    "wgerId": 90032,
+    "nome": "Panturrilha unilateral em pé",
+    "nome_en": "Single-Leg Standing Calf Raise",
+    "categoria": "Panturrilhas",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Panturrilhas"
+    ],
+    "musculos_secundarios": [
+      "Glúteo médio (abdutores)",
+      "Abdômen",
+      "Oblíquos"
+    ],
+    "descricao": "Em pé na máquina, eleve o calcanhar de uma perna por vez em amplitude completa.",
+    "dica": "Desça o calcanhar bem abaixo do degrau pra alongar antes de subir no pico.",
+    "nivel": "iniciante"
+  },
+  {
+    "wgerId": 90033,
+    "nome": "Abdução de quadril unilateral na máquina",
+    "nome_en": "Single-Leg Hip Abduction",
+    "categoria": "Pernas",
+    "equipamento": [
+      "Máquina"
+    ],
+    "musculos": [
+      "Glúteo médio (abdutores)"
+    ],
+    "musculos_secundarios": [
+      "Glúteos"
+    ],
+    "descricao": "Na máquina abdutora, afaste uma perna por vez contra a resistência.",
+    "dica": "Incline levemente o tronco à frente pra pegar mais o glúteo médio de um lado.",
+    "nivel": "iniciante"
+  }
 ]
