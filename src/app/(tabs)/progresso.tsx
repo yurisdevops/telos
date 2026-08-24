@@ -6,6 +6,7 @@ import { Screen } from '@/components/screen';
 import { AdherenceSection } from '@/components/progresso/adherence-section';
 import { BodyWeightSection } from '@/components/progresso/body-weight-section';
 import { CardioSection } from '@/components/progresso/cardio-section';
+import { CoachSection } from '@/components/progresso/coach-section';
 import { DensitySection } from '@/components/progresso/density-section';
 import { FrequencySection } from '@/components/progresso/frequency-section';
 import { MovementPatternSection } from '@/components/progresso/movement-pattern-section';
@@ -46,6 +47,9 @@ export default function ProgressoScreen() {
       <ScreenTitle title="Progresso" />
 
       <View key={focusKey}>
+        <CoachSection />
+        <View className="bg-border" style={{ height: 1, marginVertical: 16 }} />
+
         <FrequencySection />
         <MuscleSeriesVolumeSection />
         <WeeklyVolumeSection />

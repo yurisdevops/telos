@@ -5,15 +5,18 @@ import { Label } from '@/components/ui/label';
 import { computeWeeklyMuscleSeries, computeWeeklyPushPull } from '@/db/analysis';
 import { useDbQuery } from '@/lib/use-db-query';
 
-const REFERENCE_MIN = 10;
-const REFERENCE_MAX = 20;
+// Exportados — coach.ts reusa a MESMA faixa de referência e a MESMA lista de
+// músculos "grandes" pra gerar o insight de volume, em vez de redeclarar os
+// mesmos 8 nomes e os mesmos números 10/20 por conta própria.
+export const REFERENCE_MIN = 10;
+export const REFERENCE_MAX = 20;
 
 // Só os grupos "grandes" que a faixa de referência de 10-20 séries/semana da
 // literatura de volume cobre. Os demais 9 grupos do catálogo (Abdômen,
 // Panturrilhas, Antebraços, Trapézio, Lombar, Pescoço, Corpo inteiro,
 // Adutores, Glúteo médio) ficam de fora do painel — essa faixa não se
 // aplica a eles.
-const TRACKED_MUSCLES = [
+export const TRACKED_MUSCLES = [
   'Peito',
   'Dorsais',
   'Quadríceps',

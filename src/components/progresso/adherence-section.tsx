@@ -11,9 +11,12 @@ import { formatVolumeKg } from '@/lib/format';
 import { useDbQuery } from '@/lib/use-db-query';
 import { weeksBetween } from '@/lib/weeks';
 
-const ADHERENCE_WEEKS_WINDOW = 10;
+// Exportados (const/type/function) — usados também por coach.ts, que precisa
+// do MESMO cálculo de aderência (não duplicá-lo). Nenhuma mudança de
+// comportamento aqui, só visibilidade.
+export const ADHERENCE_WEEKS_WINDOW = 10;
 
-type AdherenceResult = {
+export type AdherenceResult = {
   planNome: string;
   completedInWindow: number;
   expectedInWindow: number;
@@ -21,7 +24,7 @@ type AdherenceResult = {
   dayCount: number;
 } | null;
 
-async function computeAdherence(cutoffIso: string, todayIso: string): Promise<AdherenceResult> {
+export async function computeAdherence(cutoffIso: string, todayIso: string): Promise<AdherenceResult> {
   const rows = await db
     .select({ sessionId: sessions.id, data: sessions.data, planId: workoutDays.planId })
     .from(sessions)
