@@ -1,6 +1,7 @@
 import { forwardRef, useEffect, useState } from 'react';
-import { Text, View, type LayoutChangeEvent, type StyleProp, type ViewStyle } from 'react-native';
+import { StyleSheet, Text, View, type LayoutChangeEvent, type StyleProp, type ViewStyle } from 'react-native';
 import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { formatNumberPtBr } from '@/lib/format';
@@ -114,20 +115,45 @@ export const WorkoutShareCardPhoto = forwardRef<
         />
       )}
 
-      {/* Camada 2: escurece a foto o suficiente pra texto branco continuar
-          legível independente de a foto ser clara ou escura. */}
-      <View
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          backgroundColor: 'rgba(0,0,0,0.35)',
-        }}
+      {/* Camada 2: escurecimento geral — mais forte que o 0.35 original
+          (subiu pra 0.50) porque agora é a base do efeito dark dramático, não
+          só a garantia mínima de legibilidade de antes (que continua valendo,
+          só que como consequência, não mais o único motivo da camada). */}
+      <View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0,0,0,0.50)' }]} />
+
+      {/* Camada 3: vinheta cinematográfica topo/base — escurece as bordas
+          superior e inferior, mantendo o centro (onde a cena principal da
+          foto costuma estar) mais claro. */}
+      <LinearGradient
+        colors={['rgba(0,0,0,0.70)', 'transparent', 'transparent', 'rgba(0,0,0,0.70)']}
+        locations={[0, 0.3, 0.7, 1]}
+        style={StyleSheet.absoluteFill}
       />
 
-      {/* Camada 3: dados sobrepostos, 4 cantos — sem fundo opaco, só sombra
+      {/* Camada 4: vinheta lateral — mesmo raciocínio da Camada 3, na
+          horizontal, reforçando as bordas esquerda/direita. */}
+      <LinearGradient
+        colors={['rgba(0,0,0,0.50)', 'transparent', 'rgba(0,0,0,0.50)']}
+        locations={[0, 0.5, 1]}
+        start={{ x: 0, y: 0.5 }}
+        end={{ x: 1, y: 0.5 }}
+        style={StyleSheet.absoluteFill}
+      />
+
+      {/* Camada 5: tonalidade fria/dramática — um overlay quase-preto
+          azulado com `mixBlendMode: 'overlay'` (RN 0.86/Fabric), pra dar um
+          leve tom "cinematográfico" em vez de só escurecer. Suporte de
+          `mixBlendMode` ainda não confirmado em device nesta versão — se
+          causar artefato visual ou a camada sumir, remover só esta (as
+          camadas 2-4 já sustentam o efeito dark sozinhas). */}
+      <View
+        style={[
+          StyleSheet.absoluteFill,
+          { backgroundColor: 'rgba(20,20,35,0.25)', mixBlendMode: 'overlay' },
+        ]}
+      />
+
+      {/* Camada 6: dados sobrepostos, 4 cantos — sem fundo opaco, só sombra
           nos textos (TEXT_SHADOW) pra legibilidade. */}
       <View style={{ position: 'absolute', top: CORNER_PADDING, left: CORNER_PADDING, maxWidth: PHOTO_CARD_WIDTH - CORNER_PADDING * 2 - 56 }}>
         <Text
