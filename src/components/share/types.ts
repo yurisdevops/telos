@@ -16,6 +16,13 @@ export type WorkoutShareOptions = {
    * `null` até o usuário escolher uma na tela de personalização. Só é
    * consultada pelo WorkoutShareCardPhoto; os outros 2 estilos ignoram. */
   fotoUri: string | null;
+  /** Liga/desliga o efeito dark dramático (escurecimento + vinhetas +
+   * tonalidade fria) sobre a foto do estilo 'foto' — só essa tela consulta.
+   * `true` por padrão (o efeito é o visual pretendido; desligar é a exceção).
+   * Quando `false`, um overlay leve (rgba(0,0,0,0.20)) continua aplicado —
+   * não pela dramaticidade, só pra manter o texto branco legível em fotos
+   * claras (ver WorkoutShareCardPhoto). */
+  efeitoDark: boolean;
   mostrarPr: boolean;
   /** Índice em `sessionPrs` (WorkoutShareMetrics) do PR escolhido pelo
    * usuário pra aparecer no card — `null` = automático, usa
@@ -32,6 +39,7 @@ export type WorkoutShareOptions = {
 export const DEFAULT_SHARE_OPTIONS: WorkoutShareOptions = {
   estilo: 'completo',
   fotoUri: null,
+  efeitoDark: true,
   mostrarPr: true,
   prEscolhido: null,
   mostrarDuracao: true,

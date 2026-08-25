@@ -69,7 +69,7 @@ export const WorkoutShareCardPhoto = forwardRef<
     onLayout?: (event: LayoutChangeEvent) => void;
   }
 >(function WorkoutShareCardPhoto({ metrics, options, style, onLayout }, ref) {
-  const { fotoUri } = options;
+  const { fotoUri, efeitoDark } = options;
   const prParaMostrar = resolvePrParaMostrar(metrics, options);
 
   const [imageLoaded, setImageLoaded] = useState(fotoUri == null);
@@ -80,6 +80,20 @@ export const WorkoutShareCardPhoto = forwardRef<
   // captura; `null` (sem foto, fallback sólido) não tem nada pra esperar.
   useEffect(() => {
     setImageLoaded(fotoUri == null);
+  }, [fotoUri]);
+
+  // `imageKey` força DESMONTE + REMONTE do <Image> a cada troca de foto (em
+  // vez de deixar o mesmo elemento só trocar `source.uri`) — sem isso, ao
+  // trocar de foto com o card já montado (botão "Trocar foto"), o <Image>
+  // do expo-image pode continuar mostrando o frame decodificado da foto
+  // ANTERIOR por um instante até a nova terminar de decodificar, em vez de
+  // simplesmente ficar em branco enquanto carrega. Key nova = instância
+  // nova = nada de frame anterior pra reaproveitar. Só incrementa quando HÁ
+  // foto (`fotoUri` truthy) — trocar PRA `null` (sem foto) não precisa de
+  // remonte, essa branch nem renderiza <Image>.
+  const [imageKey, setImageKey] = useState(0);
+  useEffect(() => {
+    if (fotoUri) setImageKey((k) => k + 1);
   }, [fotoUri]);
 
   useEffect(() => {
@@ -104,6 +118,7 @@ export const WorkoutShareCardPhoto = forwardRef<
           escolher uma foto. */}
       {fotoUri ? (
         <Image
+          key={imageKey}
           source={{ uri: fotoUri }}
           style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
           contentFit="cover"
@@ -115,43 +130,60 @@ export const WorkoutShareCardPhoto = forwardRef<
         />
       )}
 
-      {/* Camada 2: escurecimento geral — mais forte que o 0.35 original
-          (subiu pra 0.50) porque agora é a base do efeito dark dramático, não
-          só a garantia mínima de legibilidade de antes (que continua valendo,
-          só que como consequência, não mais o único motivo da camada). */}
-      <View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0,0,0,0.50)' }]} />
+      {/* Camadas 2-5 (overlay escuro) só entram depois que há algo de fato
+          visível por baixo pra escurecer — ou o fallback sólido (sem foto,
+          `imageLoaded` já nasce `true`) ou a foto REALMENTE decodificada
+          (`onLoad` disparado). Sem esse gate, o instante entre o <Image>
+          montar e terminar de carregar (o <Image> em si fica transparente
+          até lá) somado à pilha escura sempre visível fazia a prévia inteira
+          parecer uma tela preta sólida bem na primeira escolha de foto —
+          não uma foto atrasando, um retângulo preto liso. */}
+      {imageLoaded &&
+        (efeitoDark ? (
+          <>
+            {/* Camada 2: escurecimento geral — mais forte que o 0.35 original
+                (subiu pra 0.50) porque agora é a base do efeito dark
+                dramático, não só a garantia mínima de legibilidade de antes
+                (que continua valendo, só que como consequência, não mais o
+                único motivo da camada). */}
+            <View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0,0,0,0.50)' }]} />
 
-      {/* Camada 3: vinheta cinematográfica topo/base — escurece as bordas
-          superior e inferior, mantendo o centro (onde a cena principal da
-          foto costuma estar) mais claro. */}
-      <LinearGradient
-        colors={['rgba(0,0,0,0.70)', 'transparent', 'transparent', 'rgba(0,0,0,0.70)']}
-        locations={[0, 0.3, 0.7, 1]}
-        style={StyleSheet.absoluteFill}
-      />
+            {/* Camada 3: vinheta cinematográfica topo/base — escurece as
+                bordas superior e inferior, mantendo o centro (onde a cena
+                principal da foto costuma estar) mais claro. */}
+            <LinearGradient
+              colors={['rgba(0,0,0,0.70)', 'transparent', 'transparent', 'rgba(0,0,0,0.70)']}
+              locations={[0, 0.3, 0.7, 1]}
+              style={StyleSheet.absoluteFill}
+            />
 
-      {/* Camada 4: vinheta lateral — mesmo raciocínio da Camada 3, na
-          horizontal, reforçando as bordas esquerda/direita. */}
-      <LinearGradient
-        colors={['rgba(0,0,0,0.50)', 'transparent', 'rgba(0,0,0,0.50)']}
-        locations={[0, 0.5, 1]}
-        start={{ x: 0, y: 0.5 }}
-        end={{ x: 1, y: 0.5 }}
-        style={StyleSheet.absoluteFill}
-      />
+            {/* Camada 4: vinheta lateral — mesmo raciocínio da Camada 3, na
+                horizontal, reforçando as bordas esquerda/direita. */}
+            <LinearGradient
+              colors={['rgba(0,0,0,0.50)', 'transparent', 'rgba(0,0,0,0.50)']}
+              locations={[0, 0.5, 1]}
+              start={{ x: 0, y: 0.5 }}
+              end={{ x: 1, y: 0.5 }}
+              style={StyleSheet.absoluteFill}
+            />
 
-      {/* Camada 5: tonalidade fria/dramática — um overlay quase-preto
-          azulado com `mixBlendMode: 'overlay'` (RN 0.86/Fabric), pra dar um
-          leve tom "cinematográfico" em vez de só escurecer. Suporte de
-          `mixBlendMode` ainda não confirmado em device nesta versão — se
-          causar artefato visual ou a camada sumir, remover só esta (as
-          camadas 2-4 já sustentam o efeito dark sozinhas). */}
-      <View
-        style={[
-          StyleSheet.absoluteFill,
-          { backgroundColor: 'rgba(20,20,35,0.25)', mixBlendMode: 'overlay' },
-        ]}
-      />
+            {/* Camada 5: tonalidade fria/dramática — um overlay quase-preto
+                azulado com `mixBlendMode: 'overlay'` (RN 0.86/Fabric), pra
+                dar um leve tom "cinematográfico" em vez de só escurecer.
+                Suporte de `mixBlendMode` ainda não confirmado em device
+                nesta versão — se causar artefato visual ou a camada sumir,
+                remover só esta (as camadas 2-4 já sustentam o efeito dark
+                sozinhas). */}
+            <View
+              style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(20,20,35,0.25)', mixBlendMode: 'overlay' }]}
+            />
+          </>
+        ) : (
+          // Efeito dark desligado: só o mínimo de escurecimento pro texto
+          // branco continuar legível em cima de uma foto clara — mesmo
+          // motivo da Camada 2 original, antes do efeito dramático existir.
+          <View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0,0,0,0.20)' }]} />
+        ))}
 
       {/* Camada 6: dados sobrepostos, 4 cantos — sem fundo opaco, só sombra
           nos textos (TEXT_SHADOW) pra legibilidade. */}

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Alert, Modal, Pressable, ScrollView, Text, View } from 'react-native';
+import { Alert, Modal, Pressable, ScrollView, Switch, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -229,6 +229,26 @@ export function WorkoutShareModal({
                 </Text>
               </Pressable>
             ))}
+
+          {/* Só faz sentido junto do estilo 'foto' — é a foto que recebe o
+              efeito, os outros 2 estilos não têm imagem de fundo nenhuma pra
+              escurecer. Aparece independente de já haver foto escolhida (o
+              padrão vale assim que o usuário troca pro estilo 'foto', antes
+              mesmo de escolher a imagem). */}
+          {options.estilo === 'foto' && (
+            <View className="mb-6 flex-row items-center justify-between py-3">
+              <View>
+                <Text className="font-card-title text-sm text-text">Efeito dark</Text>
+                <Text className="font-label text-xs text-muted">Contraste dramático na foto</Text>
+              </View>
+              <Switch
+                value={options.efeitoDark}
+                onValueChange={(v) => setOptions((prev) => ({ ...prev, efeitoDark: v }))}
+                trackColor={{ false: colors.border, true: colors.accent }}
+                thumbColor={colors.text}
+              />
+            </View>
+          )}
 
           {sessionPrs.length > 0 && (
             <View className="mb-6">
