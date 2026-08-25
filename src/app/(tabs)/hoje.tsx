@@ -85,6 +85,15 @@ import { formatLastPerformance, useLastPerformance } from '@/lib/use-last-perfor
 import { colors } from '@/theme/tokens';
 
 const DEFAULT_REST_SECONDS = 90;
+// Espera ativa (poll) por um gate de card-pronto antes de capturar o
+// compartilhamento (ver handleConfirmShare) — só entra em jogo de fato pro
+// estilo 'foto' (a <Image> assíncrona pode passar do duplo rAF); pros outros
+// 2 estilos o gate já costuma estar `true` na 1ª checagem, então o loop nem
+// chega a rodar. Teto de 4s: tempo de sobra pra decodificar uma foto de
+// câmera num aparelho lento, sem travar o compartilhamento pra sempre no
+// caso raro de falha de carregamento.
+const CAPTURE_READY_TIMEOUT_MS = 4000;
+const CAPTURE_READY_POLL_MS = 50;
 // Aquecimento (Ajuste 1) é uma série EXTRA, não um toggle numa série
 // existente — precisa da própria sequência de numeroSerie, independente da
 // grade 1..seriesAlvo das séries válidas (pra nunca colidir com ela). Uma
@@ -863,19 +872,60 @@ function SessionExecution({
 
   const handleOpenShareModal = useCallback(() => setShareModalVisible(true), []);
 
+  // Espelham cardReady/cardMinimalReady/cardPhotoReady em refs — necessário
+  // porque `handleConfirmShare` abaixo é um `useCallback` com deps `[]` (não
+  // muda de identidade a cada render), então uma leitura direta dos 3
+  // `useState` ali dentro sempre veria o valor CONGELADO do primeiro render
+  // (`false`), nunca a atualização real. Ref sempre reflete o valor mais
+  // recente, sem precisar recriar o callback.
+  const cardReadyRef = useRef(cardReady);
+  useEffect(() => {
+    cardReadyRef.current = cardReady;
+  }, [cardReady]);
+  const cardMinimalReadyRef = useRef(cardMinimalReady);
+  useEffect(() => {
+    cardMinimalReadyRef.current = cardMinimalReady;
+  }, [cardMinimalReady]);
+  const cardPhotoReadyRef = useRef(cardPhotoReady);
+  useEffect(() => {
+    cardPhotoReadyRef.current = cardPhotoReady;
+  }, [cardPhotoReady]);
+
   // Confirmação vinda do modal: grava as opções escolhidas (os cards off-
   // screen só reagem a essa mudança no próximo render deles) e SÓ DEPOIS
-  // captura — precisa de um tick real pra essa nova árvore assentar no lado
-  // nativo antes do captureRef rasterizar, mesmo padrão de "duplo rAF" já
-  // usado em src/components/ui/input.tsx pra esperar um layout assentar
-  // antes de medir/agir sobre ele. Qual card capturar (e em qual resolução)
-  // depende do estilo escolhido NO MODAL (`options.estilo`, o argumento —
-  // não o `shareOptions` de fora, que só é atualizado por este mesmo `set`).
+  // captura. O duplo rAF garante só que a NOVA árvore assentou no lado
+  // nativo (mesmo padrão de src/components/ui/input.tsx) — suficiente pros
+  // estilos 'completo'/'minimalista', que não têm nada assíncrono pra
+  // esperar (os 2 cards ficam sempre montados desde o início da sessão, ver
+  // comentário de cardMinimalReady acima). NÃO é suficiente pro estilo
+  // 'foto': o card off-screen dela só é MONTADO agora (`setShareOptions`
+  // logo abaixo, primeira vez que `fotoUri` deixa de ser `null`), e a
+  // decodificação da <Image> é assíncrona — pode facilmente passar dos 2
+  // frames do rAF, o que fazia o captureRef rasterizar o card ainda sem a
+  // foto pintada (bug real: fica sem foto na imagem final, de forma
+  // intermitente — mais rápido em foto já cacheada, mais lento numa nova).
+  // Por isso, depois do rAF, espera ATIVAMENTE (poll curto) o gate do
+  // estilo escolhido ficar `true`, com um teto de segurança
+  // (CAPTURE_READY_TIMEOUT_MS) pra nunca travar o compartilhamento pra
+  // sempre se a foto falhar ao carregar — nesse caso extremo, captura assim
+  // mesmo (mesmo comportamento de antes pra esse caso raro).
   const handleConfirmShare = useCallback(async (options: WorkoutShareOptions) => {
     setShareOptions(options);
     await new Promise<void>((resolve) => {
       requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
     });
+
+    const readyRef =
+      options.estilo === 'minimalista'
+        ? cardMinimalReadyRef
+        : options.estilo === 'foto'
+          ? cardPhotoReadyRef
+          : cardReadyRef;
+    const waitStartedAt = Date.now();
+    while (!readyRef.current && Date.now() - waitStartedAt < CAPTURE_READY_TIMEOUT_MS) {
+      await new Promise<void>((resolve) => setTimeout(resolve, CAPTURE_READY_POLL_MS));
+    }
+
     const ref =
       options.estilo === 'minimalista'
         ? shareCardMinimalRef

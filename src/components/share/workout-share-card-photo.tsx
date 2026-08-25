@@ -96,16 +96,24 @@ export const WorkoutShareCardPhoto = forwardRef<
     if (fotoUri) setImageKey((k) => k + 1);
   }, [fotoUri]);
 
+  // Só chama a prop `onLayout` (o que hoje.tsx usa pra setar
+  // `cardPhotoReady`) quando os DOIS gates — layout assentado E imagem
+  // decodificada (ou sem imagem pra esperar, ver `imageLoaded` acima) —
+  // estiverem satisfeitos. `handleLayout` (nome próprio, não `onLayout` de
+  // novo) pra nunca confundir com a prop de mesmo nome que só é chamada por
+  // este efeito, nunca diretamente pelo evento nativo de layout.
   useEffect(() => {
     if (imageLoaded && layoutEvent) onLayout?.(layoutEvent);
   }, [imageLoaded, layoutEvent, onLayout]);
+
+  const handleLayout = (event: LayoutChangeEvent) => setLayoutEvent(event);
 
   const showWeekMarker = metrics.diasSemana.some(Boolean);
 
   return (
     <View
       ref={ref}
-      onLayout={setLayoutEvent}
+      onLayout={handleLayout}
       // collapsable={false}: mesmo cuidado dos outros 2 cards — sem isso o
       // Android pode otimizar essa View pra fora da árvore nativa antes da
       // captura, já que ela nunca aparece de fato na tela.
