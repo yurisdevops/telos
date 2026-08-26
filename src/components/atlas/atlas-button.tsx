@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { Pressable } from 'react-native';
+import { Image, Pressable } from 'react-native';
 import { usePathname } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { colors } from '@/theme/tokens';
 
@@ -54,7 +53,16 @@ export function AtlasButton() {
           zIndex: 999,
         }}
         onPress={() => setVisible(true)}>
-        <Ionicons name="flash-outline" size={24} color="#fff" />
+        {/* `require` do RN core (não expo-image) — mesmo padrão já usado pro
+            ícone adaptativo do app em telos-loading-screen.tsx (mesma
+            profundidade de import, 3 níveis até assets/images/), com
+            `resizeMode` (API do Image do RN core, não `contentFit` do
+            expo-image). */}
+        <Image
+          source={require('../../../assets/images/atlas-icon.png')}
+          style={{ width: 32, height: 32 }}
+          resizeMode="contain"
+        />
       </Pressable>
       <AtlasModal visible={visible} onClose={() => setVisible(false)} />
     </>

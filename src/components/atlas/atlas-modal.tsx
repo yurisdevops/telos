@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
@@ -86,7 +86,16 @@ export function AtlasModal({ visible, onClose }: { visible: boolean; onClose: ()
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <View className="flex-1 justify-end" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+      {/* iOS: 'padding' encolhe a área visível quando o teclado abre — mesmo
+          comportamento de FormModal.tsx (o outro Modal do app com TextInput
+          dentro), que este segue de propósito. Android: `undefined` (não
+          'height') — o Modal aqui herda o `softwareKeyboardLayoutMode:
+          "resize"` do app.json igual à tela por trás; 'height' duplicaria
+          essa compensação (o mesmo problema já mapeado no bug do teclado da
+          aba Treinar, nesta mesma conversa). */}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        className="flex-1 justify-end bg-black/50">
         <View
           className="bg-surface px-5 pb-6 pt-5"
           style={{ borderTopLeftRadius: 16, borderTopRightRadius: 16, maxHeight: '80%' }}>
@@ -211,7 +220,7 @@ export function AtlasModal({ visible, onClose }: { visible: boolean; onClose: ()
             </View>
           )}
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
