@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Tabs } from 'expo-router';
 
+import { AtlasButton } from '@/components/atlas/atlas-button';
 import { useConfirmDialog } from '@/lib/use-confirm-dialog';
 import { useOpenSessionNeedsConfirm } from '@/lib/use-open-session-guard';
 import { colors } from '@/theme/tokens';
@@ -105,6 +106,7 @@ export default function TabsLayout() {
       />
     </Tabs>
     {dialog}
+    <AtlasButton />
     </>
   );
 }

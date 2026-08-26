@@ -66,10 +66,8 @@ export default function PlanilhasScreen() {
         <Card className="flex-row items-center gap-3 border-l-4 border-l-accent">
           <Ionicons name="sparkles-outline" size={26} color={colors.accent} />
           <View className="flex-1">
-            <Text className="font-card-title text-lg text-text">Montar com assistente</Text>
-            <Label className="mt-1">
-              Responda 5 perguntas rápidas e receba uma sugestão de ponto de partida
-            </Label>
+            <Text className="font-card-title text-lg text-text">Montar com Atlas</Text>
+            <Label className="mt-1">O Atlas cria um plano personalizado para o seu perfil</Label>
           </View>
           <Ionicons name="chevron-forward" size={20} color={colors.muted} />
         </Card>

@@ -1,0 +1,428 @@
+{
+  "treinos": [
+    {
+      "id": "fullbody_iniciante_30min",
+      "nome": "Full Body 30min (Iniciante)",
+      "descricao": "Este treino foca em movimentos compostos fundamentais para iniciantes, construindo uma base sólida de força e coordenação. A seleção de exercícios atinge os principais grupos musculares de forma equilibrada, promovendo adaptações gerais e preparando o corpo para treinos mais intensos.",
+      "duracao_min": 30,
+      "nivel": "iniciante",
+      "objetivo": "hipertrofia",
+      "dica_tempo": "Concentre-se na forma correta e no controle do movimento. Mantenha os descansos em 60-90 segundos e, se necessário, reduza o número de séries para caber no tempo.",
+      "exercicios": [
+        {
+          "nome": "Agachamento",
+          "series": 3,
+          "reps": "10-15",
+          "descanso_s": 90,
+          "dica": "Mantenha o tronco ereto e o calcanhar no chão.",
+          "superset_com": null
+        },
+        {
+          "nome": "Supino máquina iso-lateral",
+          "series": 3,
+          "reps": "10-15",
+          "descanso_s": 90,
+          "dica": "Empurre controladamente, sentindo o peito.",
+          "superset_com": null
+        },
+        {
+          "nome": "Puxada polia",
+          "series": 3,
+          "reps": "10-15",
+          "descanso_s": 90,
+          "dica": "Puxe com as costas, não só com os braços.",
+          "superset_com": null
+        },
+        {
+          "nome": "Desenvolvimento máquina convergente",
+          "series": 2,
+          "reps": "10-15",
+          "descanso_s": 60,
+          "dica": "Controle a descida e subida do peso.",
+          "superset_com": null
+        },
+        {
+          "nome": "Cadeira extensora",
+          "series": 2,
+          "reps": "12-15",
+          "descanso_s": 60,
+          "dica": "Estenda completamente, contraindo o quadríceps.",
+          "superset_com": null
+        }
+      ]
+    },
+    {
+      "id": "fullbody_intermediario_30min_supersets",
+      "nome": "Full Body 30min (Intermediário) com Supersets",
+      "descricao": "Este treino utiliza supersets para maximizar a densidade e eficiência, permitindo um estímulo completo em menos tempo. A combinação de exercícios compostos e isolados, executados com pouco descanso entre eles, eleva a intensidade e promove maior demanda metabólica para hipertrofia.",
+      "duracao_min": 30,
+      "nivel": "intermediario",
+      "objetivo": "hipertrofia",
+      "dica_tempo": "Execute os supersets com transição rápida entre os exercícios. O descanso principal é apenas após o segundo exercício do par. Mantenha o foco na intensidade.",
+      "exercicios": [
+        {
+          "nome": "Leg press",
+          "series": 3,
+          "reps": "8-12",
+          "descanso_s": 0,
+          "dica": "Empurre com os calcanhares, controlando a descida.",
+          "superset_com": "Cadeira flexora"
+        },
+        {
+          "nome": "Cadeira flexora",
+          "series": 3,
+          "reps": "10-15",
+          "descanso_s": 90,
+          "dica": "Contraia bem os posteriores na fase concêntrica.",
+          "superset_com": "Leg press"
+        },
+        {
+          "nome": "Supino reto",
+          "series": 3,
+          "reps": "8-12",
+          "descanso_s": 0,
+          "dica": "Mantenha as escápulas retraídas e o peito aberto.",
+          "superset_com": "Remada máquina iso-lateral"
+        },
+        {
+          "nome": "Remada máquina iso-lateral",
+          "series": 3,
+          "reps": "8-12",
+          "descanso_s": 90,
+          "dica": "Puxe com as costas, focando na contração.",
+          "superset_com": "Supino reto"
+        },
+        {
+          "nome": "Desenvolvimento militar",
+          "series": 2,
+          "reps": "8-12",
+          "descanso_s": 0,
+          "dica": "Mantenha o core firme e evite balançar o tronco.",
+          "superset_com": "Elevação lateral"
+        },
+        {
+          "nome": "Elevação lateral",
+          "series": 2,
+          "reps": "12-15",
+          "descanso_s": 60,
+          "dica": "Eleve os halteres até a altura dos ombros, sem impulso.",
+          "superset_com": "Desenvolvimento militar"
+        }
+      ]
+    },
+    {
+      "id": "push_25min",
+      "nome": "Push 25min (Peito + Ombro + Tríceps)",
+      "descricao": "Este treino de 'empurrar' é otimizado para atingir peito, ombros e tríceps de forma eficiente. Prioriza movimentos compostos para força e volume, complementados por isolamentos estratégicos para maximizar o estímulo hipertrófico em um curto período.",
+      "duracao_min": 25,
+      "nivel": "intermediario",
+      "objetivo": "hipertrofia",
+      "dica_tempo": "Mantenha os descansos curtos (60-75 segundos) e a transição entre os exercícios rápida. Foque na execução controlada para cada repetição.",
+      "exercicios": [
+        {
+          "nome": "Supino inclinado",
+          "series": 3,
+          "reps": "8-12",
+          "descanso_s": 75,
+          "dica": "Concentre-se na porção superior do peito.",
+          "superset_com": null
+        },
+        {
+          "nome": "Desenvolvimento militar",
+          "series": 3,
+          "reps": "8-12",
+          "descanso_s": 75,
+          "dica": "Mantenha o core ativado para estabilidade.",
+          "superset_com": null
+        },
+        {
+          "nome": "Voador",
+          "series": 2,
+          "reps": "12-15",
+          "descanso_s": 60,
+          "dica": "Sinta a contração máxima no peito ao fechar.",
+          "superset_com": null
+        },
+        {
+          "nome": "Elevação lateral",
+          "series": 2,
+          "reps": "12-15",
+          "descanso_s": 60,
+          "dica": "Eleve os braços lateralmente, sem usar impulso.",
+          "superset_com": null
+        },
+        {
+          "nome": "Extensão de tríceps na polia",
+          "series": 2,
+          "reps": "10-15",
+          "descanso_s": 60,
+          "dica": "Mantenha os cotovelos fixos e estenda completamente.",
+          "superset_com": null
+        }
+      ]
+    },
+    {
+      "id": "pull_25min",
+      "nome": "Pull 25min (Costas + Bíceps)",
+      "descricao": "Este treino de 'puxar' é desenhado para estimular costas e bíceps de forma intensa e rápida. Combina exercícios compostos para construir largura e espessura nas costas, com isolamentos para bíceps, garantindo um estímulo completo em pouco tempo.",
+      "duracao_min": 25,
+      "nivel": "intermediario",
+      "objetivo": "hipertrofia",
+      "dica_tempo": "Priorize a conexão mente-músculo, focando em sentir as costas e bíceps trabalhando. Mantenha os descansos em 60-75 segundos para manter a intensidade.",
+      "exercicios": [
+        {
+          "nome": "Remada curvada",
+          "series": 3,
+          "reps": "8-12",
+          "descanso_s": 75,
+          "dica": "Mantenha as costas retas e puxe em direção ao umbigo.",
+          "superset_com": null
+        },
+        {
+          "nome": "Puxada polia",
+          "series": 3,
+          "reps": "8-12",
+          "descanso_s": 75,
+          "dica": "Puxe a barra até o peito, espremendo as escápulas.",
+          "superset_com": null
+        },
+        {
+          "nome": "Face pull",
+          "series": 2,
+          "reps": "12-15",
+          "descanso_s": 60,
+          "dica": "Puxe em direção ao rosto, focando nos ombros posteriores.",
+          "superset_com": null
+        },
+        {
+          "nome": "Terra romeno",
+          "series": 2,
+          "reps": "10-15",
+          "descanso_s": 60,
+          "dica": "Mantenha as pernas semi-flexionadas e sinta o alongamento nos posteriores.",
+          "superset_com": null
+        },
+        {
+          "nome": "Rosca direta",
+          "series": 2,
+          "reps": "10-15",
+          "descanso_s": 60,
+          "dica": "Mantenha os cotovelos fixos e contraia o bíceps no topo.",
+          "superset_com": null
+        }
+      ]
+    },
+    {
+      "id": "lower_25min",
+      "nome": "Lower 25min (Pernas)",
+      "descricao": "Este treino de pernas é compacto, mas altamente eficaz, visando os principais músculos da parte inferior do corpo. Combina exercícios compostos para força e volume com isolamentos para quadríceps, isquiotibiais e panturrilhas, garantindo um estímulo completo em 25 minutos.",
+      "duracao_min": 25,
+      "nivel": "intermediario",
+      "objetivo": "hipertrofia",
+      "dica_tempo": "Aqueça bem antes de começar. Mantenha os descansos em 60-90 segundos. Se o tempo estiver apertado, reduza o descanso ou faça um superset com a cadeira extensora e flexora.",
+      "exercicios": [
+        {
+          "nome": "Hack squat",
+          "series": 3,
+          "reps": "8-12",
+          "descanso_s": 90,
+          "dica": "Mantenha as costas apoiadas e desça o máximo possível.",
+          "superset_com": null
+        },
+        {
+          "nome": "Agachamento búlgaro",
+          "series": 3,
+          "reps": "8-12 por perna",
+          "descanso_s": 75,
+          "dica": "Foque no equilíbrio e na profundidade do movimento.",
+          "superset_com": null
+        },
+        {
+          "nome": "Cadeira extensora",
+          "series": 2,
+          "reps": "12-15",
+          "descanso_s": 60,
+          "dica": "Contraia o quadríceps no pico do movimento.",
+          "superset_com": null
+        },
+        {
+          "nome": "Cadeira flexora",
+          "series": 2,
+          "reps": "12-15",
+          "descanso_s": 60,
+          "dica": "Sinta a contração nos posteriores da coxa.",
+          "superset_com": null
+        },
+        {
+          "nome": "Panturrilha em pé",
+          "series": 3,
+          "reps": "15-20",
+          "descanso_s": 45,
+          "dica": "Suba o máximo possível e segure a contração no topo.",
+          "superset_com": null
+        }
+      ]
+    },
+    {
+      "id": "upper_20min_emergencia",
+      "nome": "Upper 20min (Emergência)",
+      "descricao": "Este treino de emergência para a parte superior do corpo é ideal quando o tempo é extremamente limitado. Foca em movimentos compostos que atingem múltiplos grupos musculares, garantindo um estímulo eficaz e rápido para peito, costas, ombros e braços.",
+      "duracao_min": 20,
+      "nivel": "intermediario",
+      "objetivo": "condicionamento",
+      "dica_tempo": "Mantenha o ritmo acelerado, com descansos curtos (45-60 segundos). Priorize a execução de cada série com intensidade máxima, mesmo com menos volume.",
+      "exercicios": [
+        {
+          "nome": "Supino máquina iso-lateral",
+          "series": 3,
+          "reps": "8-12",
+          "descanso_s": 60,
+          "dica": "Empurre com força, controlando a fase negativa.",
+          "superset_com": null
+        },
+        {
+          "nome": "Remada máquina iso-lateral",
+          "series": 3,
+          "reps": "8-12",
+          "descanso_s": 60,
+          "dica": "Puxe com as costas, sentindo a escápula retrair.",
+          "superset_com": null
+        },
+        {
+          "nome": "Desenvolvimento máquina convergente",
+          "series": 2,
+          "reps": "10-15",
+          "descanso_s": 45,
+          "dica": "Mantenha o controle e evite balançar o tronco.",
+          "superset_com": null
+        },
+        {
+          "nome": "Crossover",
+          "series": 2,
+          "reps": "12-15",
+          "descanso_s": 45,
+          "dica": "Cruze as mãos à frente, espremendo o peito.",
+          "superset_com": null
+        }
+      ]
+    },
+    {
+      "id": "fullbody_20min_emergencia",
+      "nome": "Full Body 20min (Emergência)",
+      "descricao": "Um treino full body ultrarrápido para aqueles dias em que cada minuto conta. Utiliza uma seleção estratégica de exercícios compostos para atingir o corpo inteiro, mantendo a intensidade alta com descansos mínimos, ideal para manter o estímulo muscular.",
+      "duracao_min": 20,
+      "nivel": "intermediario",
+      "objetivo": "condicionamento",
+      "dica_tempo": "Este é um treino de alta densidade. Mova-se rapidamente entre os exercícios, mantendo os descansos o mais curtos possível (30-45 segundos). Foco na execução e na sensação muscular.",
+      "exercicios": [
+        {
+          "nome": "Leg press",
+          "series": 3,
+          "reps": "10-15",
+          "descanso_s": 45,
+          "dica": "Mantenha o controle total do movimento.",
+          "superset_com": null
+        },
+        {
+          "nome": "Supino reto",
+          "series": 3,
+          "reps": "8-12",
+          "descanso_s": 45,
+          "dica": "Estabilize os ombros e empurre com o peito.",
+          "superset_com": null
+        },
+        {
+          "nome": "Puxada polia",
+          "series": 3,
+          "reps": "8-12",
+          "descanso_s": 45,
+          "dica": "Puxe com as costas, sentindo a contração.",
+          "superset_com": null
+        },
+        {
+          "nome": "Desenvolvimento militar",
+          "series": 2,
+          "reps": "10-15",
+          "descanso_s": 30,
+          "dica": "Empurre o peso acima da cabeça, controladamente.",
+          "superset_com": null
+        }
+      ]
+    },
+    {
+      "id": "hipertrofia_acelerada_35min_avancado",
+      "nome": "Hipertrofia Acelerada 35min (Avançado)",
+      "descricao": "Este treino avançado maximiza o estímulo hipertrófico em 35 minutos através de uma combinação de exercícios compostos pesados e técnicas de intensidade como supersets e repetições mais baixas. O objetivo é gerar o máximo de dano muscular e estresse metabólico em um curto período.",
+      "duracao_min": 35,
+      "nivel": "avancado",
+      "objetivo": "hipertrofia",
+      "dica_tempo": "Este treino exige foco e intensidade. Mantenha os descansos curtos e as transições rápidas. Considere usar técnicas como drop sets no último exercício de isolamento se o tempo permitir.",
+      "exercicios": [
+        {
+          "nome": "Agachamento",
+          "series": 4,
+          "reps": "6-10",
+          "descanso_s": 120,
+          "dica": "Priorize a carga, mantendo a forma perfeita.",
+          "superset_com": null
+        },
+        {
+          "nome": "Supino reto",
+          "series": 3,
+          "reps": "6-10",
+          "descanso_s": 90,
+          "dica": "Mantenha a estabilidade e empurre com força explosiva.",
+          "superset_com": null
+        },
+        {
+          "nome": "Barra fixa",
+          "series": 3,
+          "reps": "Máximo",
+          "descanso_s": 90,
+          "dica": "Se necessário, use assistência ou faça puxada polia.",
+          "superset_com": null
+        },
+        {
+          "nome": "Desenvolvimento militar",
+          "series": 3,
+          "reps": "8-12",
+          "descanso_s": 75,
+          "dica": "Controle o peso em todo o movimento.",
+          "superset_com": null
+        },
+        {
+          "nome": "Terra romeno",
+          "series": 2,
+          "reps": "8-12",
+          "descanso_s": 0,
+          "dica": "Sinta o alongamento nos isquiotibiais e glúteos.",
+          "superset_com": "Cadeira flexora"
+        },
+        {
+          "nome": "Cadeira flexora",
+          "series": 2,
+          "reps": "10-15",
+          "descanso_s": 60,
+          "dica": "Foque na contração máxima dos posteriores.",
+          "superset_com": "Terra romeno"
+        },
+        {
+          "nome": "Rosca direta",
+          "series": 2,
+          "reps": "8-12",
+          "descanso_s": 0,
+          "dica": "Mantenha a forma estrita, sem balançar.",
+          "superset_com": "Extensão de tríceps na polia"
+        },
+        {
+          "nome": "Extensão de tríceps na polia",
+          "series": 2,
+          "reps": "10-15",
+          "descanso_s": 60,
+          "dica": "Estenda completamente o braço, contraindo o tríceps.",
+          "superset_com": "Rosca direta"
+        }
+      ]
+    }
+  ]
+}
