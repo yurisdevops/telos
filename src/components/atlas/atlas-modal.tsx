@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Alert, Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Alert, Animated, Dimensions, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -62,13 +62,36 @@ function reportError(context: string, err: unknown) {
   Alert.alert(context, String(err instanceof Error ? err.message : err));
 }
 
+// Altura da tela (não um "600" fixo) — a folga de fora-da-tela precisa ser
+// GARANTIDAMENTE maior que qualquer altura real que o sheet possa assumir
+// (até 85% da tela, ver `maxHeight` abaixo); um valor fixo pequeno deixaria
+// uma tira do sheet visível permanentemente em telas altas (85% de uma tela
+// de 800pt já são 680pt, mais que os 600 do rascunho original).
+const ALTURA_TELA = Dimensions.get('window').height;
+
 /**
- * Modal do Atlas (assistente offline do Telos) — 3 modos internos: menu
+ * Sheet do Atlas (assistente offline do Telos) — 3 modos internos: menu
  * (entrada), conversa (busca offline no roteiro curado, `@/lib/atlas`) e
  * treinos_rapidos (lista + detalhe de um treino pronto, com "Treinar agora"/
- * "Salvar como plano" via `@/db/ready-workouts`). Sem lib de bottom sheet:
- * `Modal` nativo `transparent` + View ancorada embaixo, mesmo padrão já
- * usado em ConfirmDialog/FormModal no resto do app.
+ * "Salvar como plano" via `@/db/ready-workouts`).
+ *
+ * NÃO é um `<Modal>` nativo — motivo: no Android, `<Modal>` abre numa janela
+ * separada (um Dialog), que NÃO herda o `softwareKeyboardLayoutMode:
+ * "resize"` da Activity principal (app.json), então nenhum
+ * KeyboardAvoidingView/listener manual/KeyboardAwareScrollView dentro dele
+ * resolve o teclado tampando o input de verdade. A solução é sair da janela
+ * separada: renderizar como uma View absoluta direto na árvore principal
+ * (montada uma vez em `_layout.tsx` raiz, fora de `(tabs)`, pro mesmo motivo
+ * de `exercicio/[id].tsx` — ver atlas-context.tsx) — como agora faz parte da
+ * MESMA janela/Activity que o resto do app, o resize nativo do Android
+ * empurra o sheet pra cima junto com tudo o mais quando o teclado abre, sem
+ * nenhum workaround.
+ *
+ * Sempre montada (nunca condicionada a `visible`); some via
+ * `pointerEvents:'none'` (não intercepta toque quando fechada) + a animação
+ * de `translateY` abaixo — o padrão de outros modais do app (Modal nativo
+ * `transparent` + overlay) não se aplica aqui de propósito, por causa do
+ * problema acima.
  */
 export function AtlasModal() {
   const router = useRouter();
@@ -78,6 +101,20 @@ export function AtlasModal() {
   const [input, setInput] = useState('');
   const [treinoSelecionado, setTreinoSelecionado] = useState<AtlasTreinoRapido | null>(null);
   const scrollRef = useRef<KeyboardAwareScrollView>(null);
+
+  // Anima a entrada/saída do sheet (spring, mesmo em Android e iOS —
+  // `useNativeDriver` funciona pra `transform` nos dois). Começa fora da
+  // tela (ALTURA_TELA) porque o primeiro render acontece com `visible=false`
+  // (o AtlasProvider nasce fechado).
+  const translateY = useRef(new Animated.Value(ALTURA_TELA)).current;
+  useEffect(() => {
+    Animated.spring(translateY, {
+      toValue: visible ? 0 : ALTURA_TELA,
+      useNativeDriver: true,
+      damping: 20,
+      stiffness: 200,
+    }).start();
+  }, [visible, translateY]);
 
   // Primeira mensagem do Atlas quando há um exercício em contexto (❓ durante
   // o treino ou no catálogo) — resumo + primeira dica de execução, ou uma
@@ -200,163 +237,186 @@ export function AtlasModal() {
         : (treinoSelecionado?.nome ?? 'Treinos rápidos');
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={fecharAtlas}>
-      <View className="flex-1 justify-end bg-black/50">
-        <View className="bg-surface px-5 pb-6 pt-5" style={{ borderTopLeftRadius: 16, borderTopRightRadius: 16, maxHeight: '80%' }}>
-          <View className="mb-4 flex-row items-center justify-between">
-            <View className="flex-1 flex-row items-center gap-2 pr-2">
-              {mostrarVoltar && (
-                <Pressable onPress={handleVoltar} hitSlop={8}>
-                  <Ionicons name="arrow-back-outline" size={22} color={colors.text} />
-                </Pressable>
-              )}
-              {modo === 'menu' && <Ionicons name="flash" size={22} color={colors.accent} />}
-              <Text numberOfLines={1} className="flex-1 font-display text-xl uppercase text-accent">
-                {titulo}
-              </Text>
-            </View>
-            <Pressable onPress={fecharAtlas} hitSlop={8}>
-              <Ionicons name="close" size={24} color={colors.text} />
-            </Pressable>
+    <View
+      pointerEvents={visible ? 'auto' : 'none'}
+      style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1000 }}>
+      {/* Overlay — fecha ao tocar fora. Só existe (visual e pro toque)
+          enquanto `visible`; a View de fora já bloqueia todo toque quando
+          fechada (`pointerEvents:'none'` cobre esta e o sheet abaixo
+          também), então isto não precisa da própria checagem de visível
+          além de não ser renderizado. */}
+      {visible && (
+        <Pressable
+          style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.6)' }}
+          onPress={fecharAtlas}
+        />
+      )}
+
+      <Animated.View
+        className="bg-surface px-5 pb-6 pt-5"
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          bottom: 0,
+          borderTopLeftRadius: 16,
+          borderTopRightRadius: 16,
+          maxHeight: '80%',
+          transform: [{ translateY }],
+        }}>
+        <View className="mb-4 flex-row items-center justify-between">
+          <View className="flex-1 flex-row items-center gap-2 pr-2">
+            {mostrarVoltar && (
+              <Pressable onPress={handleVoltar} hitSlop={8}>
+                <Ionicons name="arrow-back-outline" size={22} color={colors.text} />
+              </Pressable>
+            )}
+            {modo === 'menu' && <Ionicons name="flash" size={22} color={colors.accent} />}
+            <Text numberOfLines={1} className="flex-1 font-display text-xl uppercase text-accent">
+              {titulo}
+            </Text>
           </View>
+          <Pressable onPress={fecharAtlas} hitSlop={8}>
+            <Ionicons name="close" size={24} color={colors.text} />
+          </Pressable>
+        </View>
 
-          {modo === 'menu' && (
-            <View>
-              {/* Só aparece com um exercício em contexto (chegou aqui pelo ❓
-                  durante o treino ou no catálogo) — destacado (borda/fundo
-                  accent) por ser a opção mais relevante nesse caso.
-                  Normalmente o usuário nem vê este card: o efeito acima já
-                  pula direto pro modo conversa ao abrir; ele só reaparece se
-                  o usuário voltar pro menu (handleVoltar) e quiser reentrar
-                  na mesma ajuda. */}
-              {exercicioContexto && (
-                <Pressable
-                  className="mb-3 flex-row items-center gap-3 rounded-xl border border-accent/30 bg-accent/10 p-4"
-                  onPress={() => iniciarAjudaExercicio(exercicioContexto)}>
-                  <Ionicons name="body-outline" size={22} color={colors.accent} />
-                  <View className="flex-1">
-                    <Text className="font-card-title text-sm text-text">{`Ajuda com ${exercicioContexto.nome}`}</Text>
-                    <Text className="font-label text-xs uppercase text-muted">Dicas, erros comuns, alternativas</Text>
-                  </View>
-                  <Ionicons name="chevron-forward-outline" size={16} color={colors.muted} />
-                </Pressable>
-              )}
+        {modo === 'menu' && (
+          <View>
+            {/* Só aparece com um exercício em contexto (chegou aqui pelo ❓
+                durante o treino ou no catálogo) — destacado (borda/fundo
+                accent) por ser a opção mais relevante nesse caso.
+                Normalmente o usuário nem vê este card: o efeito acima já
+                pula direto pro modo conversa ao abrir; ele só reaparece se
+                o usuário voltar pro menu (handleVoltar) e quiser reentrar
+                na mesma ajuda. */}
+            {exercicioContexto && (
+              <Pressable
+                className="mb-3 flex-row items-center gap-3 rounded-xl border border-accent/30 bg-accent/10 p-4"
+                onPress={() => iniciarAjudaExercicio(exercicioContexto)}>
+                <Ionicons name="body-outline" size={22} color={colors.accent} />
+                <View className="flex-1">
+                  <Text className="font-card-title text-sm text-text">{`Ajuda com ${exercicioContexto.nome}`}</Text>
+                  <Text className="font-label text-xs uppercase text-muted">Dicas, erros comuns, alternativas</Text>
+                </View>
+                <Ionicons name="chevron-forward-outline" size={16} color={colors.muted} />
+              </Pressable>
+            )}
 
-              <MenuOpcao
-                icone="barbell-outline"
-                titulo="Montar meu treino"
-                descricao="O Atlas monta um plano personalizado pro seu perfil"
-                onPress={handleIrParaAssistente}
+            <MenuOpcao
+              icone="barbell-outline"
+              titulo="Montar meu treino"
+              descricao="O Atlas monta um plano personalizado pro seu perfil"
+              onPress={handleIrParaAssistente}
+            />
+            <MenuOpcao
+              icone="flash-outline"
+              titulo="Treinos rápidos"
+              descricao="Sessões prontas pra quando o tempo é curto"
+              onPress={() => setModo('treinos_rapidos')}
+            />
+            <MenuOpcao
+              icone="help-circle-outline"
+              titulo="Tirar uma dúvida"
+              descricao="Pergunte sobre exercícios, treino ou nutrição"
+              onPress={() => setModo('conversa')}
+              isLast
+            />
+          </View>
+        )}
+
+        {modo === 'conversa' && (
+          <View>
+            {/* KeyboardAwareScrollView (não ScrollView + KeyboardAvoidingView
+                manual) — mesma solução que resolveu o teclado tampando a
+                SessionExecution em hoje.tsx. `enableOnAndroid` é o que falta
+                por padrão pra ela agir no Android (só o iOS é coberto sem
+                essa flag); o TextInput fica FORA dela, fixo no fim do sheet,
+                como pedido. */}
+            <KeyboardAwareScrollView
+              ref={scrollRef}
+              enableOnAndroid
+              extraScrollHeight={80}
+              keyboardShouldPersistTaps="handled"
+              style={{ maxHeight: 300 }}
+              contentContainerStyle={{ paddingBottom: 8 }}>
+              {mensagens.map((msg) => (
+                <View
+                  key={msg.id}
+                  className={`mb-2 rounded px-3 py-2 ${msg.role === 'atlas' ? 'self-start bg-bg' : 'self-end bg-accent'}`}
+                  style={{ maxWidth: '85%' }}>
+                  <Text className={`font-body text-sm ${msg.role === 'atlas' ? 'text-text' : 'text-white'}`}>
+                    {msg.content}
+                  </Text>
+                </View>
+              ))}
+            </KeyboardAwareScrollView>
+
+            <View className="mt-3 flex-row items-end gap-2">
+              <TextInput
+                value={input}
+                onChangeText={setInput}
+                placeholder="Pergunte algo..."
+                placeholderTextColor={colors.muted}
+                className="flex-1 rounded border border-border bg-bg px-4 py-3 font-body text-base text-text"
+                onSubmitEditing={handleEnviar}
+                returnKeyType="send"
+                multiline
               />
-              <MenuOpcao
-                icone="flash-outline"
-                titulo="Treinos rápidos"
-                descricao="Sessões prontas pra quando o tempo é curto"
-                onPress={() => setModo('treinos_rapidos')}
-              />
-              <MenuOpcao
-                icone="help-circle-outline"
-                titulo="Tirar uma dúvida"
-                descricao="Pergunte sobre exercícios, treino ou nutrição"
-                onPress={() => setModo('conversa')}
-                isLast
-              />
+              <Pressable
+                onPress={handleEnviar}
+                disabled={!input.trim()}
+                className={`h-11 w-11 items-center justify-center rounded-full ${input.trim() ? 'bg-accent' : 'bg-border'}`}>
+                <Ionicons name="arrow-up-outline" size={20} color="#fff" />
+              </Pressable>
             </View>
-          )}
+          </View>
+        )}
 
-          {modo === 'conversa' && (
-            <View>
-              {/* KeyboardAwareScrollView (não ScrollView + KeyboardAvoidingView
-                  manual) — mesma solução que resolveu o teclado tampando a
-                  SessionExecution em hoje.tsx. `enableOnAndroid` é o que falta
-                  por padrão pra ela agir no Android (só o iOS é coberto sem
-                  essa flag); o TextInput fica FORA dela, fixo no fim do sheet,
-                  como pedido. */}
-              <KeyboardAwareScrollView
-                ref={scrollRef}
-                enableOnAndroid
-                extraScrollHeight={80}
-                keyboardShouldPersistTaps="handled"
-                style={{ maxHeight: 300 }}
-                contentContainerStyle={{ paddingBottom: 8 }}>
-                {mensagens.map((msg) => (
-                  <View
-                    key={msg.id}
-                    className={`mb-2 rounded px-3 py-2 ${msg.role === 'atlas' ? 'self-start bg-bg' : 'self-end bg-accent'}`}
-                    style={{ maxWidth: '85%' }}>
-                    <Text className={`font-body text-sm ${msg.role === 'atlas' ? 'text-text' : 'text-white'}`}>
-                      {msg.content}
-                    </Text>
+        {modo === 'treinos_rapidos' && !treinoSelecionado && (
+          <ScrollView style={{ maxHeight: 420 }}>
+            {getTreinosRapidos().map((treino) => (
+              <Pressable key={treino.id} onPress={() => setTreinoSelecionado(treino)} className="mb-3">
+                <Card>
+                  <Text className="font-card-title text-base text-text">{treino.nome}</Text>
+                  <View className="mt-2 flex-row flex-wrap gap-x-4 gap-y-1">
+                    <Label>{`${treino.duracao_min} min`}</Label>
+                    <Label className="uppercase">{treino.nivel}</Label>
+                    <Label>{`${treino.exercicios.length} exercícios`}</Label>
                   </View>
-                ))}
-              </KeyboardAwareScrollView>
+                </Card>
+              </Pressable>
+            ))}
+          </ScrollView>
+        )}
 
-              <View className="mt-3 flex-row items-end gap-2">
-                <TextInput
-                  value={input}
-                  onChangeText={setInput}
-                  placeholder="Pergunte algo..."
-                  placeholderTextColor={colors.muted}
-                  className="flex-1 rounded border border-border bg-bg px-4 py-3 font-body text-base text-text"
-                  onSubmitEditing={handleEnviar}
-                  returnKeyType="send"
-                  multiline
-                />
-                <Pressable
-                  onPress={handleEnviar}
-                  disabled={!input.trim()}
-                  className={`h-11 w-11 items-center justify-center rounded-full ${input.trim() ? 'bg-accent' : 'bg-border'}`}>
-                  <Ionicons name="arrow-up-outline" size={20} color="#fff" />
-                </Pressable>
-              </View>
-            </View>
-          )}
-
-          {modo === 'treinos_rapidos' && !treinoSelecionado && (
-            <ScrollView style={{ maxHeight: 420 }}>
-              {getTreinosRapidos().map((treino) => (
-                <Pressable key={treino.id} onPress={() => setTreinoSelecionado(treino)} className="mb-3">
-                  <Card>
-                    <Text className="font-card-title text-base text-text">{treino.nome}</Text>
-                    <View className="mt-2 flex-row flex-wrap gap-x-4 gap-y-1">
-                      <Label>{`${treino.duracao_min} min`}</Label>
-                      <Label className="uppercase">{treino.nivel}</Label>
-                      <Label>{`${treino.exercicios.length} exercícios`}</Label>
-                    </View>
-                  </Card>
-                </Pressable>
+        {modo === 'treinos_rapidos' && treinoSelecionado && (
+          <View>
+            <ScrollView style={{ maxHeight: 340 }}>
+              {treinoSelecionado.exercicios.map((ex, index) => (
+                <View key={`${ex.nome}-${index}`} className="mb-3 border-b border-border pb-3">
+                  <Text className="font-card-title text-sm text-text">{ex.nome}</Text>
+                  <Label className="mt-1">{`${ex.series}x${ex.reps} · descanso ${ex.descanso_s}s`}</Label>
+                  {ex.dica && <Label className="mt-1 italic text-muted">{ex.dica}</Label>}
+                </View>
               ))}
             </ScrollView>
-          )}
 
-          {modo === 'treinos_rapidos' && treinoSelecionado && (
-            <View>
-              <ScrollView style={{ maxHeight: 340 }}>
-                {treinoSelecionado.exercicios.map((ex, index) => (
-                  <View key={`${ex.nome}-${index}`} className="mb-3 border-b border-border pb-3">
-                    <Text className="font-card-title text-sm text-text">{ex.nome}</Text>
-                    <Label className="mt-1">{`${ex.series}x${ex.reps} · descanso ${ex.descanso_s}s`}</Label>
-                    {ex.dica && <Label className="mt-1 italic text-muted">{ex.dica}</Label>}
-                  </View>
-                ))}
-              </ScrollView>
-
-              <View className="mt-4 flex-row gap-2">
-                <Button
-                  variant="secondary"
-                  className="flex-1"
-                  onPress={() => handleSalvarComoPlano(treinoSelecionado)}>
-                  Salvar como plano
-                </Button>
-                <Button className="flex-1" onPress={() => handleTreinarAgora(treinoSelecionado)}>
-                  Treinar agora
-                </Button>
-              </View>
+            <View className="mt-4 flex-row gap-2">
+              <Button
+                variant="secondary"
+                className="flex-1"
+                onPress={() => handleSalvarComoPlano(treinoSelecionado)}>
+                Salvar como plano
+              </Button>
+              <Button className="flex-1" onPress={() => handleTreinarAgora(treinoSelecionado)}>
+                Treinar agora
+              </Button>
             </View>
-          )}
-        </View>
-      </View>
-    </Modal>
+          </View>
+        )}
+      </Animated.View>
+    </View>
   );
 }
 
