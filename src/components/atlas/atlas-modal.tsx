@@ -1,5 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
-import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import {
+  Keyboard,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+  type KeyboardEvent,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
@@ -38,6 +49,28 @@ export function AtlasModal({ visible, onClose }: { visible: boolean; onClose: ()
   const [input, setInput] = useState('');
   const [treinoSelecionado, setTreinoSelecionado] = useState<AtlasTreinoRapido | null>(null);
   const scrollRef = useRef<ScrollView>(null);
+
+  // Altura do teclado (Android) — o `KeyboardAvoidingView` abaixo já cobre o
+  // iOS (`behavior:'padding'`, animação nativa sincronizada com o teclado);
+  // no Android ele é inerte de propósito (`behavior:undefined` — ver
+  // comentário no JSX), porque o Modal nativo aqui NÃO herda o
+  // `softwareKeyboardLayoutMode:"resize"` da janela principal (diferente da
+  // tela de trás, que é a própria Activity) — o SO não redimensiona nada
+  // sozinho dentro de um Modal no Android. `keyboardDidShow`/`keyboardDidHide`
+  // (não `keyboardWillShow/Hide`, que só existem no iOS) são os únicos
+  // eventos de teclado que o Android de fato dispara.
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  useEffect(() => {
+    if (Platform.OS !== 'android') return;
+    const show = Keyboard.addListener('keyboardDidShow', (e: KeyboardEvent) => {
+      setKeyboardHeight(e.endCoordinates.height);
+    });
+    const hide = Keyboard.addListener('keyboardDidHide', () => setKeyboardHeight(0));
+    return () => {
+      show.remove();
+      hide.remove();
+    };
+  }, []);
 
   // Reseta pro menu (e limpa a conversa) toda vez que o modal ABRE — nunca
   // herda estado de uma abertura anterior. Mesmo padrão de
@@ -98,7 +131,15 @@ export function AtlasModal({ visible, onClose }: { visible: boolean; onClose: ()
         className="flex-1 justify-end bg-black/50">
         <View
           className="bg-surface px-5 pb-6 pt-5"
-          style={{ borderTopLeftRadius: 16, borderTopRightRadius: 16, maxHeight: '80%' }}>
+          style={{
+            borderTopLeftRadius: 16,
+            borderTopRightRadius: 16,
+            maxHeight: '80%',
+            // `undefined` (não 0) quando o teclado Android não está aberto —
+            // deixa o `pb-6` da className valer normalmente; só troca pelo
+            // valor calculado quando há teclado de fato pra abrir espaço.
+            paddingBottom: Platform.OS === 'android' && keyboardHeight > 0 ? keyboardHeight + 8 : undefined,
+          }}>
           <View className="mb-4 flex-row items-center justify-between">
             <View className="flex-1 flex-row items-center gap-2 pr-2">
               {mostrarVoltar && (
