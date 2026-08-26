@@ -1,5 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
-import { Alert, Animated, Dimensions, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import {
+  Alert,
+  Animated,
+  Dimensions,
+  Keyboard,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+  type KeyboardEvent,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -115,6 +126,29 @@ export function AtlasModal() {
       stiffness: 200,
     }).start();
   }, [visible, translateY]);
+
+  // Altura do teclado — SÓ pra reancorar o sheet acima dele (`bottom:
+  // keyboardY` no Animated.View abaixo), não pra empurrar conteúdo. O
+  // `softwareKeyboardLayoutMode:"resize"` do app.json redimensiona
+  // corretamente conteúdo em FLUXO normal (é o que já resolveu o teclado na
+  // aba Treinar), mas uma View absolutamente posicionada, ancorada via
+  // `top`/`bottom`, fica FORA desse fluxo — o resize da Activity não
+  // recalcula essa âncora de forma confiável no Android, deixando o sheet
+  // preso à posição de ANTES do teclado abrir (na prática, escondido atrás
+  // dele). `keyboardDidShow`/`keyboardDidHide` (não `Will`, que só existe no
+  // iOS) funcionam nos dois SOs — no iOS, que nunca redimensiona a janela
+  // sozinho, sempre foi assim que qualquer view precisa reagir ao teclado.
+  const [keyboardY, setKeyboardY] = useState(0);
+  useEffect(() => {
+    const show = Keyboard.addListener('keyboardDidShow', (e: KeyboardEvent) => {
+      setKeyboardY(e.endCoordinates.height);
+    });
+    const hide = Keyboard.addListener('keyboardDidHide', () => setKeyboardY(0));
+    return () => {
+      show.remove();
+      hide.remove();
+    };
+  }, []);
 
   // Primeira mensagem do Atlas quando há um exercício em contexto (❓ durante
   // o treino ou no catálogo) — resumo + primeira dica de execução, ou uma
@@ -258,10 +292,22 @@ export function AtlasModal() {
           position: 'absolute',
           left: 0,
           right: 0,
-          bottom: 0,
+          // Ancorado no teclado (`keyboardY`, 0 quando fechado), não na tela
+          // — some da posição de "sem teclado" pra "acima do teclado" assim
+          // que ele abre. Compõe com `translateY` (abertura/fechamento do
+          // sheet em si): os dois deslocam a MESMA view, um por `bottom`
+          // (layout), outro por `transform` (depois do layout) — quando
+          // fechado, `translateY` (ALTURA_TELA) já joga o sheet bem pra fora
+          // da tela de qualquer forma, então o valor de `keyboardY` nesse
+          // momento não importa visualmente.
+          bottom: keyboardY,
           borderTopLeftRadius: 16,
           borderTopRightRadius: 16,
-          maxHeight: '80%',
+          // 70% (não mais 80%) — com o sheet podendo subir `keyboardY`
+          // adicionais acima do que já ocupava, um teto mais folgado deixa
+          // menos risco de o topo do sheet passar do topo da tela em
+          // devices menores com teclado grande.
+          maxHeight: '70%',
           transform: [{ translateY }],
         }}>
         <View className="mb-4 flex-row items-center justify-between">
