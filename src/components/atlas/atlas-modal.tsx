@@ -1,23 +1,23 @@
 import { useEffect, useRef, useState } from 'react';
-import {
-  Keyboard,
-  KeyboardAvoidingView,
-  Modal,
-  Platform,
-  Pressable,
-  ScrollView,
-  Text,
-  TextInput,
-  View,
-  type KeyboardEvent,
-} from 'react-native';
+import { Alert, Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { buscarResposta, getTreinosRapidos, type AtlasMessage, type AtlasTreinoRapido } from '@/lib/atlas';
+import { db } from '@/db';
+import { exercises } from '@/db/schema';
+import { criarESalvarComExercicios, treinarAgoraComExercicios } from '@/db/ready-workouts';
+import { parseRepsRangeToInt } from '@/lib/assistant-generator';
+import {
+  buscarResposta,
+  getTreinosRapidos,
+  resolverExercicioPorNome,
+  type AtlasMessage,
+  type AtlasTreinoRapido,
+} from '@/lib/atlas';
 import { colors } from '@/theme/tokens';
 
 type AtlasModo = 'menu' | 'conversa' | 'treinos_rapidos';
@@ -35,12 +35,38 @@ function gerarId(): string {
   return `msg-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
+type ExercicioResolvido = { exerciseId: number; seriesAlvo: number; repsAlvo: number };
+
+/** Casa cada exercício do treino rápido (por NOME) contra o catálogo real do
+ * device (`resolverExercicioPorNome`, `@/lib/atlas`) — exercício não
+ * encontrado é só pulado (nunca aborta), conforme pedido. `reps` do treino
+ * rápido é uma faixa string ("10-15", igual ao gerador do assistente) —
+ * reduzida a um inteiro com `parseRepsRangeToInt` (mesma função de
+ * assistant-generator.ts, não uma reimplementação). */
+function resolverExerciciosDoTreino(treino: AtlasTreinoRapido): ExercicioResolvido[] {
+  const catalogo = db.select({ id: exercises.id, wgerId: exercises.wgerId, nome: exercises.nome }).from(exercises).all();
+
+  const resolvidos: ExercicioResolvido[] = [];
+  for (const ex of treino.exercicios) {
+    const match = resolverExercicioPorNome(ex.nome, catalogo);
+    if (!match) continue;
+    resolvidos.push({ exerciseId: match.id, seriesAlvo: ex.series, repsAlvo: parseRepsRangeToInt(ex.reps) });
+  }
+  return resolvidos;
+}
+
+function reportError(context: string, err: unknown) {
+  console.error(context, err);
+  Alert.alert(context, String(err instanceof Error ? err.message : err));
+}
+
 /**
  * Modal do Atlas (assistente offline do Telos) — 3 modos internos: menu
  * (entrada), conversa (busca offline no roteiro curado, `@/lib/atlas`) e
- * treinos_rapidos (lista + detalhe de um treino pronto). Sem lib de bottom
- * sheet: `Modal` nativo `transparent` + View ancorada embaixo, mesmo padrão
- * já usado em ConfirmDialog/FormModal no resto do app.
+ * treinos_rapidos (lista + detalhe de um treino pronto, com "Treinar agora"/
+ * "Salvar como plano" via `@/db/ready-workouts`). Sem lib de bottom sheet:
+ * `Modal` nativo `transparent` + View ancorada embaixo, mesmo padrão já
+ * usado em ConfirmDialog/FormModal no resto do app.
  */
 export function AtlasModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const router = useRouter();
@@ -48,29 +74,7 @@ export function AtlasModal({ visible, onClose }: { visible: boolean; onClose: ()
   const [mensagens, setMensagens] = useState<AtlasMessage[]>([MENSAGEM_INICIAL]);
   const [input, setInput] = useState('');
   const [treinoSelecionado, setTreinoSelecionado] = useState<AtlasTreinoRapido | null>(null);
-  const scrollRef = useRef<ScrollView>(null);
-
-  // Altura do teclado (Android) — o `KeyboardAvoidingView` abaixo já cobre o
-  // iOS (`behavior:'padding'`, animação nativa sincronizada com o teclado);
-  // no Android ele é inerte de propósito (`behavior:undefined` — ver
-  // comentário no JSX), porque o Modal nativo aqui NÃO herda o
-  // `softwareKeyboardLayoutMode:"resize"` da janela principal (diferente da
-  // tela de trás, que é a própria Activity) — o SO não redimensiona nada
-  // sozinho dentro de um Modal no Android. `keyboardDidShow`/`keyboardDidHide`
-  // (não `keyboardWillShow/Hide`, que só existem no iOS) são os únicos
-  // eventos de teclado que o Android de fato dispara.
-  const [keyboardHeight, setKeyboardHeight] = useState(0);
-  useEffect(() => {
-    if (Platform.OS !== 'android') return;
-    const show = Keyboard.addListener('keyboardDidShow', (e: KeyboardEvent) => {
-      setKeyboardHeight(e.endCoordinates.height);
-    });
-    const hide = Keyboard.addListener('keyboardDidHide', () => setKeyboardHeight(0));
-    return () => {
-      show.remove();
-      hide.remove();
-    };
-  }, []);
+  const scrollRef = useRef<KeyboardAwareScrollView>(null);
 
   // Reseta pro menu (e limpa a conversa) toda vez que o modal ABRE — nunca
   // herda estado de uma abertura anterior. Mesmo padrão de
@@ -96,7 +100,9 @@ export function AtlasModal({ visible, onClose }: { visible: boolean; onClose: ()
     const respostaMsg: AtlasMessage = { id: gerarId(), role: 'atlas', content: buscarResposta(texto) };
     setMensagens((prev) => [...prev, perguntaMsg, respostaMsg]);
     setInput('');
-    requestAnimationFrame(() => scrollRef.current?.scrollToEnd({ animated: true }));
+    // `scrollToEnd(animated)` — a API do KeyboardAwareScrollView (não a do
+    // ScrollView nativo): recebe um boolean solto, não `{ animated: true }`.
+    requestAnimationFrame(() => scrollRef.current?.scrollToEnd(true));
   };
 
   const handleVoltar = () => {
@@ -109,6 +115,49 @@ export function AtlasModal({ visible, onClose }: { visible: boolean; onClose: ()
     setModo('menu');
   };
 
+  // Transações síncronas (mesmo padrão de treinos-prontos/[key].tsx) — sem
+  // await, o resultado já está pronto quando a chamada retorna.
+  const handleTreinarAgora = (treino: AtlasTreinoRapido) => {
+    try {
+      const exerciciosResolvidos = resolverExerciciosDoTreino(treino);
+      if (exerciciosResolvidos.length === 0) {
+        Alert.alert('Não foi possível iniciar', 'Nenhum exercício deste treino foi encontrado no catálogo.');
+        return;
+      }
+
+      const result = treinarAgoraComExercicios(treino.nome, exerciciosResolvidos);
+      if (result.status === 'already_has_session_today') {
+        Alert.alert(
+          'Você já tem um treino hoje',
+          'Termine ou cancele a sessão de hoje antes de começar outra. Se quiser, salve este treino como plano pra usar depois.'
+        );
+        return;
+      }
+
+      onClose();
+      router.replace('/hoje');
+    } catch (err) {
+      reportError('Erro ao iniciar treino', err);
+    }
+  };
+
+  const handleSalvarComoPlano = (treino: AtlasTreinoRapido) => {
+    try {
+      const exerciciosResolvidos = resolverExerciciosDoTreino(treino);
+      if (exerciciosResolvidos.length === 0) {
+        Alert.alert('Não foi possível salvar', 'Nenhum exercício deste treino foi encontrado no catálogo.');
+        return;
+      }
+
+      criarESalvarComExercicios(treino.nome, exerciciosResolvidos);
+      onClose();
+      router.push('/planilhas');
+      Alert.alert('Plano salvo!', `"${treino.nome}" foi salvo em Planilhas.`);
+    } catch (err) {
+      reportError('Erro ao salvar plano', err);
+    }
+  };
+
   const mostrarVoltar = modo !== 'menu';
   const titulo =
     modo === 'menu'
@@ -119,27 +168,8 @@ export function AtlasModal({ visible, onClose }: { visible: boolean; onClose: ()
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      {/* iOS: 'padding' encolhe a área visível quando o teclado abre — mesmo
-          comportamento de FormModal.tsx (o outro Modal do app com TextInput
-          dentro), que este segue de propósito. Android: `undefined` (não
-          'height') — o Modal aqui herda o `softwareKeyboardLayoutMode:
-          "resize"` do app.json igual à tela por trás; 'height' duplicaria
-          essa compensação (o mesmo problema já mapeado no bug do teclado da
-          aba Treinar, nesta mesma conversa). */}
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        className="flex-1 justify-end bg-black/50">
-        <View
-          className="bg-surface px-5 pb-6 pt-5"
-          style={{
-            borderTopLeftRadius: 16,
-            borderTopRightRadius: 16,
-            maxHeight: '80%',
-            // `undefined` (não 0) quando o teclado Android não está aberto —
-            // deixa o `pb-6` da className valer normalmente; só troca pelo
-            // valor calculado quando há teclado de fato pra abrir espaço.
-            paddingBottom: Platform.OS === 'android' && keyboardHeight > 0 ? keyboardHeight + 8 : undefined,
-          }}>
+      <View className="flex-1 justify-end bg-black/50">
+        <View className="bg-surface px-5 pb-6 pt-5" style={{ borderTopLeftRadius: 16, borderTopRightRadius: 16, maxHeight: '80%' }}>
           <View className="mb-4 flex-row items-center justify-between">
             <View className="flex-1 flex-row items-center gap-2 pr-2">
               {mostrarVoltar && (
@@ -148,9 +178,7 @@ export function AtlasModal({ visible, onClose }: { visible: boolean; onClose: ()
                 </Pressable>
               )}
               {modo === 'menu' && <Ionicons name="flash" size={22} color={colors.accent} />}
-              <Text
-                numberOfLines={1}
-                className="flex-1 font-display text-xl uppercase text-accent">
+              <Text numberOfLines={1} className="flex-1 font-display text-xl uppercase text-accent">
                 {titulo}
               </Text>
             </View>
@@ -185,12 +213,19 @@ export function AtlasModal({ visible, onClose }: { visible: boolean; onClose: ()
 
           {modo === 'conversa' && (
             <View>
-              <ScrollView
+              {/* KeyboardAwareScrollView (não ScrollView + KeyboardAvoidingView
+                  manual) — mesma solução que resolveu o teclado tampando a
+                  SessionExecution em hoje.tsx. `enableOnAndroid` é o que falta
+                  por padrão pra ela agir no Android (só o iOS é coberto sem
+                  essa flag); o TextInput fica FORA dela, fixo no fim do sheet,
+                  como pedido. */}
+              <KeyboardAwareScrollView
                 ref={scrollRef}
-                style={{ maxHeight: 340 }}
-                contentContainerStyle={{ paddingBottom: 8 }}
-                onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: true })}
-                keyboardShouldPersistTaps="handled">
+                enableOnAndroid
+                extraScrollHeight={80}
+                keyboardShouldPersistTaps="handled"
+                style={{ maxHeight: 300 }}
+                contentContainerStyle={{ paddingBottom: 8 }}>
                 {mensagens.map((msg) => (
                   <View
                     key={msg.id}
@@ -201,7 +236,7 @@ export function AtlasModal({ visible, onClose }: { visible: boolean; onClose: ()
                     </Text>
                   </View>
                 ))}
-              </ScrollView>
+              </KeyboardAwareScrollView>
 
               <View className="mt-3 flex-row items-end gap-2">
                 <TextInput
@@ -243,7 +278,7 @@ export function AtlasModal({ visible, onClose }: { visible: boolean; onClose: ()
 
           {modo === 'treinos_rapidos' && treinoSelecionado && (
             <View>
-              <ScrollView style={{ maxHeight: 380 }}>
+              <ScrollView style={{ maxHeight: 340 }}>
                 {treinoSelecionado.exercicios.map((ex, index) => (
                   <View key={`${ex.nome}-${index}`} className="mb-3 border-b border-border pb-3">
                     <Text className="font-card-title text-sm text-text">{ex.nome}</Text>
@@ -252,16 +287,22 @@ export function AtlasModal({ visible, onClose }: { visible: boolean; onClose: ()
                   </View>
                 ))}
               </ScrollView>
-              {/* Ainda não salva o treino escolhido como plano — só devolve
-                  pro fluxo já existente do assistente (ver PASSO 5 do
-                  pedido: a integração de verdade vem numa próxima etapa). */}
-              <Button className="mt-3" onPress={handleIrParaAssistente}>
-                Usar este treino
-              </Button>
+
+              <View className="mt-4 flex-row gap-2">
+                <Button
+                  variant="secondary"
+                  className="flex-1"
+                  onPress={() => handleSalvarComoPlano(treinoSelecionado)}>
+                  Salvar como plano
+                </Button>
+                <Button className="flex-1" onPress={() => handleTreinarAgora(treinoSelecionado)}>
+                  Treinar agora
+                </Button>
+              </View>
             </View>
           )}
         </View>
-      </KeyboardAvoidingView>
+      </View>
     </Modal>
   );
 }

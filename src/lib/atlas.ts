@@ -122,6 +122,60 @@ function pontuarMatch(perguntaNormalizada: string, candidatoNormalizado: string)
   return score;
 }
 
+export type ExercicioCatalogoBasico = { id: number; wgerId: number; nome: string };
+
+// Mais alta que PONTUACAO_MINIMA (perguntas em linguagem natural, mais
+// abaixo) — aqui o objetivo é achar o MESMO exercício, não uma resposta
+// relacionada; um match fraco erra o exercício errado, não só dá uma
+// resposta genérica. Verificado contra os 42 exercícios reais de
+// treinos_rapidos.json: resolve 41 corretamente ("Terra romeno" ->
+// "Levantamento terra romeno", "Hack squat" (nome em inglês, sem
+// equivalente direto) fica de fora — cai no `null` e quem chama pula.
+const PONTUACAO_MINIMA_NOME_EXERCICIO = 2;
+
+/**
+ * Resolve o NOME de um exercício (como aparece em treinos_rapidos.json — às
+ * vezes abreviado, ex: "Terra romeno", "Cadeira flexora") pro item mais
+ * provável de `catalogo` (o catálogo real do device, com `id`/`wgerId`
+ * locais). 3 camadas, na ordem: (1) igual exato normalizado; (2) substring —
+ * catálogo contém o nome curto OU o nome curto contém o do catálogo,
+ * preferindo o candidato de tamanho mais próximo quando há mais de um; (3)
+ * pontuação por palavras significativas em comum (mesmo motor de
+ * `pontuarMatch`, usado em `buscarResposta`). `null` se nada bater com
+ * confiança suficiente — quem chama decide (pular o exercício, avisar).
+ */
+export function resolverExercicioPorNome(
+  nome: string,
+  catalogo: ExercicioCatalogoBasico[]
+): ExercicioCatalogoBasico | null {
+  const nomeNormalizado = normalizar(nome);
+
+  for (const item of catalogo) {
+    if (normalizar(item.nome) === nomeNormalizado) return item;
+  }
+
+  let melhorSubstring: { item: ExercicioCatalogoBasico; normalizado: string } | null = null;
+  for (const item of catalogo) {
+    const itemNormalizado = normalizar(item.nome);
+    if (itemNormalizado.includes(nomeNormalizado) || nomeNormalizado.includes(itemNormalizado)) {
+      const diferenca = Math.abs(itemNormalizado.length - nomeNormalizado.length);
+      if (!melhorSubstring || diferenca < Math.abs(melhorSubstring.normalizado.length - nomeNormalizado.length)) {
+        melhorSubstring = { item, normalizado: itemNormalizado };
+      }
+    }
+  }
+  if (melhorSubstring) return melhorSubstring.item;
+
+  let melhorPontuado: { item: ExercicioCatalogoBasico; score: number } | null = null;
+  for (const item of catalogo) {
+    const score = pontuarMatch(nomeNormalizado, normalizar(item.nome));
+    if (score > 0 && (!melhorPontuado || score > melhorPontuado.score)) {
+      melhorPontuado = { item, score };
+    }
+  }
+  return melhorPontuado && melhorPontuado.score >= PONTUACAO_MINIMA_NOME_EXERCICIO ? melhorPontuado.item : null;
+}
+
 type Candidato = { resposta: string; score: number };
 
 // Gatilhos por palavra-chave pros campos do exercício que NÃO são, em si,

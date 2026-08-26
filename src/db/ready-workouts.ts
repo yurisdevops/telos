@@ -187,6 +187,33 @@ export const READY_WORKOUTS: ReadyWorkout[] = [
  * `readyWorkoutKey` não existir), pra quem chama poder criar a sessão em
  * cima dele.
  */
+export type ResolvedReadyWorkoutExercise = { exerciseId: number; seriesAlvo: number; repsAlvo: number };
+
+function criarDiaComExerciciosResolvidos(
+  tx: Tx,
+  planId: number,
+  nomeDia: string,
+  exerciciosResolvidos: ResolvedReadyWorkoutExercise[]
+): number {
+  const createdDay = tx.insert(workoutDays).values({ planId, label: nomeDia, ordem: 0 }).returning().get();
+
+  exerciciosResolvidos.forEach((exercise, exerciseIndex) => {
+    tx.insert(workoutDayExercises)
+      .values({
+        dayId: createdDay.id,
+        exerciseId: exercise.exerciseId,
+        seriesAlvo: exercise.seriesAlvo,
+        repsAlvo: exercise.repsAlvo,
+        cargaAlvo: null,
+        ordem: exerciseIndex,
+        supersetGroup: null,
+      })
+      .run();
+  });
+
+  return createdDay.id;
+}
+
 export function applyReadyWorkout(tx: Tx, planId: number, readyWorkoutKey: string): number | null {
   const workout = READY_WORKOUTS.find((w) => w.key === readyWorkoutKey);
   if (!workout) return null;
@@ -199,26 +226,14 @@ export function applyReadyWorkout(tx: Tx, planId: number, readyWorkoutKey: strin
       .map((row) => [row.wgerId, row.id])
   );
 
-  const createdDay = tx.insert(workoutDays).values({ planId, label: workout.nome, ordem: 0 }).returning().get();
-
-  workout.exercises.forEach((exercise, exerciseIndex) => {
+  const exerciciosResolvidos: ResolvedReadyWorkoutExercise[] = [];
+  for (const exercise of workout.exercises) {
     const exerciseId = wgerIdMap.get(exercise.wgerId);
-    if (exerciseId === undefined) return;
+    if (exerciseId === undefined) continue;
+    exerciciosResolvidos.push({ exerciseId, seriesAlvo: exercise.seriesAlvo, repsAlvo: exercise.repsAlvo });
+  }
 
-    tx.insert(workoutDayExercises)
-      .values({
-        dayId: createdDay.id,
-        exerciseId,
-        seriesAlvo: exercise.seriesAlvo,
-        repsAlvo: exercise.repsAlvo,
-        cargaAlvo: null,
-        ordem: exerciseIndex,
-        supersetGroup: null,
-      })
-      .run();
-  });
-
-  return createdDay.id;
+  return criarDiaComExerciciosResolvidos(tx, planId, workout.nome, exerciciosResolvidos);
 }
 
 /** Cria o plano + dia e SALVA (aparece em Planilhas) — `tipo: 'Pronto'`, sem
@@ -235,6 +250,19 @@ export function criarESalvar(readyWorkoutKey: string): number {
       .get();
 
     applyReadyWorkout(tx, plan.id, readyWorkoutKey);
+    return plan.id;
+  });
+}
+
+export function criarESalvarComExercicios(nome: string, exercicios: ResolvedReadyWorkoutExercise[]): number {
+  return db.transaction((tx) => {
+    const plan = tx
+      .insert(workoutPlans)
+      .values({ nome, tipo: 'Pronto', criadoEm: new Date().toISOString() })
+      .returning()
+      .get();
+
+    criarDiaComExerciciosResolvidos(tx, plan.id, nome, exercicios);
     return plan.id;
   });
 }
@@ -317,6 +345,41 @@ export function treinarAgora(readyWorkoutKey: string): TreinarAgoraResult {
     if (dayId === null) {
       throw new Error('Falha ao montar o treino pronto.');
     }
+
+    const session = tx
+      .insert(sessions)
+      .values({ workoutDayId: dayId, data: todayStr, concluida: false, horaInicio: Date.now() })
+      .returning()
+      .get();
+
+    return { status: 'started', sessionId: session.id };
+  });
+}
+
+/** Mesmo resultado de `treinarAgora`, pra uma lista de exercícios JÁ
+ * RESOLVIDA (por nome, contra o catálogo — ver `resolverExercicioPorNome`
+ * em `@/lib/atlas`) em vez de uma chave de `READY_WORKOUTS`. Usado pelo
+ * "Treinar agora" dos treinos rápidos do Atlas — mesma trava de "já existe
+ * sessão hoje" e mesma limpeza de órfãos, `tipo: 'Treino pronto'` (efêmero,
+ * some do seletor de dias, mesmo critério dos treinos prontos fixos). */
+export function treinarAgoraComExercicios(nome: string, exercicios: ResolvedReadyWorkoutExercise[]): TreinarAgoraResult {
+  const todayStr = getTodayDateString();
+
+  return db.transaction((tx) => {
+    const existingToday = tx.select({ id: sessions.id }).from(sessions).where(eq(sessions.data, todayStr)).all();
+    if (existingToday.length > 0) {
+      return { status: 'already_has_session_today' };
+    }
+
+    limparTreinosProntosOrfaos(tx);
+
+    const plan = tx
+      .insert(workoutPlans)
+      .values({ nome, tipo: 'Treino pronto', criadoEm: new Date().toISOString() })
+      .returning()
+      .get();
+
+    const dayId = criarDiaComExerciciosResolvidos(tx, plan.id, nome, exercicios);
 
     const session = tx
       .insert(sessions)
