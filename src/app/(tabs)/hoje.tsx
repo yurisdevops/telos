@@ -59,6 +59,7 @@ import {
   workoutPlans,
   type Session,
 } from '@/db/schema';
+import { useAtlas } from '@/lib/atlas-context';
 import { MODALIDADES_CARDIO, INTENSIDADES_CARDIO } from '@/lib/cardio';
 import {
   daysBetween,
@@ -1560,6 +1561,7 @@ const ExerciseSessionCard = memo(
     }, [logs]);
 
     const { confirm, dialog } = useConfirmDialog();
+    const { abrirAtlas } = useAtlas();
 
     const { data: preferenceRows } = useLiveQuery(
       db.select().from(exercisePreferences).where(eq(exercisePreferences.exerciseWgerId, item.exerciseWgerId)),
@@ -1784,6 +1786,17 @@ const ExerciseSessionCard = memo(
                 color={colors.muted}
               />
             )}
+            {/* Pressable ANINHADO dentro do Pressable da linha inteira (o
+                onPress={() => isComplete && setManualExpanded(...)} lá em
+                cima) — no toque, o Pressable interno reivindica o responder
+                pra si (comportamento padrão do RN), então nunca também
+                expande/colapsa o card por engano. */}
+            <Pressable
+              onPress={() => abrirAtlas({ wgerId: item.exerciseWgerId, nome: item.exerciseNome })}
+              hitSlop={8}
+              className="p-1">
+              <Ionicons name="help-circle-outline" size={20} color={colors.muted} />
+            </Pressable>
           </View>
         </Pressable>
 

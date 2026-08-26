@@ -13,11 +13,13 @@ import { criarESalvarComExercicios, treinarAgoraComExercicios } from '@/db/ready
 import { parseRepsRangeToInt } from '@/lib/assistant-generator';
 import {
   buscarResposta,
+  getExercicioInfo,
   getTreinosRapidos,
   resolverExercicioPorNome,
   type AtlasMessage,
   type AtlasTreinoRapido,
 } from '@/lib/atlas';
+import { useAtlas, type AtlasExercicioContexto } from '@/lib/atlas-context';
 import { colors } from '@/theme/tokens';
 
 type AtlasModo = 'menu' | 'conversa' | 'treinos_rapidos';
@@ -68,28 +70,50 @@ function reportError(context: string, err: unknown) {
  * `Modal` nativo `transparent` + View ancorada embaixo, mesmo padrão já
  * usado em ConfirmDialog/FormModal no resto do app.
  */
-export function AtlasModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
+export function AtlasModal() {
   const router = useRouter();
+  const { visible, exercicioContexto, fecharAtlas } = useAtlas();
   const [modo, setModo] = useState<AtlasModo>('menu');
   const [mensagens, setMensagens] = useState<AtlasMessage[]>([MENSAGEM_INICIAL]);
   const [input, setInput] = useState('');
   const [treinoSelecionado, setTreinoSelecionado] = useState<AtlasTreinoRapido | null>(null);
   const scrollRef = useRef<KeyboardAwareScrollView>(null);
 
-  // Reseta pro menu (e limpa a conversa) toda vez que o modal ABRE — nunca
-  // herda estado de uma abertura anterior. Mesmo padrão de
-  // WorkoutShareModal (DEFAULT_SHARE_OPTIONS a cada `visible` virar true).
+  // Primeira mensagem do Atlas quando há um exercício em contexto (❓ durante
+  // o treino ou no catálogo) — resumo + primeira dica de execução, ou uma
+  // mensagem neutra se o roteiro não cobrir esse exercício. Chamada tanto no
+  // efeito abaixo (abrir já sabendo o exercício) quanto pelo card em destaque
+  // do menu (voltar pra essa conversa depois de já ter saído dela).
+  const iniciarAjudaExercicio = (exercicio: AtlasExercicioContexto) => {
+    const info = getExercicioInfo(exercicio.wgerId);
+    const partes = [info?.resumo_rapido, info?.dicas_execucao?.[0] ? `💡 ${info.dicas_execucao[0]}` : null].filter(
+      (parte): parte is string => !!parte
+    );
+    const conteudo = partes.length > 0 ? partes.join('\n\n') : `Pode me perguntar sobre ${exercicio.nome}!`;
+    setMensagens([{ id: 'inicial-exercicio', role: 'atlas', content: conteudo }]);
+    setModo('conversa');
+  };
+
+  // Reseta toda vez que o modal ABRE — nunca herda estado de uma abertura
+  // anterior. Mesmo padrão de WorkoutShareModal (DEFAULT_SHARE_OPTIONS a
+  // cada `visible` virar true). Com `exercicioContexto` (aberto por um ❓),
+  // pula direto pro modo conversa já com as dicas daquele exercício, em vez
+  // do menu genérico — é o "abre já sabendo qual exercício é" do pedido.
   useEffect(() => {
-    if (visible) {
+    if (!visible) return;
+    setInput('');
+    setTreinoSelecionado(null);
+    if (exercicioContexto) {
+      iniciarAjudaExercicio(exercicioContexto);
+    } else {
       setModo('menu');
       setMensagens([MENSAGEM_INICIAL]);
-      setInput('');
-      setTreinoSelecionado(null);
     }
-  }, [visible]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visible, exercicioContexto]);
 
   const handleIrParaAssistente = () => {
-    onClose();
+    fecharAtlas();
     router.push('/plano/assistente');
   };
 
@@ -97,7 +121,16 @@ export function AtlasModal({ visible, onClose }: { visible: boolean; onClose: ()
     const texto = input.trim();
     if (!texto) return;
     const perguntaMsg: AtlasMessage = { id: gerarId(), role: 'user', content: texto };
-    const respostaMsg: AtlasMessage = { id: gerarId(), role: 'atlas', content: buscarResposta(texto) };
+    // Com exercício em contexto (❓), o wgerId acompanha TODA a conversa
+    // daquela abertura — não só a mensagem inicial — pra `buscarResposta`
+    // priorizar o conhecimento específico dele mesmo em perguntas de
+    // acompanhamento ("e se eu sentir dor?"), sem repetir o nome do
+    // exercício a cada pergunta.
+    const respostaMsg: AtlasMessage = {
+      id: gerarId(),
+      role: 'atlas',
+      content: buscarResposta(texto, exercicioContexto?.wgerId),
+    };
     setMensagens((prev) => [...prev, perguntaMsg, respostaMsg]);
     setInput('');
     // `scrollToEnd(animated)` — a API do KeyboardAwareScrollView (não a do
@@ -134,7 +167,7 @@ export function AtlasModal({ visible, onClose }: { visible: boolean; onClose: ()
         return;
       }
 
-      onClose();
+      fecharAtlas();
       router.replace('/hoje');
     } catch (err) {
       reportError('Erro ao iniciar treino', err);
@@ -150,7 +183,7 @@ export function AtlasModal({ visible, onClose }: { visible: boolean; onClose: ()
       }
 
       criarESalvarComExercicios(treino.nome, exerciciosResolvidos);
-      onClose();
+      fecharAtlas();
       router.push('/planilhas');
       Alert.alert('Plano salvo!', `"${treino.nome}" foi salvo em Planilhas.`);
     } catch (err) {
@@ -167,7 +200,7 @@ export function AtlasModal({ visible, onClose }: { visible: boolean; onClose: ()
         : (treinoSelecionado?.nome ?? 'Treinos rápidos');
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={fecharAtlas}>
       <View className="flex-1 justify-end bg-black/50">
         <View className="bg-surface px-5 pb-6 pt-5" style={{ borderTopLeftRadius: 16, borderTopRightRadius: 16, maxHeight: '80%' }}>
           <View className="mb-4 flex-row items-center justify-between">
@@ -182,13 +215,33 @@ export function AtlasModal({ visible, onClose }: { visible: boolean; onClose: ()
                 {titulo}
               </Text>
             </View>
-            <Pressable onPress={onClose} hitSlop={8}>
+            <Pressable onPress={fecharAtlas} hitSlop={8}>
               <Ionicons name="close" size={24} color={colors.text} />
             </Pressable>
           </View>
 
           {modo === 'menu' && (
             <View>
+              {/* Só aparece com um exercício em contexto (chegou aqui pelo ❓
+                  durante o treino ou no catálogo) — destacado (borda/fundo
+                  accent) por ser a opção mais relevante nesse caso.
+                  Normalmente o usuário nem vê este card: o efeito acima já
+                  pula direto pro modo conversa ao abrir; ele só reaparece se
+                  o usuário voltar pro menu (handleVoltar) e quiser reentrar
+                  na mesma ajuda. */}
+              {exercicioContexto && (
+                <Pressable
+                  className="mb-3 flex-row items-center gap-3 rounded-xl border border-accent/30 bg-accent/10 p-4"
+                  onPress={() => iniciarAjudaExercicio(exercicioContexto)}>
+                  <Ionicons name="body-outline" size={22} color={colors.accent} />
+                  <View className="flex-1">
+                    <Text className="font-card-title text-sm text-text">{`Ajuda com ${exercicioContexto.nome}`}</Text>
+                    <Text className="font-label text-xs uppercase text-muted">Dicas, erros comuns, alternativas</Text>
+                  </View>
+                  <Ionicons name="chevron-forward-outline" size={16} color={colors.muted} />
+                </Pressable>
+              )}
+
               <MenuOpcao
                 icone="barbell-outline"
                 titulo="Montar meu treino"

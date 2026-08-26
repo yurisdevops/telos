@@ -17,6 +17,7 @@ import { Label } from '@/components/ui/label';
 import { ScreenTitle } from '@/components/ui/screen-title';
 import { db } from '@/db';
 import { exercisePreferences, exercises, type Exercise } from '@/db/schema';
+import { useAtlas } from '@/lib/atlas-context';
 import { formatDayMonthLabel, formatShortDateLabel, getTodayDateString, parseLocalIsoDate } from '@/lib/date';
 import { fetchCombinedExerciseHistory, markExerciseSubstitution } from '@/lib/exercise-history';
 import { useDbQuery } from '@/lib/use-db-query';
@@ -27,6 +28,7 @@ const HISTORY_PAGE_SIZE = 10;
 export default function ExercicioDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const exerciseId = Number(id);
+  const { abrirAtlas } = useAtlas();
 
   const { data } = useLiveQuery(
     db.select().from(exercises).where(eq(exercises.id, exerciseId)),
@@ -195,6 +197,13 @@ export default function ExercicioDetailScreen() {
           </View>
         )}
       </View>
+
+      <Pressable
+        onPress={() => abrirAtlas({ wgerId: exercise.wgerId, nome: exercise.nome })}
+        className="mt-2 flex-row items-center gap-1 self-start">
+        <Ionicons name="help-circle-outline" size={16} color={colors.accent} />
+        <Text className="font-label text-xs uppercase text-accent">Perguntar ao Atlas</Text>
+      </Pressable>
 
       <Section title="Músculos">
         {musculos.length > 0 ? (

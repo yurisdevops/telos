@@ -21,11 +21,13 @@ import { Animated, StyleSheet, Text, useColorScheme, View } from 'react-native';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 
 import { ChangelogModal } from '@/components/changelog-modal';
+import { AtlasModal } from '@/components/atlas/atlas-modal';
 import { TelosLoadingScreen } from '@/components/ui/telos-loading-screen';
 import { db } from '@/db';
 import migrations from '@/db/migrations/migrations';
 import { seedDatabase } from '@/db/seed';
 import { ensureUserProfileRow, getLastSeenChangelogVersion, markChangelogSeen } from '@/db/user-profile';
+import { AtlasProvider } from '@/lib/atlas-context';
 import { CURRENT_CHANGELOG_VERSION, getUnseenChangelog, type ChangelogEntry } from '@/lib/changelog';
 import { colors } from '@/theme/tokens';
 
@@ -106,34 +108,42 @@ export default function TabLayout() {
   }, [loadingOpacity]);
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <StatusBar style="light" />
-      {anyError ? (
-        <View style={styles.center}>
-          <Text style={styles.errorText}>Erro ao iniciar o app: {anyError.message}</Text>
-        </View>
-      ) : (
-        <>
-          {ready && (
-            <>
-              <Stack screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="(tabs)" />
-                <Stack.Screen name="plano/novo" options={{ presentation: 'modal' }} />
-              </Stack>
-              {unseenChangelog.length > 0 && (
-                <ChangelogModal visible entries={unseenChangelog} onDismiss={handleDismissChangelog} />
-              )}
-            </>
-          )}
+    <AtlasProvider>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <StatusBar style="light" />
+        {anyError ? (
+          <View style={styles.center}>
+            <Text style={styles.errorText}>Erro ao iniciar o app: {anyError.message}</Text>
+          </View>
+        ) : (
+          <>
+            {ready && (
+              <>
+                <Stack screenOptions={{ headerShown: false }}>
+                  <Stack.Screen name="(tabs)" />
+                  <Stack.Screen name="plano/novo" options={{ presentation: 'modal' }} />
+                </Stack>
+                {unseenChangelog.length > 0 && (
+                  <ChangelogModal visible entries={unseenChangelog} onDismiss={handleDismissChangelog} />
+                )}
+                {/* Estado global (AtlasProvider, acima) + montado uma vez aqui
+                    — não mais dentro de AtlasButton — pra existir
+                    independente de qual rota disparou `abrirAtlas` (ex:
+                    exercicio/[id].tsx, uma tela IRMÃ de (tabs) na Stack, não
+                    descendente dela). */}
+                <AtlasModal />
+              </>
+            )}
 
-          {showLoading && (
-            <Animated.View style={[StyleSheet.absoluteFill, { opacity: loadingOpacity }]}>
-              <TelosLoadingScreen appReady={ready} onReady={handleLoadingReady} />
-            </Animated.View>
-          )}
-        </>
-      )}
-    </ThemeProvider>
+            {showLoading && (
+              <Animated.View style={[StyleSheet.absoluteFill, { opacity: loadingOpacity }]}>
+                <TelosLoadingScreen appReady={ready} onReady={handleLoadingReady} />
+              </Animated.View>
+            )}
+          </>
+        )}
+      </ThemeProvider>
+    </AtlasProvider>
   );
 }
 
