@@ -165,16 +165,25 @@ export function TelosLoadingScreen({
           da tela inteira (que ficaria puxado pra cima, mais perto do topo
           fixo do que do rodapé fixo, se centralizasse contra a tela toda). */}
       <View style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
-        <Animated.View style={{ alignItems: 'center', opacity: iconOpacity }}>
+        <Animated.View style={{ width: '100%', alignItems: 'center', opacity: iconOpacity }}>
           <Ionicons name={icon.name} size={52} color={colors.text} />
+          {/* `width:'100%'` (no Text E no Animated.View pai, que sem isso
+              fica com largura auto/shrink-to-content) — mesma causa raiz do
+              corte já resolvida em "TELOS"/slogan no topo: sem uma largura
+              real pra resolver, o `letterSpacing` faz a medição de largura
+              no Android ficar curta demais e a última letra é cortada pelo
+              limite do container. `textAlign:'center'` mantém o texto
+              centralizado agora que ele ocupa a largura toda. */}
           <Text
             style={{
+              width: '100%',
               marginTop: 8,
               fontFamily: fonts.label,
               fontSize: 11,
               color: colors.muted,
               letterSpacing: 2,
               textTransform: 'uppercase',
+              textAlign: 'center',
             }}>
             {icon.label}
           </Text>
@@ -213,7 +222,7 @@ export function TelosLoadingScreen({
           escala bem menor pra nunca competir com o resto da tela. Linha
           fininha (colors.border) como separador, no lugar de qualquer
           pontuação. */}
-      <View style={{ alignItems: 'center', paddingBottom: 40 }}>
+      <View style={{ width: '100%', alignItems: 'center', paddingBottom: 40 }}>
         <View style={{ height: 0.5, width: 40, backgroundColor: colors.border, marginBottom: 12 }} />
         <Text
           style={{
@@ -225,14 +234,24 @@ export function TelosLoadingScreen({
           }}>
           Yuri Souza
         </Text>
+        {/* `width:'100%'` + `textAlign:'center'` (mesma causa raiz do corte
+            do label do ícone acima, e do "TELOS"/slogan no topo): sem uma
+            largura real pra resolver, o `letterSpacing` faz a medição no
+            Android ficar curta e a última letra é cortada. O container
+            (View acima) também precisa de `width:'100%'` própria — sem ela
+            fica auto/shrink-to-content, e o `100%` do Text não tem o que
+            resolver contra. "Yuri Souza" não teve esse ajuste: não foi
+            reportado cortando e continua igual (auto-width, centralizado). */}
         <Text
           style={{
+            width: '100%',
             marginTop: 2,
             fontFamily: fonts.label,
             fontSize: 10,
             color: colors.border,
             letterSpacing: 1,
             textTransform: 'uppercase',
+            textAlign: 'center',
           }}>
           Desenvolvido com propósito
         </Text>
