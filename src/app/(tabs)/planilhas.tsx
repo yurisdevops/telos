@@ -62,6 +62,17 @@ export default function PlanilhasScreen() {
         }
       />
 
+      <Pressable
+        onPress={() => router.push('/plano/importar-treino')}
+        className="mb-3 flex-row items-center gap-3 rounded-xl border border-border bg-surface p-4">
+        <Ionicons name="clipboard-outline" size={22} color={colors.accent} />
+        <View className="flex-1">
+          <Text className="font-card-title text-sm text-text">Importar treino do professor</Text>
+          <Text className="font-label text-xs text-muted">Cole o treino e o Atlas monta o plano</Text>
+        </View>
+        <Ionicons name="chevron-forward-outline" size={16} color={colors.muted} />
+      </Pressable>
+
       <Pressable onPress={() => router.push('/plano/assistente')} className="mb-4">
         <Card className="flex-row items-center gap-3 border-l-4 border-l-accent">
           <Ionicons name="sparkles-outline" size={26} color={colors.accent} />

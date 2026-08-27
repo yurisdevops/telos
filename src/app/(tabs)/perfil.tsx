@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { Alert, Pressable, Text, View } from 'react-native';
+import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
 import { File } from 'expo-file-system';
 import { Image } from 'expo-image';
@@ -48,6 +49,7 @@ export default function PerfilScreen() {
   const router = useRouter();
   const profile = useUserProfile();
   const { confirm, dialog: confirmDialog } = useConfirmDialog();
+  const appVersion = Constants.expoConfig?.version ?? '1.0.0';
 
   // Reler pelo Perfil mostra o changelog INTEIRO (não só o não visto — é "o
   // que mudou", não "o que há de novo") e só fecha ao dispensar; nunca chama
@@ -389,6 +391,24 @@ export default function PerfilScreen() {
           </Card>
         </Pressable>
 
+        {/* Movido do header do Catálogo pro Perfil (pedido desta leva) —
+            `/sobre.tsx` continua existindo como está (intro do app, Ajuda,
+            Créditos/atribuição wger sob CC BY-SA), só o ponto de entrada
+            mudou. O bloco compacto de versão/autor no fim desta tela (ver
+            abaixo) é NOVO e literal ao pedido, mas por si só não substitui
+            o acesso à Ajuda nem aos Créditos — por isso este card continua
+            apontando pra tela cheia, evitando que `/sobre` (e a atribuição
+            de licença nela) fique inacessível no app. */}
+        <Pressable onPress={() => router.push('/sobre')} className="mb-3">
+          <Card className="flex-row items-center justify-between">
+            <View>
+              <Text className="font-card-title text-lg text-text">Sobre</Text>
+              <Label className="mt-1">O app, ajuda e créditos</Label>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color={colors.muted} />
+          </Card>
+        </Pressable>
+
         {/* Visualmente perigosa, separada das ações normais acima: ícone e
             texto em accent (não há um vermelho dedicado no design system —
             accent já cumpre esse papel de "atenção" em todo o app), borda de
@@ -420,6 +440,16 @@ export default function PerfilScreen() {
         entries={CHANGELOG_ENTRIES}
         onDismiss={() => setChangelogModalVisible(false)}
       />
+
+      {/* Sobre o app — compacto, discreto, só rodapé (o card "Sobre" acima,
+          na seção Dados, é o ponto de entrada de verdade pra Ajuda/Créditos).
+          Mesmo estilo das outras seções (Section/Label), como pedido. */}
+      <Section title="Sobre o app">
+        <Text className="font-card-title text-base text-text">Telos</Text>
+        <Label className="mt-1">Desenvolvido por Yuri Souza</Label>
+        <View className="my-3 h-px bg-border" />
+        <Label>{`Versão ${appVersion}`}</Label>
+      </Section>
 
       {confirmDialog}
     </Screen>
