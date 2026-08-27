@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Alert, Animated, Dimensions, Keyboard, Pressable, ScrollView, Text, View, type KeyboardEvent } from 'react-native';
 import { useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -10,11 +10,11 @@ import { db } from '@/db';
 import { exercises } from '@/db/schema';
 import { criarESalvarComExercicios, treinarAgoraComExercicios } from '@/db/ready-workouts';
 import { parseRepsRangeToInt } from '@/lib/assistant-generator';
-import { getTreinosRapidos, resolverExercicioPorNome, type AtlasTreinoRapido } from '@/lib/atlas';
+import { getExercicioInfo, getTreinosRapidos, resolverExercicioPorNome, type AtlasTreinoRapido } from '@/lib/atlas';
 import { useAtlas } from '@/lib/atlas-context';
 import { colors } from '@/theme/tokens';
 
-type AtlasModo = 'menu' | 'treinos_rapidos';
+type AtlasModo = 'menu' | 'treinos_rapidos' | 'ajuda';
 
 type ExercicioResolvido = { exerciseId: number; seriesAlvo: number; repsAlvo: number };
 
@@ -49,9 +49,11 @@ function reportError(context: string, err: unknown) {
 const ALTURA_TELA = Dimensions.get('window').height;
 
 /**
- * Sheet do Atlas (assistente offline do Telos) — 2 modos internos: menu
- * (entrada) e treinos_rapidos (lista + detalhe de um treino pronto, com
- * "Treinar agora"/"Salvar como plano" via `@/db/ready-workouts`).
+ * Sheet do Atlas (assistente offline do Telos) — 3 modos internos: menu
+ * (entrada), treinos_rapidos (lista + detalhe de um treino pronto, com
+ * "Treinar agora"/"Salvar como plano" via `@/db/ready-workouts`) e ajuda
+ * (dicas curadas de um exercício específico, `@/lib/atlas` getExercicioInfo
+ * — aberto pelo ❓ durante o treino ou no catálogo, nunca pelo menu).
  *
  * NÃO é um `<Modal>` nativo — motivo: no Android, `<Modal>` abre numa janela
  * separada (um Dialog), que NÃO herda o `softwareKeyboardLayoutMode:
@@ -73,9 +75,18 @@ const ALTURA_TELA = Dimensions.get('window').height;
  */
 export function AtlasModal() {
   const router = useRouter();
-  const { visible, fecharAtlas } = useAtlas();
+  const { visible, exercicioContexto, fecharAtlas } = useAtlas();
   const [modo, setModo] = useState<AtlasModo>('menu');
   const [treinoSelecionado, setTreinoSelecionado] = useState<AtlasTreinoRapido | null>(null);
+
+  // Conhecimento curado do exercício em contexto — `null` tanto "sem
+  // exercício em contexto" quanto "tem contexto mas o roteiro não cobre
+  // esse wgerId" (getExercicioInfo já devolve `null` nesse 2º caso; os dois
+  // caem no mesmo texto de fallback no modo ajuda, ver abaixo).
+  const infoExercicio = useMemo(
+    () => (exercicioContexto ? getExercicioInfo(exercicioContexto.wgerId) : null),
+    [exercicioContexto]
+  );
 
   // Anima a entrada/saída do sheet (spring, mesmo em Android e iOS —
   // `useNativeDriver` funciona pra `transform` nos dois). Começa fora da
@@ -116,15 +127,15 @@ export function AtlasModal() {
 
   // Reseta toda vez que o modal ABRE — nunca herda estado de uma abertura
   // anterior. Mesmo padrão de WorkoutShareModal (DEFAULT_SHARE_OPTIONS a
-  // cada `visible` virar true). Sempre abre no menu principal — o ❓
-  // contextual (exercicioContexto, ver atlas-context.tsx) não pula mais pra
-  // nenhuma conversa dedicada, só traz o usuário até aqui como o botão
-  // flutuante genérico faria.
+  // cada `visible` virar true). Com `exercicioContexto` (aberto pelo ❓
+  // durante o treino ou no catálogo), pula direto pro modo ajuda — o menu
+  // principal só aparece quando o Atlas é aberto sem contexto nenhum
+  // (botão flutuante genérico).
   useEffect(() => {
     if (!visible) return;
     setTreinoSelecionado(null);
-    setModo('menu');
-  }, [visible]);
+    setModo(exercicioContexto ? 'ajuda' : 'menu');
+  }, [visible, exercicioContexto]);
 
   const handleIrParaAssistente = () => {
     fecharAtlas();
@@ -185,7 +196,12 @@ export function AtlasModal() {
   };
 
   const mostrarVoltar = modo !== 'menu';
-  const titulo = modo === 'menu' ? 'ATLAS' : (treinoSelecionado?.nome ?? 'Treinos rápidos');
+  const titulo =
+    modo === 'menu'
+      ? 'ATLAS'
+      : modo === 'ajuda'
+        ? (exercicioContexto?.nome ?? 'Ajuda')
+        : (treinoSelecionado?.nome ?? 'Treinos rápidos');
 
   return (
     <View
@@ -234,7 +250,7 @@ export function AtlasModal() {
                 <Ionicons name="arrow-back-outline" size={22} color={colors.text} />
               </Pressable>
             )}
-            {modo === 'menu' && <Ionicons name="flash" size={22} color={colors.accent} />}
+            {(modo === 'menu' || modo === 'ajuda') && <Ionicons name="flash" size={22} color={colors.accent} />}
             <Text numberOfLines={1} className="flex-1 font-display text-xl uppercase text-accent">
               {titulo}
             </Text>
@@ -260,6 +276,50 @@ export function AtlasModal() {
               isLast
             />
           </View>
+        )}
+
+        {modo === 'ajuda' && (
+          <ScrollView style={{ maxHeight: 420 }}>
+            {infoExercicio ? (
+              <>
+                {infoExercicio.resumo_rapido && (
+                  <SecaoAjuda titulo="💡 Dica principal">
+                    <Text className="font-body text-sm text-text">{infoExercicio.resumo_rapido}</Text>
+                  </SecaoAjuda>
+                )}
+                {infoExercicio.como_sentir_musculo && (
+                  <SecaoAjuda titulo="✅ Como sentir o músculo">
+                    <Text className="font-body text-sm text-text">{infoExercicio.como_sentir_musculo}</Text>
+                  </SecaoAjuda>
+                )}
+                {!!infoExercicio.dicas_execucao?.length && (
+                  <SecaoAjuda titulo="⚡ Execução">
+                    {infoExercicio.dicas_execucao.map((dica, index) => (
+                      <BulletAjuda key={index} texto={dica} />
+                    ))}
+                  </SecaoAjuda>
+                )}
+                {!!infoExercicio.erros_comuns?.length && (
+                  <SecaoAjuda titulo="⚠️ Erros comuns">
+                    {infoExercicio.erros_comuns.map((erro, index) => (
+                      <BulletAjuda key={index} texto={erro} />
+                    ))}
+                  </SecaoAjuda>
+                )}
+                {!!infoExercicio.alternativas_se_nao_conseguir?.length && (
+                  <SecaoAjuda titulo="🔄 Se não conseguir fazer" isLast>
+                    {infoExercicio.alternativas_se_nao_conseguir.map((alt, index) => (
+                      <BulletAjuda key={index} texto={alt} />
+                    ))}
+                  </SecaoAjuda>
+                )}
+              </>
+            ) : (
+              <Text className="font-body text-sm text-muted">
+                Informações detalhadas sobre este exercício ainda não estão disponíveis.
+              </Text>
+            )}
+          </ScrollView>
         )}
 
         {modo === 'treinos_rapidos' && !treinoSelecionado && (
@@ -307,6 +367,19 @@ export function AtlasModal() {
       </Animated.View>
     </View>
   );
+}
+
+function SecaoAjuda({ titulo, isLast, children }: { titulo: string; isLast?: boolean; children: ReactNode }) {
+  return (
+    <View className={isLast ? '' : 'mb-4'}>
+      <Text className="mb-1 font-label text-xs uppercase text-muted">{titulo}</Text>
+      {children}
+    </View>
+  );
+}
+
+function BulletAjuda({ texto }: { texto: string }) {
+  return <Text className="mb-1 font-body text-sm text-text">{`•  ${texto}`}</Text>;
 }
 
 function MenuOpcao({
