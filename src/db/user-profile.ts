@@ -29,7 +29,10 @@ export function useUserProfile() {
 }
 
 export type UserProfilePatch = Partial<
-  Pick<UserProfile, 'nome' | 'alturaCm' | 'experiencia' | 'fotoUri' | 'lastSeenChangelogVersion' | 'sexo'>
+  Pick<
+    UserProfile,
+    'nome' | 'alturaCm' | 'experiencia' | 'fotoUri' | 'lastSeenChangelogVersion' | 'sexo' | 'lastCelebrationMonth'
+  >
 >;
 
 // Fundação do boneco 2D (Fase 2, futura) — mesmo padrão de AssistantExperience
@@ -65,6 +68,25 @@ export async function getLastSeenChangelogVersion(): Promise<number | null> {
 /** Grava a versão mais alta do changelog já vista. */
 export async function markChangelogSeen(version: number): Promise<void> {
   await updateUserProfile({ lastSeenChangelogVersion: version });
+}
+
+/** "YYYY-MM" do último mês em que o modal de celebração mensal
+ * (lib/monthly-celebration.ts) foi mostrado — `null` se nunca (linha
+ * existente de antes da coluna, ou usuário que ainda não viu nenhuma). */
+export async function getLastCelebrationMonth(): Promise<string | null> {
+  const rows = await db
+    .select({ value: userProfile.lastCelebrationMonth })
+    .from(userProfile)
+    .where(eq(userProfile.id, USER_PROFILE_ID));
+  return rows[0]?.value ?? null;
+}
+
+/** Grava o mês ("YYYY-MM") em que a celebração acabou de ser mostrada — ou
+ * `null` pra limpar o registro (só usado por `clearCelebrationRecord`,
+ * lib/monthly-celebration.ts, ferramenta de debug pra testar sem esperar o
+ * mês virar). */
+export async function setLastCelebrationMonth(month: string | null): Promise<void> {
+  await updateUserProfile({ lastCelebrationMonth: month });
 }
 
 const PROFILE_PHOTO_BASENAME = 'profile-photo';

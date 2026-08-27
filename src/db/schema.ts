@@ -242,6 +242,14 @@ export const userProfile = sqliteTable('user_profile', {
   // aplicação; SQLite não tem enum nativo, então fica `text` livre aqui,
   // mesmo tratamento de `experiencia`. Nullable: usuário pode nunca preencher.
   sexo: text('sexo'),
+  // "YYYY-MM" do último mês em que o modal de celebração mensal (Progresso
+  // do mês anterior, lib/monthly-celebration.ts) foi mostrado — mesmo
+  // raciocínio de `lastSeenChangelogVersion` (flag de "já vi isso", não um
+  // segredo do device), por isso ENTRA no backup, diferente de pin_hash/
+  // pin_salt. Nullable: linhas existentes ficam NULL até a migração rodar,
+  // e usuário que nunca viu a celebração — tratado como "nunca mostrado"
+  // (shouldShowCelebration), nunca como "já mostrado neste mês".
+  lastCelebrationMonth: text('last_celebration_month'),
 });
 
 export type UserProfile = typeof userProfile.$inferSelect;

@@ -565,6 +565,7 @@ function restoreUserProfile(tx: Tx, row: BackupUserProfile | null, summary: Impo
       fotoUri: row.fotoUri,
       lastSeenChangelogVersion: row.lastSeenChangelogVersion,
       sexo: row.sexo,
+      lastCelebrationMonth: row.lastCelebrationMonth,
     })
     .onConflictDoUpdate({
       target: userProfile.id,
@@ -575,6 +576,7 @@ function restoreUserProfile(tx: Tx, row: BackupUserProfile | null, summary: Impo
         fotoUri: row.fotoUri,
         lastSeenChangelogVersion: row.lastSeenChangelogVersion,
         sexo: row.sexo,
+        lastCelebrationMonth: row.lastCelebrationMonth,
       },
     })
     .run();

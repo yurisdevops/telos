@@ -164,6 +164,10 @@ export type BackupExerciseSubstitution = {
 //
 // `sexo` (fundação do boneco 2D, Fase 1A) é o oposto de pinHash/pinSalt: É
 // dado de perfil de verdade, não trava local — entra no backup normalmente.
+//
+// `lastCelebrationMonth` (celebração mensal, lib/monthly-celebration.ts) é a
+// mesma categoria de `lastSeenChangelogVersion` — flag de "já vi isso", não
+// um segredo do device — então entra no backup normalmente também.
 export type BackupUserProfile = {
   nome: string | null;
   alturaCm: number | null;
@@ -171,6 +175,7 @@ export type BackupUserProfile = {
   fotoUri: string | null;
   lastSeenChangelogVersion: number | null;
   sexo: string | null;
+  lastCelebrationMonth: string | null;
 };
 
 // Fundação de cardio (Etapa A) — cardioSessions é standalone de verdade

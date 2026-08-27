@@ -1,10 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Alert, Pressable, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { eq } from 'drizzle-orm';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
+import { CelebrationModal } from '@/components/ui/celebration-modal';
 import { Screen } from '@/components/screen';
 import { Button } from '@/components/ui/button';
 import { db } from '@/db';
@@ -24,6 +25,13 @@ import {
 } from '@/db/dashboard-stats';
 import { useUserProfile } from '@/db/user-profile';
 import { computeWeekStreak, getTodayDateString, getWeekStartIso } from '@/lib/date';
+import {
+  buildCelebrationMessage,
+  clearCelebrationRecord,
+  getCelebrationIcon,
+  markCelebrationShown,
+  shouldShowCelebration,
+} from '@/lib/monthly-celebration';
 import { getFraseDoDia } from '@/lib/motivational';
 import { computeTrainedDaysInWeek } from '@/lib/stats';
 import { useDbQuery } from '@/lib/use-db-query';
@@ -75,6 +83,40 @@ export default function DashboardScreen() {
   const frase = useMemo(() => getFraseDoDia(), []);
   const saudacao = useMemo(() => getSaudacao(new Date().getHours()), []);
   const weekStartIso = useMemo(() => getWeekStartIso(getTodayDateString()), []);
+
+  // Celebração mensal — roda uma vez por MONTAGEM da tela (não uma query
+  // reativa: é uma checagem de "já mostrei isso este mês?" contra
+  // user_profile, não algo que deva reagir a mudança de sessions em tempo
+  // real). `anterior === 0` (mês anterior sem nenhum treino) não mostra o
+  // modal — não há nada pra celebrar — mas ainda marca como "visto" pra não
+  // checar de novo a cada abertura do app dentro do mesmo mês.
+  const [celebrationData, setCelebrationData] = useState<{ treinos: number; mesNome: string } | null>(null);
+  useEffect(() => {
+    (async () => {
+      try {
+        const show = await shouldShowCelebration();
+        if (!show) return;
+        const { anterior, mesAnteriorNome } = await computeMonthlyTrainingCounts();
+        await markCelebrationShown();
+        if (anterior === 0) return;
+        setCelebrationData({ treinos: anterior, mesNome: capitalize(mesAnteriorNome) });
+      } catch (err) {
+        console.error('Erro ao checar celebração mensal:', err);
+      }
+    })();
+  }, []);
+
+  // Debug (Passo de verificação do pedido) — só existe em dev builds
+  // (`__DEV__`, global do RN/Metro, `false` em qualquer build de produção):
+  // toque longo na saudação limpa o registro e força o modal a aparecer na
+  // hora, sem esperar o mês virar. `clearCelebrationRecord` não é chamada em
+  // nenhum outro lugar do app.
+  const handleDebugForceCelebration = async () => {
+    if (!__DEV__) return;
+    await clearCelebrationRecord();
+    const { anterior, mesAnteriorNome } = await computeMonthlyTrainingCounts();
+    setCelebrationData({ treinos: anterior || 1, mesNome: capitalize(mesAnteriorNome) });
+  };
 
   // Datas de sessões concluídas — alimenta o streak (computeWeekStreak) e os
   // dots de dias da semana (computeTrainedDaysInWeek, mesma função pura já
@@ -174,8 +216,12 @@ export default function DashboardScreen() {
     return { ano, mes, celulas, hojeDia: hoje.getDate() };
   }, [hoje]);
 
+  // Toque longo só tem efeito em dev (`handleDebugForceCelebration` sai cedo
+  // fora de `__DEV__`) — nenhum affordance visível muda em produção, então
+  // não precisa de um botão de debug separado disputando espaço no layout
+  // aprovado.
   const hero = (
-    <View className="pb-2 pt-2">
+    <Pressable onLongPress={handleDebugForceCelebration} className="pb-2 pt-2">
       <Text className="font-label uppercase tracking-wide text-muted" style={{ fontSize: 10 }}>
         {saudacao}
       </Text>
@@ -187,8 +233,19 @@ export default function DashboardScreen() {
         {frase}
       </Text>
       <View className="mt-3.5 rounded-full bg-accent" style={{ width: 40, height: 3 }} />
-    </View>
+    </Pressable>
   );
+
+  const celebrationModal = celebrationData ? (
+    <CelebrationModal
+      visible
+      mesNome={celebrationData.mesNome}
+      treinos={celebrationData.treinos}
+      icone={getCelebrationIcon(celebrationData.treinos)}
+      mensagem={buildCelebrationMessage(celebrationData.treinos, celebrationData.mesNome)}
+      onClose={() => setCelebrationData(null)}
+    />
+  ) : null;
 
   if (isUsuarioNovo) {
     return (
@@ -199,6 +256,7 @@ export default function DashboardScreen() {
           <Text className="mb-4 font-body text-sm text-muted">Crie seu primeiro plano e comece hoje.</Text>
           <Button onPress={() => router.push('/plano/novo')}>Criar meu primeiro plano</Button>
         </View>
+        {celebrationModal}
       </Screen>
     );
   }
@@ -477,6 +535,8 @@ export default function DashboardScreen() {
           <Ionicons name="chevron-forward" size={18} color={colors.muted} />
         </View>
       </Pressable>
+
+      {celebrationModal}
     </Screen>
   );
 }

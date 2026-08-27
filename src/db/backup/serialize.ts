@@ -175,7 +175,7 @@ export async function buildBackupPayload(): Promise<BackupPayload> {
     })),
     // `profile.pinHash`/`profile.pinSalt` NUNCA entram aqui de propósito —
     // trava local ao device, ver comentário em BackupUserProfile (types.ts).
-    // `sexo` entra normalmente — é dado de perfil de verdade.
+    // `sexo`/`lastCelebrationMonth` entram normalmente.
     userProfile: profile
       ? {
           nome: profile.nome,
@@ -184,6 +184,7 @@ export async function buildBackupPayload(): Promise<BackupPayload> {
           fotoUri: profile.fotoUri,
           lastSeenChangelogVersion: profile.lastSeenChangelogVersion,
           sexo: profile.sexo,
+          lastCelebrationMonth: profile.lastCelebrationMonth,
         }
       : null,
     cardioSessions: cardioSessionRows.map((cs) => ({

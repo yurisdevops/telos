@@ -285,6 +285,10 @@ export function assertValidBackupPayload(json: unknown): BackupPayload {
     // feature, mesma regra de normalização pra `null`.
     assertOptionalNullableString(json.userProfile.sexo, 'userProfile.sexo');
     if (json.userProfile.sexo === undefined) json.userProfile.sexo = null;
+    // lastCelebrationMonth (celebração mensal) — mesma regra: ausente em
+    // backups anteriores a essa feature, normaliza pra `null`.
+    assertOptionalNullableString(json.userProfile.lastCelebrationMonth, 'userProfile.lastCelebrationMonth');
+    if (json.userProfile.lastCelebrationMonth === undefined) json.userProfile.lastCelebrationMonth = null;
   }
 
   json.cardioSessions.forEach((row, index) => {

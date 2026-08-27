@@ -120,6 +120,13 @@
       "when": 1787406021812,
       "tag": "0016_new_cloak",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "6",
+      "when": 1787864417391,
+      "tag": "0017_typical_the_executioner",
+      "breakpoints": true
     }
   ]
 }
