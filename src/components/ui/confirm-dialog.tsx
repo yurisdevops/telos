@@ -28,6 +28,24 @@ export type ConfirmDialogProps = {
  * Mesmo molde de Modal que FormModal (transparent + fade + statusBarTranslucent
  * + overlay bg-black/70) — só o conteúdo interno muda (card de confirmação
  * em vez de formulário).
+ *
+ * DELIBERADAMENTE `<Modal>` nativo, não a "View absoluta" do AtlasModal —
+ * mesmo pedido explícito numa leva anterior. AtlasModal precisa da View
+ * absoluta porque tem um TextInput dentro: no Android, o `<Modal>` nativo
+ * abre numa janela separada que não herda `softwareKeyboardLayoutMode:
+ * "resize"`, então o teclado tampa o campo (ver AtlasModal). ConfirmDialog
+ * NUNCA tem TextInput — esse problema não existe aqui. Trocar mesmo assim
+ * introduziria um bug real: cada tela instancia seu PRÓPRIO
+ * `useConfirmDialog()` e renderiza `{dialog}` inline dentro da própria
+ * árvore (muitas vezes dentro de `<Screen scrollable>`, ou até dentro de um
+ * `<CollapsibleSection>`) — uma View `position:'absolute'` nesse ponto fica
+ * posicionada relativa ao CONTEÚDO do ScrollView (que cresce com o scroll),
+ * não à tela visível, então `top:'35%'` acertaria a posição errada
+ * (relativa a uma altura de conteúdo variável, não ao viewport real) em vez
+ * de centralizar na tela — funciona pro AtlasModal porque ELE é montado uma
+ * única vez no layout raiz, fora de qualquer scroll, não replicado em ~10
+ * telas como o ConfirmDialog. O `<Modal>` nativo garante centralização
+ * correta em qualquer um desses lugares, sem essa armadilha.
  */
 export function ConfirmDialog({
   visible,
@@ -70,13 +88,13 @@ export function ConfirmDialog({
       <View className="flex-1 items-center justify-center bg-black/70">
         <Animated.View
           style={{
-            width: '100%',
+            width: '85%',
             maxWidth: 320,
-            marginHorizontal: 24,
+            marginHorizontal: 32,
             backgroundColor: colors.surface,
             borderWidth: 1,
             borderColor: colors.border,
-            borderRadius: 12,
+            borderRadius: 16,
             padding: 24,
             transform: [{ scale }],
           }}>
@@ -98,7 +116,7 @@ export function ConfirmDialog({
                 color: colors.muted,
                 textAlign: 'center',
                 lineHeight: 20,
-                marginBottom: 24,
+                marginBottom: 20,
               }}>
               {message}
             </Text>
