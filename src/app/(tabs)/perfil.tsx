@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Alert, Pressable, Text, View } from 'react-native';
 import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
@@ -190,9 +190,30 @@ export default function PerfilScreen() {
   const [pesoDraft, setPesoDraft] = useState('');
   const latestPesoKg = useDbQuery(() => getLatestBodyWeightKg(), ['body_weight_logs'], []);
 
+  // Feedback de "salvo" — some sozinho depois de 1,5s. `savedFeedbackTimeout`
+  // guarda o id pra limpar no unmount (troca de aba no meio da janela de
+  // 1,5s não deve tentar setState numa tela que já saiu).
+  const [savedFeedback, setSavedFeedback] = useState(false);
+  const savedFeedbackTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    return () => {
+      if (savedFeedbackTimeout.current) clearTimeout(savedFeedbackTimeout.current);
+    };
+  }, []);
+
   // Nome/altura: explícito "Salvar" (mesmo padrão de "Salvar nota" no
   // exercício e "Registrar hoje" do peso corporal) — não onBlur, pra não
   // gravar um valor de altura incompleto/inválido enquanto o usuário digita.
+  //
+  // Investigação do pedido: não existe (e nunca existiu) um `isEditing` que
+  // "fecha" e faz o botão sumir — os campos de Nome/Altura e o botão Salvar
+  // já são SEMPRE visíveis nesta seção, sem modo de edição nenhum por trás.
+  // O bug real era só a metade 2 do pedido: salvar não dava nenhum feedback
+  // (os drafts só voltavam a `null`, e o valor exibido — vindo de
+  // `profile?.nome` via useUserProfile — ficava visualmente idêntico ao que
+  // já estava lá, então parecia que nada tinha acontecido). Corrigido só
+  // isso; não criei um `isEditing`/`setIsEditing(false)` que não tem
+  // correspondência nenhuma no código de verdade.
   const handleSaveDadosPessoais = async () => {
     const trimmedNome = nomeValue.trim();
     const alturaTrim = alturaValue.trim();
@@ -206,6 +227,9 @@ export default function PerfilScreen() {
       });
       setNomeDraft(null);
       setAlturaDraft(null);
+      setSavedFeedback(true);
+      if (savedFeedbackTimeout.current) clearTimeout(savedFeedbackTimeout.current);
+      savedFeedbackTimeout.current = setTimeout(() => setSavedFeedback(false), 1500);
     } catch (err) {
       reportError('Erro ao salvar dados pessoais', err);
     }
@@ -306,9 +330,12 @@ export default function PerfilScreen() {
           className="mb-4"
         />
 
-        <Button variant="secondary" onPress={handleSaveDadosPessoais}>
-          Salvar
+        <Button variant="secondary" disabled={savedFeedback} onPress={handleSaveDadosPessoais}>
+          {savedFeedback ? 'Salvo ✓' : 'Salvar'}
         </Button>
+        {savedFeedback && (
+          <Text className="mt-2 font-label text-xs text-success">✓ Dados salvos com sucesso</Text>
+        )}
 
         <Label className="mb-2 mt-6">Experiência</Label>
         <View className="flex-row flex-wrap gap-2">
