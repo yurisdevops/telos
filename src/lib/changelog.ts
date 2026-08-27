@@ -7,7 +7,7 @@ export type ChangelogEntry = {
 // Versão mais recente definida abaixo — o que o usuário já viu (persistido em
 // user_profile.lastSeenChangelogVersion) é comparado contra o `version` de
 // cada entrada, não contra essa constante diretamente (getUnseenChangelog).
-export const CURRENT_CHANGELOG_VERSION = 5;
+export const CURRENT_CHANGELOG_VERSION = 6;
 
 // Lista crescente de levas — nunca editar uma entrada já publicada (quem já
 // viu não deve ver de novo com conteúdo diferente); só adicionar novas com
@@ -152,6 +152,34 @@ export const CHANGELOG_ENTRIES: ChangelogEntry[] = [
         titulo: 'Exercícios novos',
         descricao:
           '33 exercícios adicionados: máquinas iso-lateral, convergentes e versões unilaterais do que antes só tinha bilateral.',
+      },
+    ],
+  },
+  {
+    version: 6,
+    title: 'Novidades',
+    items: [
+      {
+        titulo: 'Dashboard',
+        descricao:
+          'Nova tela inicial com frase do dia, próximo treino, calendário mensal, volume semanal e seus recordes.',
+      },
+      {
+        titulo: 'Atlas',
+        descricao:
+          'Assistente de treino com botão flutuante — acesse treinos rápidos e monte seu plano diretamente pelo Atlas.',
+      },
+      {
+        titulo: 'Treinos rápidos',
+        descricao: '8 treinos de 20 a 35 minutos prontos para usar, com exercícios do seu catálogo.',
+      },
+      {
+        titulo: 'Celebração mensal',
+        descricao: 'No início de cada mês, o app celebra seus treinos do mês anterior.',
+      },
+      {
+        titulo: 'Efeito dark no compartilhamento',
+        descricao: 'O estilo foto ganhou efeito dark dramático com toggle para ligar e desligar.',
       },
     ],
   },
