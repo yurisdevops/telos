@@ -1,19 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import {
-  Alert,
-  Animated,
-  Dimensions,
-  Keyboard,
-  Pressable,
-  ScrollView,
-  Text,
-  TextInput,
-  View,
-  type KeyboardEvent,
-} from 'react-native';
+import { Alert, Animated, Dimensions, Keyboard, Pressable, ScrollView, Text, View, type KeyboardEvent } from 'react-native';
 import { useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -22,31 +10,11 @@ import { db } from '@/db';
 import { exercises } from '@/db/schema';
 import { criarESalvarComExercicios, treinarAgoraComExercicios } from '@/db/ready-workouts';
 import { parseRepsRangeToInt } from '@/lib/assistant-generator';
-import {
-  buscarResposta,
-  getExercicioInfo,
-  getTreinosRapidos,
-  resolverExercicioPorNome,
-  type AtlasMessage,
-  type AtlasTreinoRapido,
-} from '@/lib/atlas';
-import { useAtlas, type AtlasExercicioContexto } from '@/lib/atlas-context';
+import { getTreinosRapidos, resolverExercicioPorNome, type AtlasTreinoRapido } from '@/lib/atlas';
+import { useAtlas } from '@/lib/atlas-context';
 import { colors } from '@/theme/tokens';
 
-type AtlasModo = 'menu' | 'conversa' | 'treinos_rapidos';
-
-const MENSAGEM_INICIAL: AtlasMessage = {
-  id: 'inicial',
-  role: 'atlas',
-  content: 'Olá! Pode me perguntar sobre exercícios, treino, nutrição ou qualquer dúvida de academia.',
-};
-
-// Id local só pra `key` de lista / distinguir mensagens no histórico — nunca
-// persiste em lugar nenhum (a conversa reseta a cada abertura do modal, ver
-// efeito abaixo), então não precisa de nada mais forte que isso.
-function gerarId(): string {
-  return `msg-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-}
+type AtlasModo = 'menu' | 'treinos_rapidos';
 
 type ExercicioResolvido = { exerciseId: number; seriesAlvo: number; repsAlvo: number };
 
@@ -81,10 +49,9 @@ function reportError(context: string, err: unknown) {
 const ALTURA_TELA = Dimensions.get('window').height;
 
 /**
- * Sheet do Atlas (assistente offline do Telos) — 3 modos internos: menu
- * (entrada), conversa (busca offline no roteiro curado, `@/lib/atlas`) e
- * treinos_rapidos (lista + detalhe de um treino pronto, com "Treinar agora"/
- * "Salvar como plano" via `@/db/ready-workouts`).
+ * Sheet do Atlas (assistente offline do Telos) — 2 modos internos: menu
+ * (entrada) e treinos_rapidos (lista + detalhe de um treino pronto, com
+ * "Treinar agora"/"Salvar como plano" via `@/db/ready-workouts`).
  *
  * NÃO é um `<Modal>` nativo — motivo: no Android, `<Modal>` abre numa janela
  * separada (um Dialog), que NÃO herda o `softwareKeyboardLayoutMode:
@@ -106,12 +73,9 @@ const ALTURA_TELA = Dimensions.get('window').height;
  */
 export function AtlasModal() {
   const router = useRouter();
-  const { visible, exercicioContexto, fecharAtlas } = useAtlas();
+  const { visible, fecharAtlas } = useAtlas();
   const [modo, setModo] = useState<AtlasModo>('menu');
-  const [mensagens, setMensagens] = useState<AtlasMessage[]>([MENSAGEM_INICIAL]);
-  const [input, setInput] = useState('');
   const [treinoSelecionado, setTreinoSelecionado] = useState<AtlasTreinoRapido | null>(null);
-  const scrollRef = useRef<KeyboardAwareScrollView>(null);
 
   // Anima a entrada/saída do sheet (spring, mesmo em Android e iOS —
   // `useNativeDriver` funciona pra `transform` nos dois). Começa fora da
@@ -150,63 +114,21 @@ export function AtlasModal() {
     };
   }, []);
 
-  // Primeira mensagem do Atlas quando há um exercício em contexto (❓ durante
-  // o treino ou no catálogo) — resumo + primeira dica de execução, ou uma
-  // mensagem neutra se o roteiro não cobrir esse exercício. Chamada tanto no
-  // efeito abaixo (abrir já sabendo o exercício) quanto pelo card em destaque
-  // do menu (voltar pra essa conversa depois de já ter saído dela).
-  const iniciarAjudaExercicio = (exercicio: AtlasExercicioContexto) => {
-    const info = getExercicioInfo(exercicio.wgerId);
-    const partes = [info?.resumo_rapido, info?.dicas_execucao?.[0] ? `💡 ${info.dicas_execucao[0]}` : null].filter(
-      (parte): parte is string => !!parte
-    );
-    const conteudo = partes.length > 0 ? partes.join('\n\n') : `Pode me perguntar sobre ${exercicio.nome}!`;
-    setMensagens([{ id: 'inicial-exercicio', role: 'atlas', content: conteudo }]);
-    setModo('conversa');
-  };
-
   // Reseta toda vez que o modal ABRE — nunca herda estado de uma abertura
   // anterior. Mesmo padrão de WorkoutShareModal (DEFAULT_SHARE_OPTIONS a
-  // cada `visible` virar true). Com `exercicioContexto` (aberto por um ❓),
-  // pula direto pro modo conversa já com as dicas daquele exercício, em vez
-  // do menu genérico — é o "abre já sabendo qual exercício é" do pedido.
+  // cada `visible` virar true). Sempre abre no menu principal — o ❓
+  // contextual (exercicioContexto, ver atlas-context.tsx) não pula mais pra
+  // nenhuma conversa dedicada, só traz o usuário até aqui como o botão
+  // flutuante genérico faria.
   useEffect(() => {
     if (!visible) return;
-    setInput('');
     setTreinoSelecionado(null);
-    if (exercicioContexto) {
-      iniciarAjudaExercicio(exercicioContexto);
-    } else {
-      setModo('menu');
-      setMensagens([MENSAGEM_INICIAL]);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visible, exercicioContexto]);
+    setModo('menu');
+  }, [visible]);
 
   const handleIrParaAssistente = () => {
     fecharAtlas();
     router.push('/plano/assistente');
-  };
-
-  const handleEnviar = () => {
-    const texto = input.trim();
-    if (!texto) return;
-    const perguntaMsg: AtlasMessage = { id: gerarId(), role: 'user', content: texto };
-    // Com exercício em contexto (❓), o wgerId acompanha TODA a conversa
-    // daquela abertura — não só a mensagem inicial — pra `buscarResposta`
-    // priorizar o conhecimento específico dele mesmo em perguntas de
-    // acompanhamento ("e se eu sentir dor?"), sem repetir o nome do
-    // exercício a cada pergunta.
-    const respostaMsg: AtlasMessage = {
-      id: gerarId(),
-      role: 'atlas',
-      content: buscarResposta(texto, exercicioContexto?.wgerId),
-    };
-    setMensagens((prev) => [...prev, perguntaMsg, respostaMsg]);
-    setInput('');
-    // `scrollToEnd(animated)` — a API do KeyboardAwareScrollView (não a do
-    // ScrollView nativo): recebe um boolean solto, não `{ animated: true }`.
-    requestAnimationFrame(() => scrollRef.current?.scrollToEnd(true));
   };
 
   const handleVoltar = () => {
@@ -263,12 +185,7 @@ export function AtlasModal() {
   };
 
   const mostrarVoltar = modo !== 'menu';
-  const titulo =
-    modo === 'menu'
-      ? 'ATLAS'
-      : modo === 'conversa'
-        ? 'Tirar uma dúvida'
-        : (treinoSelecionado?.nome ?? 'Treinos rápidos');
+  const titulo = modo === 'menu' ? 'ATLAS' : (treinoSelecionado?.nome ?? 'Treinos rápidos');
 
   return (
     <View
@@ -329,26 +246,6 @@ export function AtlasModal() {
 
         {modo === 'menu' && (
           <View>
-            {/* Só aparece com um exercício em contexto (chegou aqui pelo ❓
-                durante o treino ou no catálogo) — destacado (borda/fundo
-                accent) por ser a opção mais relevante nesse caso.
-                Normalmente o usuário nem vê este card: o efeito acima já
-                pula direto pro modo conversa ao abrir; ele só reaparece se
-                o usuário voltar pro menu (handleVoltar) e quiser reentrar
-                na mesma ajuda. */}
-            {exercicioContexto && (
-              <Pressable
-                className="mb-3 flex-row items-center gap-3 rounded-xl border border-accent/30 bg-accent/10 p-4"
-                onPress={() => iniciarAjudaExercicio(exercicioContexto)}>
-                <Ionicons name="body-outline" size={22} color={colors.accent} />
-                <View className="flex-1">
-                  <Text className="font-card-title text-sm text-text">{`Ajuda com ${exercicioContexto.nome}`}</Text>
-                  <Text className="font-label text-xs uppercase text-muted">Dicas, erros comuns, alternativas</Text>
-                </View>
-                <Ionicons name="chevron-forward-outline" size={16} color={colors.muted} />
-              </Pressable>
-            )}
-
             <MenuOpcao
               icone="barbell-outline"
               titulo="Montar meu treino"
@@ -360,62 +257,8 @@ export function AtlasModal() {
               titulo="Treinos rápidos"
               descricao="Sessões prontas pra quando o tempo é curto"
               onPress={() => setModo('treinos_rapidos')}
-            />
-            <MenuOpcao
-              icone="help-circle-outline"
-              titulo="Tirar uma dúvida"
-              descricao="Pergunte sobre exercícios, treino ou nutrição"
-              onPress={() => setModo('conversa')}
               isLast
             />
-          </View>
-        )}
-
-        {modo === 'conversa' && (
-          <View>
-            {/* KeyboardAwareScrollView (não ScrollView + KeyboardAvoidingView
-                manual) — mesma solução que resolveu o teclado tampando a
-                SessionExecution em hoje.tsx. `enableOnAndroid` é o que falta
-                por padrão pra ela agir no Android (só o iOS é coberto sem
-                essa flag); o TextInput fica FORA dela, fixo no fim do sheet,
-                como pedido. */}
-            <KeyboardAwareScrollView
-              ref={scrollRef}
-              enableOnAndroid
-              extraScrollHeight={80}
-              keyboardShouldPersistTaps="handled"
-              style={{ maxHeight: 300 }}
-              contentContainerStyle={{ paddingBottom: 8 }}>
-              {mensagens.map((msg) => (
-                <View
-                  key={msg.id}
-                  className={`mb-2 rounded px-3 py-2 ${msg.role === 'atlas' ? 'self-start bg-bg' : 'self-end bg-accent'}`}
-                  style={{ maxWidth: '85%' }}>
-                  <Text className={`font-body text-sm ${msg.role === 'atlas' ? 'text-text' : 'text-white'}`}>
-                    {msg.content}
-                  </Text>
-                </View>
-              ))}
-            </KeyboardAwareScrollView>
-
-            <View className="mt-3 flex-row items-end gap-2">
-              <TextInput
-                value={input}
-                onChangeText={setInput}
-                placeholder="Pergunte algo..."
-                placeholderTextColor={colors.muted}
-                className="flex-1 rounded border border-border bg-bg px-4 py-3 font-body text-base text-text"
-                onSubmitEditing={handleEnviar}
-                returnKeyType="send"
-                multiline
-              />
-              <Pressable
-                onPress={handleEnviar}
-                disabled={!input.trim()}
-                className={`h-11 w-11 items-center justify-center rounded-full ${input.trim() ? 'bg-accent' : 'bg-border'}`}>
-                <Ionicons name="arrow-up-outline" size={20} color="#fff" />
-              </Pressable>
-            </View>
           </View>
         )}
 
@@ -473,7 +316,7 @@ function MenuOpcao({
   onPress,
   isLast,
 }: {
-  icone: 'barbell-outline' | 'flash-outline' | 'help-circle-outline';
+  icone: 'barbell-outline' | 'flash-outline';
   titulo: string;
   descricao: string;
   onPress: () => void;
