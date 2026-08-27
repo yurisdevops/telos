@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Alert, Pressable, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { eq } from 'drizzle-orm';
@@ -12,9 +12,15 @@ import { exercises, sessions } from '@/db/schema';
 import {
   computeLastMonthsTrainingCounts,
   computeMonthlyTrainingCounts,
+  computeWeeklyVolumeKg,
   computeWeekTrainingCount,
+  getActivePlanDays,
+  getActivePlanFrequency,
   getLatestPR,
+  getMonthTrainingDays,
   getNextSuggestedWorkout,
+  MESES_PT,
+  type PlanDay,
 } from '@/db/dashboard-stats';
 import { useUserProfile } from '@/db/user-profile';
 import { computeWeekStreak, getTodayDateString, getWeekStartIso } from '@/lib/date';
@@ -23,17 +29,18 @@ import { computeTrainedDaysInWeek } from '@/lib/stats';
 import { useDbQuery } from '@/lib/use-db-query';
 import { colors } from '@/theme/tokens';
 
-// O perfil (user_profile, schema.ts) não tem nenhum campo de frequência/meta
-// semanal hoje (só nome/altura/experiência/foto/sexo) — sem essa fundação,
-// a meta fica só no valor fixo abaixo até existir um campo de meta de
-// verdade no perfil.
-const META_SEMANAL_PADRAO = 3;
-
 // Streak mínimo pra valer a pena mostrar o badge de sequência — 1 semana
 // sozinha não é uma "sequência", é só a semana atual.
 const STREAK_MINIMO_EXIBICAO = 2;
 
 const MESES_MINI_BARRAS = 6;
+
+// Segunda a domingo — mesma ordem/convenção de computeTrainedDaysInWeek
+// (lib/stats.ts) e do card de compartilhamento, índice 0 = segunda.
+const DIA_LETRAS = ['S', 'T', 'Q', 'Q', 'S', 'S', 'D'];
+// Domingo a sábado — ordem do cabeçalho do calendário (bate com
+// `Date.getDay()`: 0 = domingo, usado direto pro offset do 1º dia do mês).
+const DIA_LETRAS_CALENDARIO = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
 
 // Base compartilhada dos cards do dashboard — rounded-xl (12px), diferente
 // do `rounded` (6px) do componente `Card` compartilhado (ui/card.tsx), que
@@ -47,6 +54,10 @@ function getSaudacao(hour: number): string {
   if (hour < 12) return 'Bom dia';
   if (hour < 18) return 'Boa tarde';
   return 'Boa noite';
+}
+
+function capitalize(word: string): string {
+  return word.charAt(0).toUpperCase() + word.slice(1);
 }
 
 function reportError(context: string, err: unknown) {
@@ -84,19 +95,49 @@ export default function DashboardScreen() {
   // só porque a query ainda não respondeu.
   const isUsuarioNovo = concludedSessionRows !== undefined && concludedSessionRows.length === 0;
 
+  // Meta semanal REAL (Passo 1) — dias do plano ativo, não mais um "3" fixo.
+  // Mesmas tabelas de getNextSuggestedWorkout (as duas consultam o "plano
+  // ativo"), por isso os mesmos watchTables.
+  const WATCH_PLANO_ATIVO = ['sessions', 'workout_days', 'workout_plans'];
+  const meta = useDbQuery(getActivePlanFrequency, WATCH_PLANO_ATIVO, []);
   const weekCount = useDbQuery(computeWeekTrainingCount, ['sessions'], []);
+  const volume = useDbQuery(computeWeeklyVolumeKg, ['sessions', 'set_logs'], []);
   const monthlyCounts = useDbQuery(computeMonthlyTrainingCounts, ['sessions'], []);
+  const monthTrainingDays = useDbQuery(getMonthTrainingDays, ['sessions'], []);
   const lastMonths = useDbQuery(() => computeLastMonthsTrainingCounts(MESES_MINI_BARRAS), ['sessions'], []);
   const latestPR = useDbQuery(getLatestPR, ['sessions', 'set_logs'], []);
-  const nextWorkout = useDbQuery(getNextSuggestedWorkout, ['sessions', 'workout_days', 'workout_plans'], []);
+  const nextWorkout = useDbQuery(getNextSuggestedWorkout, WATCH_PLANO_ATIVO, []);
+  const planDays = useDbQuery(getActivePlanDays, WATCH_PLANO_ATIVO, []);
   const totalExercicios = useDbQuery(() => db.$count(exercises), ['exercises'], []);
 
-  const weekProgress = weekCount != null ? Math.max(0, Math.min(1, weekCount / META_SEMANAL_PADRAO)) : 0;
+  const metaEfetiva = meta ?? 3;
+  const weekProgress = weekCount != null ? Math.max(0, Math.min(1, weekCount / metaEfetiva)) : 0;
   const maxMesCount = lastMonths ? Math.max(1, ...lastMonths) : 1;
 
+  // Passo 4 — "Trocar": troca só visual/local (não grava nada no banco),
+  // sobrepondo o dia sugerido por outro dia do mesmo plano ativo escolhido
+  // via chip. Reseta sozinho quando `nextWorkout` muda de plano/sugestão de
+  // verdade (troca de plano ativo, por exemplo) — sem isso, um `selectedDay`
+  // de um plano antigo poderia ficar "grudado" na tela depois de uma
+  // mudança real de contexto.
+  const [showTrocar, setShowTrocar] = useState(false);
+  const [selectedDay, setSelectedDay] = useState<PlanDay | null>(null);
+  const diaAtual = selectedDay ?? (nextWorkout ? { id: nextWorkout.dayId, label: nextWorkout.dayNome } : null);
+  // Músculos só existem pré-calculados pro dia SUGERIDO (getNextSuggestedWorkout
+  // já traz isso pronto) — pra um dia escolhido manualmente via chip, mostrar
+  // de novo exigiria uma consulta por dia só pra essa troca visual; omitido
+  // de propósito (fica só o nome do dia) em vez de uma N+1 query por chip.
+  const musculosVisiveis = selectedDay ? null : nextWorkout?.musculos;
+  const outrosDias = (planDays ?? []).filter((day) => day.id !== diaAtual?.id);
+
+  const handleTrocarDia = (day: PlanDay) => {
+    setSelectedDay(day);
+    setShowTrocar(false);
+  };
+
   // Mesma semântica de handleStartDay (hoje.tsx): cria a sessão de hoje pro
-  // dia sugerido. Reimplementado aqui (não importado de hoje.tsx, que não
-  // exporta nada) com a mesma trava de "já existe sessão hoje" de
+  // dia sugerido/escolhido. Reimplementado aqui (não importado de hoje.tsx,
+  // que não exporta nada) com a mesma trava de "já existe sessão hoje" de
   // treinarAgora/treinarAgoraComExercicios (ready-workouts.ts) — sem ela,
   // tocar "Iniciar" com um treino já em andamento criaria uma 2ª sessão
   // órfã pro dia (hoje.tsx só mostra a primeira, `todaySessions?.[0]`). Com
@@ -116,6 +157,22 @@ export default function DashboardScreen() {
       reportError('Erro ao iniciar treino', err);
     }
   };
+
+  // Grade do calendário (Passo 5) — puramente derivada da data de hoje, sem
+  // consulta nenhuma (o dado real é `monthTrainingDays`, já vindo da query).
+  // `null` preenche as células antes do dia 1 (offset do 1º dia da semana).
+  const hoje = useMemo(() => new Date(), []);
+  const calendario = useMemo(() => {
+    const ano = hoje.getFullYear();
+    const mes = hoje.getMonth();
+    const diasNoMes = new Date(ano, mes + 1, 0).getDate();
+    const primeiroDiaSemana = new Date(ano, mes, 1).getDay(); // 0 = domingo
+    const celulas: (number | null)[] = [
+      ...Array(primeiroDiaSemana).fill(null),
+      ...Array.from({ length: diasNoMes }, (_, i) => i + 1),
+    ];
+    return { ano, mes, celulas, hojeDia: hoje.getDate() };
+  }, [hoje]);
 
   const hero = (
     <View className="pb-2 pt-2">
@@ -150,83 +207,194 @@ export default function DashboardScreen() {
     <Screen edges={['top', 'left', 'right']} scrollable>
       {hero}
 
-      {/* CARD SEMANA */}
-      <View className={`${CARD_BASE} mt-4 px-4 py-3.5`}>
-        <Text className="font-label uppercase text-muted" style={{ fontSize: 10 }}>
-          Esta semana
-        </Text>
-        <View className="mt-2 flex-row items-center justify-between">
-          <Text className="font-display text-text" style={{ fontSize: 26 }}>
-            {`${weekCount ?? 0} de ${META_SEMANAL_PADRAO} treinos`}
+      {/* GRID: SEMANA + VOLUME */}
+      <View className="mt-4 flex-row gap-2.5">
+        <View className={`${CARD_BASE} flex-1 px-3.5 py-3.5`}>
+          <Text className="font-label uppercase text-muted" style={{ fontSize: 10 }}>
+            Esta semana
           </Text>
+          <Text className="mt-1.5 font-display text-text" style={{ fontSize: 22 }}>{`${weekCount ?? 0}/${metaEfetiva}`}</Text>
           {streak >= STREAK_MINIMO_EXIBICAO && (
             <View
-              className="flex-row items-center rounded-full px-2.5 py-1"
+              className="mt-1.5 flex-row items-center self-start rounded-full px-2 py-0.5"
               style={{ backgroundColor: `${colors.accent}1A`, borderWidth: 1, borderColor: `${colors.accent}4D` }}>
-              <Text className="font-label text-accent" style={{ fontSize: 11 }}>{`🔥 ${streak} semanas`}</Text>
+              <Text className="font-label text-accent" style={{ fontSize: 10 }}>{`🔥 ${streak} sem.`}</Text>
             </View>
           )}
+          <View className="mt-2.5 h-1 overflow-hidden rounded-full bg-border">
+            <View className="h-full rounded-full bg-accent" style={{ width: `${weekProgress * 100}%` }} />
+          </View>
+          {/* Dots dos dias — 7 (segunda-domingo), um por dia REAL da semana
+              (computeTrainedDaysInWeek), com a inicial do dia embaixo de
+              cada um, como pedido. */}
+          <View className="mt-2 flex-row justify-between">
+            {diasSemana.map((treinou, index) => (
+              <View key={index} className="items-center">
+                <View
+                  style={{
+                    width: 4,
+                    height: 4,
+                    borderRadius: 2,
+                    backgroundColor: treinou ? colors.accent : 'transparent',
+                    borderWidth: treinou ? 0 : 1,
+                    borderColor: colors.border,
+                  }}
+                />
+                <Text className="mt-1 font-label text-muted" style={{ fontSize: 8 }}>
+                  {DIA_LETRAS[index]}
+                </Text>
+              </View>
+            ))}
+          </View>
         </View>
-        <View className="mt-3 h-1 overflow-hidden rounded-full bg-border">
-          <View className="h-full rounded-full bg-accent" style={{ width: `${weekProgress * 100}%` }} />
-        </View>
-        {/* Dots dos dias — 7 (segunda-domingo), um por dia REAL da semana
-            (computeTrainedDaysInWeek), não um contador solto de "5 dots" —
-            layout aprovado pedia "5 dots (ou frequência do perfil)", mas sem
-            frequência no perfil (ver comentário de META_SEMANAL_PADRAO) e
-            sem um recorte óbvio de "quais 5 dos 7 dias", os 7 dias reais da
-            semana são o dado correto que já existe (mesma função usada no
-            card de compartilhamento) — 5 dots fixos, sem ligação a dia
-            nenhum, mostrariam informação incorreta. */}
-        <View className="mt-3 flex-row gap-1.5">
-          {diasSemana.map((treinou, index) => (
-            <View
-              key={index}
-              style={{
-                width: 4,
-                height: 4,
-                borderRadius: 2,
-                backgroundColor: treinou ? colors.accent : 'transparent',
-                borderWidth: treinou ? 0 : 1,
-                borderColor: colors.border,
-              }}
-            />
-          ))}
+
+        <View className={`${CARD_BASE} flex-1 px-3.5 py-3.5`}>
+          <Text className="font-label uppercase text-muted" style={{ fontSize: 10 }}>
+            Volume
+          </Text>
+          <Text className="mt-1.5 font-display text-text" style={{ fontSize: 22 }} numberOfLines={1}>
+            {`${(volume?.atual ?? 0).toLocaleString('pt-BR')} kg`}
+          </Text>
+          <Text className="mt-0.5 font-label text-muted" style={{ fontSize: 10 }}>
+            esta semana
+          </Text>
+          {volume && volume.atual > volume.anterior && (
+            <Text className="mt-1.5 font-body text-success" style={{ fontSize: 11 }}>
+              {`↑ +${(volume.atual - volume.anterior).toLocaleString('pt-BR')}kg`}
+            </Text>
+          )}
+          {volume && volume.atual < volume.anterior && (
+            <Text className="mt-1.5 font-body text-accent" style={{ fontSize: 11 }}>
+              {`↓ -${(volume.anterior - volume.atual).toLocaleString('pt-BR')}kg`}
+            </Text>
+          )}
+          {volume && volume.atual === volume.anterior && (
+            <Text className="mt-1.5 font-body text-muted" style={{ fontSize: 11 }}>
+              = igual à anterior
+            </Text>
+          )}
         </View>
       </View>
 
       {/* CARD PRÓXIMO TREINO */}
-      <View className={`${CARD_BASE} mt-2.5 flex-row items-center border-l-4 border-l-accent px-4 py-3.5`}>
-        {nextWorkout ? (
-          <>
-            <View className="flex-1 pr-3">
-              <Text className="font-label uppercase text-muted" style={{ fontSize: 10 }}>
-                Próximo treino
+      <View className={`${CARD_BASE} mt-2.5 border-l-4 border-l-accent px-4 py-3.5`}>
+        {nextWorkout && diaAtual ? (
+          showTrocar ? (
+            <View>
+              <Text className="mb-2 font-label uppercase text-muted" style={{ fontSize: 10 }}>
+                Escolher outro dia
               </Text>
-              <Text className="mt-1 font-display uppercase text-text" style={{ fontSize: 20 }} numberOfLines={1}>
-                {nextWorkout.dayNome}
-              </Text>
-              {nextWorkout.musculos !== '' && (
-                <Text className="mt-0.5 font-body text-muted" style={{ fontSize: 11 }} numberOfLines={1}>
-                  {nextWorkout.musculos}
+              <View className="flex-row flex-wrap gap-2">
+                {outrosDias.length === 0 ? (
+                  <Text className="font-body text-sm text-muted">Esse plano só tem esse dia.</Text>
+                ) : (
+                  outrosDias.map((day) => (
+                    <Pressable
+                      key={day.id}
+                      onPress={() => handleTrocarDia(day)}
+                      className="rounded-full border border-border px-3 py-1.5">
+                      <Text className="font-label text-text" style={{ fontSize: 11 }}>
+                        {day.label}
+                      </Text>
+                    </Pressable>
+                  ))
+                )}
+              </View>
+              <Pressable onPress={() => setShowTrocar(false)} className="mt-3 self-start">
+                <Text className="font-label uppercase text-muted" style={{ fontSize: 11 }}>
+                  Cancelar
                 </Text>
-              )}
+              </Pressable>
             </View>
-            <Pressable
-              onPress={() => handleIniciarAgora(nextWorkout.dayId)}
-              className="items-center justify-center rounded-xl bg-accent"
-              style={{ paddingVertical: 10, paddingHorizontal: 14 }}>
-              <Text className="font-label uppercase text-white" style={{ fontSize: 11 }}>
-                ▶ Iniciar
-              </Text>
-            </Pressable>
-          </>
+          ) : (
+            <View className="flex-row items-center">
+              <View className="flex-1 pr-3">
+                <Text className="font-label uppercase text-muted" style={{ fontSize: 10 }}>
+                  Próximo treino sugerido
+                </Text>
+                <Text className="mt-1 font-display uppercase text-text" style={{ fontSize: 20 }} numberOfLines={1}>
+                  {diaAtual.label}
+                </Text>
+                {musculosVisiveis ? (
+                  <Text className="mt-0.5 font-body text-muted" style={{ fontSize: 11 }} numberOfLines={1}>
+                    {musculosVisiveis}
+                  </Text>
+                ) : null}
+              </View>
+              <View className="items-stretch gap-1.5">
+                <Pressable
+                  onPress={() => handleIniciarAgora(diaAtual.id)}
+                  className="items-center justify-center rounded-xl bg-accent"
+                  style={{ paddingVertical: 10, paddingHorizontal: 14 }}>
+                  <Text className="font-label uppercase text-white" style={{ fontSize: 11 }}>
+                    ▶ Iniciar
+                  </Text>
+                </Pressable>
+                <Pressable
+                  onPress={() => setShowTrocar(true)}
+                  className="items-center justify-center rounded-xl border border-border"
+                  style={{ paddingVertical: 8, paddingHorizontal: 14 }}>
+                  <Text className="font-label uppercase text-muted" style={{ fontSize: 11 }}>
+                    ⇄ Trocar
+                  </Text>
+                </Pressable>
+              </View>
+            </View>
+          )
         ) : (
-          <View className="flex-1">
+          <View>
             <Text className="mb-3 font-body text-sm text-muted">Crie um plano pra começar.</Text>
             <Button onPress={() => router.push('/plano/novo')}>Criar plano</Button>
           </View>
         )}
+      </View>
+
+      {/* CALENDÁRIO */}
+      <View className={`${CARD_BASE} mt-2.5 px-4 py-3.5`}>
+        <View className="flex-row items-center justify-between">
+          <Text className="font-card-title text-text" style={{ fontSize: 14 }}>
+            {`${capitalize(MESES_PT[calendario.mes])} ${calendario.ano}`}
+          </Text>
+          <Text className="font-label text-accent" style={{ fontSize: 11 }}>
+            {`${monthlyCounts?.atual ?? 0} treinos`}
+          </Text>
+        </View>
+        <View className="mt-3 flex-row">
+          {DIA_LETRAS_CALENDARIO.map((letra, index) => (
+            <View key={index} style={{ width: `${100 / 7}%` }}>
+              <Text className="text-center font-label text-muted" style={{ fontSize: 9 }}>
+                {letra}
+              </Text>
+            </View>
+          ))}
+        </View>
+        <View className="mt-1 flex-row flex-wrap">
+          {calendario.celulas.map((dia, index) => {
+            const treinou = dia !== null && (monthTrainingDays?.has(dia) ?? false);
+            const ehHoje = dia === calendario.hojeDia;
+            return (
+              <View key={index} className="items-center py-0.5" style={{ width: `${100 / 7}%` }}>
+                {dia !== null && (
+                  <View
+                    className="items-center justify-center rounded-full"
+                    style={{
+                      width: 26,
+                      height: 26,
+                      backgroundColor: treinou ? colors.accent : 'transparent',
+                      borderWidth: ehHoje ? 1 : 0,
+                      borderColor: colors.accent,
+                    }}>
+                    <Text
+                      className={`font-body ${treinou ? 'text-white' : 'text-muted'}`}
+                      style={{ fontSize: 11 }}>
+                      {dia}
+                    </Text>
+                  </View>
+                )}
+              </View>
+            );
+          })}
+        </View>
       </View>
 
       {/* GRID: PR (só se houver) + MÊS — vira 1 coluna sem PR */}

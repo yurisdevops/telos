@@ -1,19 +1,80 @@
 import { and, desc, eq, gte, inArray, lt, ne, sql } from 'drizzle-orm';
 
 import { db } from './index';
-import { exercises, sessions, workoutDayExercises, workoutDays, workoutPlans } from './schema';
+import { exercises, sessions, setLogs, workoutDayExercises, workoutDays, workoutPlans } from './schema';
 import { findSessionPrs, type SessionPr } from '@/lib/personal-records';
 import { getTodayDateString, getWeekStartIso, parseLocalIsoDate, toLocalIsoDate } from '@/lib/date';
+import { computeTrainedDaysInMonth, getCurrentMonthPrefix } from '@/lib/stats';
 
 // Mesma lista de MONTHS em lib/date.ts (privada, não exportada de lá) —
 // duplicada aqui pro nome do mês anterior (computeMonthlyTrainingCounts) e
-// pra abreviação de 3 letras (formatPrDate); exportar de date.ts ficaria
-// fora do escopo combinado desta etapa (arquivos já definidos no pedido).
-const MESES = [
+// pro cabeçalho do calendário no dashboard (index.tsx importa `MESES_PT`
+// daqui em vez de duplicar uma 3ª cópia); exportar de date.ts ficaria fora
+// do escopo combinado desta etapa (arquivos já definidos no pedido).
+export const MESES_PT = [
   'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
   'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro',
 ];
 const MESES_ABREV = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+
+// Fallback quando não há nenhum plano ativo (getActivePlanFrequency) — mesmo
+// valor default já usado antes de existir essa função (META_SEMANAL_PADRAO,
+// que morava em index.tsx).
+const META_SEMANAL_FALLBACK = 3;
+
+/**
+ * Id do "plano ativo" — o que tem a sessão concluída mais recente, entre
+ * planos reais (`tipo !== 'Treino pronto'`, mesmo filtro do DayPicker em
+ * hoje.tsx: treino pronto é efêmero/um-uso-só, não conta como "o plano que
+ * o usuário está seguindo"). `null` se não existir nenhum. Extraído de
+ * `getNextSuggestedWorkout` (que já fazia exatamente essa consulta) pra
+ * `getActivePlanFrequency` e `getActivePlanDays` reusarem sem duplicar SQL.
+ */
+async function getActivePlanId(): Promise<number | null> {
+  const planLastTrainedRows = await db
+    .select({ planId: workoutDays.planId, lastData: sql<string>`max(${sessions.data})` })
+    .from(sessions)
+    .innerJoin(workoutDays, eq(sessions.workoutDayId, workoutDays.id))
+    .innerJoin(workoutPlans, eq(workoutDays.planId, workoutPlans.id))
+    .where(and(eq(sessions.concluida, true), ne(workoutPlans.tipo, 'Treino pronto')))
+    .groupBy(workoutDays.planId);
+
+  if (planLastTrainedRows.length === 0) return null;
+  return planLastTrainedRows.reduce((best, row) => (row.lastData > best.lastData ? row : best)).planId;
+}
+
+/**
+ * Meta semanal = quantos dias (workoutDays) o plano ativo tem — um plano de
+ * 6 dias (Push/Pull/Legs x2, por exemplo) tem meta 6, não o "3" fixo de
+ * antes. `META_SEMANAL_FALLBACK` cobre tanto "nenhum plano ativo" quanto
+ * (defensivamente) um plano ativo sem nenhum dia cadastrado — caso que não
+ * deveria existir na prática (todo plano nasce com pelo menos 1 dia), mas
+ * evita meta=0 (barra de progresso sempre "cheia", divisão por zero) se
+ * acontecer.
+ */
+export async function getActivePlanFrequency(): Promise<number> {
+  const activePlanId = await getActivePlanId();
+  if (activePlanId === null) return META_SEMANAL_FALLBACK;
+
+  const days = await db.select({ id: workoutDays.id }).from(workoutDays).where(eq(workoutDays.planId, activePlanId));
+  return days.length > 0 ? days.length : META_SEMANAL_FALLBACK;
+}
+
+export type PlanDay = { id: number; label: string };
+
+/** Todos os dias do plano ativo, na ordem do plano — alimenta os chips do
+ * botão "Trocar" no card Próximo Treino (index.tsx filtra o dia sugerido
+ * fora da lista). `[]` se não houver plano ativo. */
+export async function getActivePlanDays(): Promise<PlanDay[]> {
+  const activePlanId = await getActivePlanId();
+  if (activePlanId === null) return [];
+
+  return db
+    .select({ id: workoutDays.id, label: workoutDays.label })
+    .from(workoutDays)
+    .where(eq(workoutDays.planId, activePlanId))
+    .orderBy(workoutDays.ordem);
+}
 
 /**
  * Treinos concluídos na semana atual (count) — mesmo boundary [início, +7
@@ -69,8 +130,69 @@ export async function computeMonthlyTrainingCounts(): Promise<{
   return {
     atual: Number(atualRows[0]?.count ?? 0),
     anterior: Number(anteriorRows[0]?.count ?? 0),
-    mesAnteriorNome: MESES[mesAnteriorIndex],
+    mesAnteriorNome: MESES_PT[mesAnteriorIndex],
   };
+}
+
+/**
+ * Volume (reps × carga) da semana atual e da anterior, em kg — mesmo
+ * critério de `computeCurrentWeekVolume` (stats.ts): só sessões concluídas,
+ * excluindo séries de peso corporal e de aquecimento (nenhuma das duas é
+ * carga de trabalho de verdade). Não reaproveita `computeCurrentWeekVolume`
+ * diretamente (ela só devolve a semana atual) — `computeVolumeForRange` é a
+ * mesma consulta parametrizada por boundary, chamada 2x.
+ */
+async function computeVolumeForRange(startIso: string, endIso: string): Promise<number> {
+  const rows = await db
+    .select({ volume: sql<number>`sum(${setLogs.reps} * ${setLogs.carga})` })
+    .from(setLogs)
+    .innerJoin(sessions, eq(setLogs.sessionId, sessions.id))
+    .where(
+      and(
+        eq(sessions.concluida, true),
+        eq(setLogs.pesoCorporal, false),
+        eq(setLogs.aquecimento, false),
+        gte(sessions.data, startIso),
+        lt(sessions.data, endIso)
+      )
+    );
+  return Number(rows[0]?.volume ?? 0);
+}
+
+export async function computeWeeklyVolumeKg(): Promise<{ atual: number; anterior: number }> {
+  const weekStartIso = getWeekStartIso(getTodayDateString());
+  const weekStart = parseLocalIsoDate(weekStartIso);
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekEnd.getDate() + 7);
+  const weekEndIso = toLocalIsoDate(weekEnd);
+  const prevWeekStart = new Date(weekStart);
+  prevWeekStart.setDate(prevWeekStart.getDate() - 7);
+  const prevWeekStartIso = toLocalIsoDate(prevWeekStart);
+
+  const [atual, anterior] = await Promise.all([
+    computeVolumeForRange(weekStartIso, weekEndIso),
+    computeVolumeForRange(prevWeekStartIso, weekStartIso),
+  ]);
+  return { atual, anterior };
+}
+
+/** Dias do mês atual (1-31) com sessão concluída — reusa
+ * `computeTrainedDaysInMonth`/`getCurrentMonthPrefix` (lib/stats.ts, já
+ * existentes, mesma lógica do FrequencySection no Progresso) em vez de
+ * reimplementar o parse de dia-do-mês a partir da data ISO. */
+export async function getMonthTrainingDays(): Promise<Set<number>> {
+  const inicioAtual = startOfMonthIso(0);
+  const inicioProximo = startOfMonthIso(1);
+
+  const rows = await db
+    .select({ data: sessions.data })
+    .from(sessions)
+    .where(and(eq(sessions.concluida, true), gte(sessions.data, inicioAtual), lt(sessions.data, inicioProximo)));
+
+  return computeTrainedDaysInMonth(
+    rows.map((row) => row.data),
+    getCurrentMonthPrefix()
+  );
 }
 
 /**
@@ -147,17 +269,8 @@ const MUSCULOS_TOP_N = 3;
  * " · ". `null` se não existir nenhum plano real com sessão concluída.
  */
 export async function getNextSuggestedWorkout(): Promise<NextSuggestedWorkout | null> {
-  const planLastTrainedRows = await db
-    .select({ planId: workoutDays.planId, lastData: sql<string>`max(${sessions.data})` })
-    .from(sessions)
-    .innerJoin(workoutDays, eq(sessions.workoutDayId, workoutDays.id))
-    .innerJoin(workoutPlans, eq(workoutDays.planId, workoutPlans.id))
-    .where(and(eq(sessions.concluida, true), ne(workoutPlans.tipo, 'Treino pronto')))
-    .groupBy(workoutDays.planId);
-
-  if (planLastTrainedRows.length === 0) return null;
-
-  const activePlanId = planLastTrainedRows.reduce((best, row) => (row.lastData > best.lastData ? row : best)).planId;
+  const activePlanId = await getActivePlanId();
+  if (activePlanId === null) return null;
 
   const planRow = await db
     .select({ id: workoutPlans.id, nome: workoutPlans.nome })
