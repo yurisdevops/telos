@@ -52,8 +52,8 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Catálogo',
-          tabBarIcon: ({ color, size }) => <Ionicons name="barbell-outline" color={color} size={size} />,
+          title: 'Início',
+          tabBarIcon: ({ color, size }) => <Ionicons name="home-outline" color={color} size={size} />,
         }}
         listeners={({ navigation, route }) => ({
           tabPress: guardedTabPress(navigation, route.name),
@@ -99,6 +99,19 @@ export default function TabsLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person-outline" color={color} size={size} />
           ),
+        }}
+        listeners={({ navigation, route }) => ({
+          tabPress: guardedTabPress(navigation, route.name),
+        })}
+      />
+      {/* Posição secundária (última) desde a introdução do Dashboard como
+          tela inicial — o catálogo continua acessível pela barra, só não é
+          mais a 1ª parada; também tem um atalho no próprio Dashboard. */}
+      <Tabs.Screen
+        name="catalogo"
+        options={{
+          title: 'Catálogo',
+          tabBarIcon: ({ color, size }) => <Ionicons name="barbell-outline" color={color} size={size} />,
         }}
         listeners={({ navigation, route }) => ({
           tabPress: guardedTabPress(navigation, route.name),
