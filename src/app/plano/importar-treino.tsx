@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Alert, Text, TextInput, View } from 'react-native';
+import { useRef, useState } from 'react';
+import { Alert, ScrollView, Text, TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { Screen } from '@/components/screen';
@@ -29,6 +29,10 @@ export default function ImportarTreinoScreen() {
   const [nomePlano, setNomePlano] = useState('');
   const [interpretando, setInterpretando] = useState(false);
   const [salvando, setSalvando] = useState(false);
+  // `<Screen scrollable scrollRef={scrollRef}>` expõe o ScrollView interno
+  // da própria Screen (não um ScrollView aninhado por cima — isso duplicaria
+  // o gesto de rolagem) — mesmo padrão já usado em hoje.tsx.
+  const scrollRef = useRef<ScrollView>(null);
 
   const handleInterpretar = async () => {
     if (!texto.trim()) return;
@@ -37,6 +41,11 @@ export default function ImportarTreinoScreen() {
       const parsed = await parseWorkoutText(texto);
       setResultado(parsed);
       setNomePlano(parsed.nomeSugerido);
+      // 300ms: dá tempo da prévia (potencialmente vários dias/exercícios)
+      // terminar de montar/medir antes de rolar — rolar pro fim ANTES do
+      // conteúdo novo existir de verdade rolaria só até o fim do que já
+      // estava lá (o botão "Interpretar treino"), não até a prévia.
+      setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 300);
     } catch (err) {
       reportError('Erro ao interpretar treino', err);
     } finally {
@@ -88,7 +97,7 @@ export default function ImportarTreinoScreen() {
   };
 
   return (
-    <Screen showBack scrollable>
+    <Screen showBack scrollable scrollRef={scrollRef}>
       <ScreenTitle title="Importar treino" />
 
       <Text className="mb-4 font-body text-sm text-muted">

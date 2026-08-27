@@ -1793,9 +1793,10 @@ const ExerciseSessionCard = memo(
                 expande/colapsa o card por engano. */}
             <Pressable
               onPress={() => abrirAtlas({ wgerId: item.exerciseWgerId, nome: item.exerciseNome })}
-              hitSlop={8}
-              className="p-1">
-              <Ionicons name="help-circle-outline" size={20} color={colors.muted} />
+              hitSlop={8}>
+              <View style={{ backgroundColor: `${colors.accent}1A`, borderRadius: 8, padding: 4 }}>
+                <Ionicons name="help-circle" size={22} color={colors.accent} />
+              </View>
             </Pressable>
           </View>
         </Pressable>
@@ -1952,14 +1953,21 @@ function SetRow({
   // nunca uma série existente que vira aquecimento e volta.
   onRemove?: () => void;
 }) {
-  const [reps, setReps] = useState(existing !== undefined ? String(existing.reps) : '');
-  // Carga gravada como 0 (sentinela) numa série de peso corporal não é um
-  // texto útil de reexibir — nasce em branco tanto ao ligar o toggle quanto
-  // ao carregar uma série já salva assim, forçando reentrada explícita se o
-  // usuário desligar o peso corporal depois (nunca reaproveita o "0" antigo
-  // como se fosse uma carga real digitada).
+  // `existing.reps === 0`: mesmo raciocínio do comentário de `carga` logo
+  // abaixo, estendido pra reps — 0 nunca é uma repetição real digitada, só
+  // o sentinela com que uma série de aquecimento nasce (handleAddWarmup
+  // insere `reps:0, carga:0` na hora de criar, antes do usuário preencher
+  // nada). Sem esse tratamento, o campo mostrava o texto literal "0" (não
+  // vazio) assim que uma série de aquecimento era adicionada — e digitar
+  // por cima concatenava ("0" + "10" = "010", já que o cursor entra depois
+  // do "0" existente, não substituindo-o).
+  const [reps, setReps] = useState(existing !== undefined && existing.reps !== 0 ? String(existing.reps) : '');
+  // Carga gravada como 0 (sentinela, seja de peso corporal OU de uma série
+  // de aquecimento recém-criada) não é um texto útil de reexibir — nasce em
+  // branco nesses casos, forçando reentrada explícita em vez de reaproveitar
+  // o "0" como se fosse uma carga real digitada.
   const [carga, setCarga] = useState(
-    existing !== undefined && !existing.pesoCorporal ? String(existing.carga) : ''
+    existing !== undefined && !existing.pesoCorporal && existing.carga !== 0 ? String(existing.carga) : ''
   );
   const [pesoCorporal, setPesoCorporal] = useState(existing?.pesoCorporal ?? false);
   // Não é mais um toggle — a linha OU é uma série de aquecimento (criada via
