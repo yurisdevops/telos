@@ -14,7 +14,6 @@ import { db } from '@/db';
 import { cardioLogs, cardioSessions } from '@/db/schema';
 import { deleteCardioSession } from '@/db/cardio-stats';
 import { formatPace, INTENSIDADES_CARDIO, MODALIDADES_CARDIO } from '@/lib/cardio';
-import { formatElapsed, formatStopwatch, useNow } from '@/lib/duration';
 import { useConfirmDialog } from '@/lib/use-confirm-dialog';
 import { colors } from '@/theme/tokens';
 
@@ -39,15 +38,6 @@ export default function CardioSessaoScreen() {
     db.select().from(cardioLogs).where(eq(cardioLogs.cardioSessionId, cardioSessionIdNum)),
     [cardioSessionIdNum]
   );
-
-  // `useNow` (mesmo hook de RestTimerOverlay/SessionExecution em hoje.tsx) —
-  // tick de 1s sem acumular estado próprio; o valor exibido é sempre
-  // recalculado de `now - horaInicio` (timestamp real gravado no banco), não
-  // de um contador em memória, então fechar e reabrir o app mostra o tempo
-  // certo na hora. Chamado incondicionalmente (regra de hooks), mesmo que só
-  // seja usado enquanto a sessão está em andamento — igual ao `now` de
-  // SessionExecution.
-  const now = useNow(1000);
 
   // Resumo pro card "Cardio concluído" — total de blocos, minutos somados,
   // modalidades sem repetir (Set + join), mesmo espírito do resumo de
@@ -114,30 +104,9 @@ export default function CardioSessaoScreen() {
     <Screen showBack scrollable>
       <ScreenTitle title="Sessão de Cardio" />
 
-      {/* Cronômetro ao vivo — mesma pegada visual do RestTimerOverlay
-          (número grande em accent, font-display), mas inline na tela (não
-          Modal full-screen): aqui o cronômetro É o contexto principal da
-          tela, não uma interrupção por cima de outra coisa. Progressivo
-          simples (conta pra cima desde horaInicio) — sem alarme/notificação/
-          contagem regressiva, que só fazem sentido pro descanso entre
-          séries. */}
-      {!cardioSession.concluida && cardioSession.horaInicio != null && (
-        <Card className="mb-4 items-center border-l-4 border-l-accent py-6">
-          <Label>Cardio em andamento</Label>
-          <Text className="mt-1 font-display text-6xl text-accent">
-            {formatStopwatch(now - cardioSession.horaInicio)}
-          </Text>
-        </Card>
-      )}
-
       {cardioSession.concluida && (
         <Card className="mb-4 border-l-4 border-l-success">
           <Text className="text-center font-label uppercase text-success">Cardio concluído</Text>
-          {cardioSession.horaInicio != null && cardioSession.horaFim != null && (
-            <Text className="mt-2 text-center font-display text-3xl text-text">
-              {formatElapsed(cardioSession.horaFim - cardioSession.horaInicio)}
-            </Text>
-          )}
           <Label className="mt-2 text-center">
             {`${resumo.totalBlocos} ${resumo.totalBlocos === 1 ? 'bloco' : 'blocos'} · ${resumo.totalMinutos} min${
               resumo.modalidades.length > 0 ? ` · ${resumo.modalidades.join(', ')}` : ''
