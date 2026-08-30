@@ -433,15 +433,19 @@ export function criarTreinoLivre(): CriarTreinoLivreResult {
 
     limparPlanosEfemerosOrfaos(tx);
 
+    // Nome/label visíveis ao usuário (título da tela de execução, e podem
+    // aparecer no histórico se a sessão for só concluída, não descartada) —
+    // "Treine com um Amigo" é o texto de UI atual; `tipo: 'Livre'` continua
+    // sendo o valor interno (nunca mostrado), sem relação com esse texto.
     const plan = tx
       .insert(workoutPlans)
-      .values({ nome: 'Treino Livre', tipo: 'Livre', criadoEm: new Date().toISOString() })
+      .values({ nome: 'Treine com um Amigo', tipo: 'Livre', criadoEm: new Date().toISOString() })
       .returning()
       .get();
 
     const day = tx
       .insert(workoutDays)
-      .values({ planId: plan.id, label: 'Treino Livre', ordem: 0 })
+      .values({ planId: plan.id, label: 'Treine com um Amigo', ordem: 0 })
       .returning()
       .get();
 

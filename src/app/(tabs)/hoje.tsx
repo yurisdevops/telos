@@ -416,7 +416,7 @@ function DayPicker({
         <Card className="flex-row items-center gap-3 border-l-4 border-l-accent">
           <Ionicons name="flash-outline" size={26} color={colors.accent} />
           <View className="flex-1">
-            <Text className="font-display text-2xl uppercase text-text">Treino Livre</Text>
+            <Text className="font-display text-2xl uppercase text-text">Treine com um Amigo</Text>
             <Label className="mt-1">Monte exercício por exercício, na hora</Label>
           </View>
           <Ionicons name="chevron-forward" size={20} color={colors.muted} />
@@ -1081,7 +1081,7 @@ function SessionExecution({
         return;
       }
 
-      const nomePlano = `Treino Livre — ${formatShortDateLabel(session.data)}`;
+      const nomePlano = `Treine com um Amigo — ${formatShortDateLabel(session.data)}`;
       const planId = criarESalvarComExercicios(nomePlano, exerciciosUnicos);
 
       await db
@@ -1498,7 +1498,7 @@ function SessionExecution({
       )}
 
       <Button variant="destructive" onPress={handleCancel}>
-        {isTreinoLivre ? 'Descartar treino livre' : 'Cancelar sessão de hoje'}
+        {isTreinoLivre ? 'Descartar treino' : 'Cancelar sessão de hoje'}
       </Button>
       {dialog}
     </KeyboardAvoidingView>
