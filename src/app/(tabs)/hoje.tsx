@@ -15,7 +15,7 @@ import {
   Vibration,
   View,
 } from 'react-native';
-import { and, eq, ne, sql } from 'drizzle-orm';
+import { and, eq, notInArray, sql } from 'drizzle-orm';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { useRouter } from 'expo-router';
 import { useKeepAwake } from 'expo-keep-awake';
@@ -59,6 +59,7 @@ import {
   workoutPlans,
   type Session,
 } from '@/db/schema';
+import { criarESalvarComExercicios, criarTreinoLivre, TIPOS_PLANO_EFEMERO } from '@/db/ready-workouts';
 import { useAtlas } from '@/lib/atlas-context';
 import { MODALIDADES_CARDIO, INTENSIDADES_CARDIO } from '@/lib/cardio';
 import {
@@ -166,6 +167,33 @@ export default function HojeScreen() {
       });
     } catch (err) {
       reportError('Erro ao iniciar treino', err);
+    }
+  };
+
+  // Síncrona (mesmo padrão de treinarAgora/criarTreinoLivre em
+  // ready-workouts.ts — transação sem await). Cria a sessão vazia e já
+  // empurra o usuário pro picker de exercícios (sessao/adicionar-exercicio),
+  // que grava em sessionExtraExercises — a mesma tela usada pra adicionar
+  // exercício avulso a QUALQUER sessão em andamento, reaproveitada aqui como
+  // o próprio ponto de partida. `router.back()` de lá volta pra esta aba, já
+  // mostrando a sessão via SessionExecution (useLiveQuery de `sessions`
+  // reage à inserção sozinho).
+  const handleStartLivre = () => {
+    try {
+      const result = criarTreinoLivre();
+      if (result.status === 'already_has_session_today') {
+        // Não deveria ocorrer (este botão só aparece quando NÃO há sessão
+        // hoje), mas defensivo — mesmo critério de aviso já usado no
+        // "treinar agora" do Atlas.
+        reportError('Erro ao iniciar treino livre', new Error('Já existe uma sessão hoje.'));
+        return;
+      }
+      router.push({
+        pathname: '/sessao/adicionar-exercicio',
+        params: { sessionId: String(result.sessionId) },
+      });
+    } catch (err) {
+      reportError('Erro ao iniciar treino livre', err);
     }
   };
 
@@ -312,20 +340,30 @@ export default function HojeScreen() {
 
       <Text className="mb-3 font-label text-xs uppercase tracking-wide text-muted">Treinos de musculação</Text>
 
-      <DayPicker onStart={handleStartDay} todayStr={todayStr} />
+      <DayPicker onStart={handleStartDay} onStartLivre={handleStartLivre} todayStr={todayStr} />
       {dialog}
     </Screen>
   );
 }
 
-function DayPicker({ onStart, todayStr }: { onStart: (dayId: number) => void; todayStr: string }) {
-  // 'Treino pronto' são os planos efêmeros do "treinar agora" (ver
-  // src/db/ready-workouts.ts) — depois de concluídos, o plano/dia continuam no
-  // banco (a sessão feita precisa deles pro histórico), mas não podem oferecer
-  // reinício aqui. Mesmo filtro já usado em planilhas.tsx pra escondê-los da
-  // lista de planilhas; aqui esconde do seletor de "começar treino". Não afeta
-  // WorkoutHistorySection nem métricas — nenhuma delas faz join com
-  // workoutPlans, então continuam mostrando a sessão normalmente.
+function DayPicker({
+  onStart,
+  onStartLivre,
+  todayStr,
+}: {
+  onStart: (dayId: number) => void;
+  onStartLivre: () => void;
+  todayStr: string;
+}) {
+  // 'Treino pronto'/'Livre' são os planos efêmeros do "treinar agora"/"Treino
+  // Livre" (ver TIPOS_PLANO_EFEMERO em src/db/ready-workouts.ts) — depois de
+  // concluídos, o plano/dia continuam no banco (a sessão feita precisa deles
+  // pro histórico), mas não podem oferecer reinício aqui (um dia "Treino
+  // Livre" antigo não tem exercícios pra reiniciar — é sempre montado do
+  // zero, nunca reaproveitado). Mesmo filtro já usado em planilhas.tsx pra
+  // escondê-los da lista de planilhas; aqui esconde do seletor de "começar
+  // treino". Não afeta WorkoutHistorySection nem métricas — nenhuma delas faz
+  // join com workoutPlans, então continuam mostrando a sessão normalmente.
   const { data: days } = useLiveQuery(
     db
       .select({
@@ -335,7 +373,7 @@ function DayPicker({ onStart, todayStr }: { onStart: (dayId: number) => void; to
       })
       .from(workoutDays)
       .innerJoin(workoutPlans, eq(workoutDays.planId, workoutPlans.id))
-      .where(ne(workoutPlans.tipo, 'Treino pronto'))
+      .where(notInArray(workoutPlans.tipo, TIPOS_PLANO_EFEMERO))
   );
 
   const { data: exerciseCountRows } = useLiveQuery(
@@ -368,6 +406,22 @@ function DayPicker({ onStart, todayStr }: { onStart: (dayId: number) => void; to
   return (
     <View>
       <Text className="mb-3 font-card-title text-lg text-text">Qual treino você vai fazer hoje?</Text>
+
+      {/* Sempre visível, antes da lista de dias — não depende de já ter
+          nenhum plano cadastrado (é o oposto: começa do zero, exercício por
+          exercício, ao vivo). Destacado com borda accent, mesmo padrão já
+          usado noutros CTAs do app (ex: card "Montar com Atlas" em
+          planilhas.tsx). */}
+      <Pressable onPress={onStartLivre} className="mb-3">
+        <Card className="flex-row items-center gap-3 border-l-4 border-l-accent">
+          <Ionicons name="flash-outline" size={26} color={colors.accent} />
+          <View className="flex-1">
+            <Text className="font-display text-2xl uppercase text-text">Treino Livre</Text>
+            <Label className="mt-1">Monte exercício por exercício, na hora</Label>
+          </View>
+          <Ionicons name="chevron-forward" size={20} color={colors.muted} />
+        </Card>
+      </Pressable>
 
       {(days ?? []).length === 0 && (
         <Text className="font-body text-muted">
@@ -486,10 +540,19 @@ function SessionExecution({
   }, [session.concluida, scrollRef]);
 
   const { data: dayRows } = useLiveQuery(
-    db.select({ label: workoutDays.label }).from(workoutDays).where(eq(workoutDays.id, session.workoutDayId)),
+    db
+      .select({ label: workoutDays.label, planTipo: workoutPlans.tipo })
+      .from(workoutDays)
+      .innerJoin(workoutPlans, eq(workoutDays.planId, workoutPlans.id))
+      .where(eq(workoutDays.id, session.workoutDayId)),
     [session.workoutDayId]
   );
   const dayLabel = dayRows?.[0]?.label ?? '';
+  // Sessão de Treino Livre — muda o texto/opções de fim de sessão abaixo
+  // (Salvar como treino / Só registrar no histórico / Descartar), mas nada
+  // mais no resto da tela: SessionExecution já renderiza normalmente uma
+  // sessão sem nenhum workoutDayExercises (só sessionExtraExercises).
+  const isTreinoLivre = dayRows?.[0]?.planTipo === 'Livre';
 
   const { data: dayExerciseRows } = useLiveQuery(
     db
@@ -983,6 +1046,60 @@ function SessionExecution({
     }
   };
 
+  // Só pra sessão de Treino Livre (botão gated por `isTreinoLivre` abaixo) —
+  // promove os exercícios avulsos desta sessão (sessionExtraExercises) a um
+  // plano NORMAL e reutilizável (`tipo: 'Pronto'`, mesmo caminho que
+  // "Salvar como plano" já usa pros treinos rápidos do Atlas —
+  // criarESalvarComExercicios, reaproveitada sem mudança). Dedup por
+  // exerciseId mantendo a 1ª aparição é defensivo: sessao/adicionar-
+  // exercicio.tsx já impede duplicar o mesmo exercício numa sessão, então
+  // isso raramente muda algo na prática. Marca a sessão concluída também —
+  // "salvar como treino" é uma forma de ENCERRAR o Treino Livre de hoje,
+  // não uma ação à parte; a sessão em si continua vinculada ao dia efêmero
+  // 'Livre' original (o plano novo é só um molde pra próxima vez).
+  const handleSalvarComoTreino = async () => {
+    try {
+      const extraRows = await db
+        .select({
+          exerciseId: sessionExtraExercises.exerciseId,
+          seriesAlvo: sessionExtraExercises.seriesAlvo,
+          repsAlvo: sessionExtraExercises.repsAlvo,
+        })
+        .from(sessionExtraExercises)
+        .where(eq(sessionExtraExercises.sessionId, session.id))
+        .orderBy(sessionExtraExercises.ordem);
+
+      const vistos = new Set<number>();
+      const exerciciosUnicos = extraRows.filter((row) => {
+        if (vistos.has(row.exerciseId)) return false;
+        vistos.add(row.exerciseId);
+        return true;
+      });
+
+      if (exerciciosUnicos.length === 0) {
+        Alert.alert('Nada pra salvar', 'Adicione pelo menos um exercício antes de salvar como treino.');
+        return;
+      }
+
+      const nomePlano = `Treino Livre — ${formatShortDateLabel(session.data)}`;
+      const planId = criarESalvarComExercicios(nomePlano, exerciciosUnicos);
+
+      await db
+        .update(sessions)
+        .set({
+          concluida: true,
+          restTimerStartedAt: null,
+          ...(session.horaFim == null ? { horaFim: Date.now() } : {}),
+        })
+        .where(eq(sessions.id, session.id));
+      await cancelRestEndNotification();
+
+      router.push({ pathname: '/plano/[id]', params: { id: String(planId) } });
+    } catch (err) {
+      reportError('Erro ao salvar como treino', err);
+    }
+  };
+
   const handleReopen = async () => {
     const ok = await confirm({
       title: 'Reabrir treino?',
@@ -1363,14 +1480,25 @@ function SessionExecution({
         </Button>
       )}
 
+      {/* Só pra Treino Livre: promove sessionExtraExercises a um plano
+          reutilizável (ver handleSalvarComoTreino) — uma 3ª forma de
+          encerrar a sessão, ao lado de "concluir" (mantém só o plano
+          efêmero) e "cancelar" (descarta tudo). Não aparece pra sessão
+          normal — o plano dela já existe e é reutilizável por natureza. */}
+      {!session.concluida && isTreinoLivre && (
+        <Button variant="secondary" className="mb-3 py-4" onPress={handleSalvarComoTreino}>
+          Salvar como treino
+        </Button>
+      )}
+
       {!session.concluida && (
         <Button onPress={handleComplete} className="mb-3 py-4">
-          Concluir treino
+          {isTreinoLivre ? 'Só registrar no histórico' : 'Concluir treino'}
         </Button>
       )}
 
       <Button variant="destructive" onPress={handleCancel}>
-        Cancelar sessão de hoje
+        {isTreinoLivre ? 'Descartar treino livre' : 'Cancelar sessão de hoje'}
       </Button>
       {dialog}
     </KeyboardAvoidingView>

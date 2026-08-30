@@ -2,24 +2,25 @@ import { sql } from 'drizzle-orm';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 
 import { db } from './index';
-import { limparTreinosProntosOrfaos } from './ready-workouts';
+import { limparPlanosEfemerosOrfaos } from './ready-workouts';
 import { sessionExtraExercises, sessionSkips, sessions, setLogs } from './schema';
 
 type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
 
 /**
  * Apaga TODO o histórico de treinos — sessões, séries, exercícios avulsos,
- * exercícios pulados, e os planos `'Treino pronto'` efêmeros que ficam
- * órfãos quando as sessões deles somem. Numa única transação síncrona: ou
- * apaga tudo, ou (erro no meio) reverte por completo, banco fica exatamente
- * como estava — mesmo padrão de `treinarAgora`/`importBackupPayload`.
+ * exercícios pulados, e os planos efêmeros (`'Treino pronto'`/`'Livre'`,
+ * ver `TIPOS_PLANO_EFEMERO`) que ficam órfãos quando as sessões deles somem.
+ * Numa única transação síncrona: ou apaga tudo, ou (erro no meio) reverte
+ * por completo, banco fica exatamente como estava — mesmo padrão de
+ * `treinarAgora`/`importBackupPayload`.
  *
  * NÃO toca em: `workoutPlans`/`workoutDays`/`workoutDayExercises` de tipo
- * diferente de `'Treino pronto'` (planos normais e `'Pronto'` salvos como
- * planilha continuam intactos), `bodyWeightLogs` (peso), `userProfile`
- * (perfil inteiro, **incluindo `pinHash`/`pinSalt`** — o PIN sobrevive ao
- * reset, precisa continuar valendo pro próximo reset), `exercises`
- * (catálogo). Nenhuma dessas tabelas é mencionada abaixo de propósito.
+ * que não seja efêmero (planos normais e `'Pronto'` salvos como planilha
+ * continuam intactos), `bodyWeightLogs` (peso), `userProfile` (perfil
+ * inteiro, **incluindo `pinHash`/`pinSalt`** — o PIN sobrevive ao reset,
+ * precisa continuar valendo pro próximo reset), `exercises` (catálogo).
+ * Nenhuma dessas tabelas é mencionada abaixo de propósito.
  */
 export function resetHistory(): void {
   db.transaction((tx: Tx) => {
@@ -34,12 +35,13 @@ export function resetHistory(): void {
     tx.delete(sessionSkips).run();
     tx.delete(sessions).run();
 
-    // Só DEPOIS de `sessions` estar vazia: reaproveita a limpeza de treinos
-    // prontos órfãos (ready-workouts.ts) — com nenhuma sessão sobrando, todo
-    // plano `'Treino pronto'` fica sem referência nenhuma ao seu dia, então
-    // a função apaga todos eles (e só eles — filtra estritamente por
-    // `tipo === 'Treino pronto'`, nunca toca em planos normais/'Pronto').
-    limparTreinosProntosOrfaos(tx);
+    // Só DEPOIS de `sessions` estar vazia: reaproveita a limpeza de planos
+    // efêmeros órfãos (ready-workouts.ts) — com nenhuma sessão sobrando,
+    // todo plano `'Treino pronto'`/`'Livre'` fica sem referência nenhuma ao
+    // seu dia, então a função apaga todos eles (e só eles — filtra
+    // estritamente por `tipo` em `TIPOS_PLANO_EFEMERO`, nunca toca em
+    // planos normais/'Pronto').
+    limparPlanosEfemerosOrfaos(tx);
   });
 }
 

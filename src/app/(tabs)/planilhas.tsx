@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { FlatList, Pressable, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { eq, ne, sql } from 'drizzle-orm';
+import { eq, notInArray, sql } from 'drizzle-orm';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
@@ -12,17 +12,19 @@ import { Label } from '@/components/ui/label';
 import { ScreenTitle } from '@/components/ui/screen-title';
 import { db } from '@/db';
 import { workoutDayExercises, workoutDays, workoutPlans, type WorkoutPlan } from '@/db/schema';
+import { TIPOS_PLANO_EFEMERO } from '@/db/ready-workouts';
 import { colors } from '@/theme/tokens';
 
 export default function PlanilhasScreen() {
   const router = useRouter();
-  // 'Treino pronto' são os planos efêmeros criados por "treinar agora" (ver
-  // src/db/ready-workouts.ts) — nunca deveriam poluir a lista de planilhas,
-  // mas continuam existindo de verdade no banco: sessões, histórico e
-  // métricas (Perfil/Progresso) não filtram por tipo em lugar nenhum, então
-  // nada disso deixa de contar esses treinos. Só esta lista esconde.
+  // 'Treino pronto'/'Livre' são planos efêmeros criados por "treinar agora"/
+  // "Treino Livre" (ver TIPOS_PLANO_EFEMERO em src/db/ready-workouts.ts) —
+  // nunca deveriam poluir a lista de planilhas, mas continuam existindo de
+  // verdade no banco: sessões, histórico e métricas (Perfil/Progresso) não
+  // filtram por tipo em lugar nenhum, então nada disso deixa de contar esses
+  // treinos. Só esta lista esconde.
   const { data: plans } = useLiveQuery(
-    db.select().from(workoutPlans).where(ne(workoutPlans.tipo, 'Treino pronto'))
+    db.select().from(workoutPlans).where(notInArray(workoutPlans.tipo, TIPOS_PLANO_EFEMERO))
   );
   const { data: days } = useLiveQuery(db.select().from(workoutDays));
 

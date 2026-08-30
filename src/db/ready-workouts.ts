@@ -1,10 +1,17 @@
-import { eq } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 
 import { db } from './index';
 import { exercises, sessions, workoutDayExercises, workoutDays, workoutPlans } from './schema';
 import { getTodayDateString } from '@/lib/date';
 
 type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
+
+// `workoutPlans.tipo` que marcam um plano EFÊMERO — criado só pra existir
+// por trás de uma sessão (treino pronto ou livre), nunca pra aparecer como
+// planilha reutilizável nem como "dia" reiniciável em hoje.tsx. Único lugar
+// que define essa lista — hoje.tsx (DayPicker) e planilhas.tsx filtram por
+// ela, e `limparPlanosEfemerosOrfaos` abaixo usa como padrão.
+export const TIPOS_PLANO_EFEMERO: string[] = ['Treino pronto', 'Livre'];
 
 export type ReadyWorkoutExercise = { wgerId: number; seriesAlvo: number; repsAlvo: number };
 export type ReadyWorkoutCategoria = 'completo' | 'focado';
@@ -270,34 +277,37 @@ export function criarESalvarComExercicios(nome: string, exercicios: ResolvedRead
 export type TreinarAgoraResult = { status: 'started'; sessionId: number } | { status: 'already_has_session_today' };
 
 /**
- * Apaga planos `tipo: 'Treino pronto'` cujo dia ficou órfão — nenhuma sessão
- * (de nenhuma data, concluída ou não) referencia mais o `workoutDayId` deles.
- * Isso só acontece quando o usuário cancela a sessão de um treino pronto
- * (handleCancel em hoje.tsx apaga a linha de `sessions`, mas nunca o plano/
- * dia que ela apontava). Cada plano de treino pronto tem exatamente 1 dia
- * (ver `applyReadyWorkout`), então checar o dia órfão basta.
+ * Apaga planos EFÊMEROS (`tipo` em `TIPOS_PLANO_EFEMERO` — treino pronto OU
+ * livre) cujo dia ficou órfão — nenhuma sessão (de nenhuma data, concluída
+ * ou não) referencia mais o `workoutDayId` deles. Isso só acontece quando o
+ * usuário cancela a sessão (handleCancel em hoje.tsx apaga a linha de
+ * `sessions`, mas nunca o plano/dia que ela apontava). Cada plano efêmero
+ * tem exatamente 1 dia (ver `applyReadyWorkout`/`criarTreinoLivre`), então
+ * checar o dia órfão basta.
  *
  * Deliberadamente NÃO apaga planos cuja sessão ainda existe (concluída ou em
  * andamento): o histórico (WorkoutHistorySection) faz `innerJoin` de
  * `sessions` com `workoutDays` pra mostrar o label — apagar o dia de uma
  * sessão concluída quebraria essa sessão no histórico. Esses continuam no
  * banco de propósito; só não aparecem mais no seletor da aba Treinar (ver
- * filtro em hoje.tsx `DayPicker`).
+ * filtro em hoje.tsx `DayPicker`) nem na lista de Planilhas.
  *
  * Exportada (Etapa C da feature de reset com PIN, reset-history.ts): depois
  * que um reset de histórico apaga TODAS as `sessions`, `referencedDayIds`
  * fica vazio — então esta mesma função, chamada depois disso, naturalmente
- * apaga TODO plano `'Treino pronto'` (é exatamente o critério de "seguro pra
- * apagar" que ela já implementa), sem duplicar a lógica.
+ * apaga TODO plano efêmero (é exatamente o critério de "seguro pra apagar"
+ * que ela já implementa), sem duplicar a lógica. `tipos` é parametrizável
+ * (raramente precisa ser, na prática) só pra quem quiser restringir a
+ * limpeza a um subconjunto específico.
  */
-export function limparTreinosProntosOrfaos(tx: Tx) {
+export function limparPlanosEfemerosOrfaos(tx: Tx, tipos: readonly string[] = TIPOS_PLANO_EFEMERO) {
   const referencedDayIds = new Set(tx.select({ id: sessions.workoutDayId }).from(sessions).all().map((r) => r.id));
 
   const candidateDays = tx
     .select({ dayId: workoutDays.id, planId: workoutDays.planId })
     .from(workoutDays)
     .innerJoin(workoutPlans, eq(workoutDays.planId, workoutPlans.id))
-    .where(eq(workoutPlans.tipo, 'Treino pronto'))
+    .where(inArray(workoutPlans.tipo, tipos))
     .all();
 
   for (const { dayId, planId } of candidateDays) {
@@ -333,7 +343,7 @@ export function treinarAgora(readyWorkoutKey: string): TreinarAgoraResult {
       return { status: 'already_has_session_today' };
     }
 
-    limparTreinosProntosOrfaos(tx);
+    limparPlanosEfemerosOrfaos(tx);
 
     const plan = tx
       .insert(workoutPlans)
@@ -371,7 +381,7 @@ export function treinarAgoraComExercicios(nome: string, exercicios: ResolvedRead
       return { status: 'already_has_session_today' };
     }
 
-    limparTreinosProntosOrfaos(tx);
+    limparPlanosEfemerosOrfaos(tx);
 
     const plan = tx
       .insert(workoutPlans)
@@ -384,6 +394,60 @@ export function treinarAgoraComExercicios(nome: string, exercicios: ResolvedRead
     const session = tx
       .insert(sessions)
       .values({ workoutDayId: dayId, data: todayStr, concluida: false, horaInicio: Date.now() })
+      .returning()
+      .get();
+
+    return { status: 'started', sessionId: session.id };
+  });
+}
+
+export type CriarTreinoLivreResult =
+  | { status: 'started'; sessionId: number }
+  | { status: 'already_has_session_today' };
+
+/**
+ * Cria uma sessão "Treino Livre" — plano efêmero (`tipo: 'Livre'`, ver
+ * `TIPOS_PLANO_EFEMERO`) + 1 dia SEM nenhum exercício (nenhum
+ * `workoutDayExercises` é inserido; é montado exercício por exercício ao
+ * vivo depois, por `sessao/adicionar-exercicio.tsx`, gravando em
+ * `sessionExtraExercises` — o mesmo mecanismo que já cobre exercício avulso
+ * num plano normal, e que `SessionExecution`/hoje.tsx já sabe renderizar
+ * mesmo sem nenhum `workoutDayExercises` por trás) + sessão de hoje.
+ *
+ * Mesma trava de "já existe sessão hoje" e mesma limpeza de órfãos que
+ * `treinarAgora`/`treinarAgoraComExercicios` — se esta sessão for descartada
+ * depois (handleCancel em hoje.tsx, que só apaga a sessão, nunca o plano/
+ * dia), o plano/dia efêmero fica órfão até a PRÓXIMA chamada a esta função
+ * (ou a `treinarAgora`/`treinarAgoraComExercicios`, ou a um reset de
+ * histórico) varrer e apagar — mesmo comportamento (lazy) já aceito pra
+ * `'Treino pronto'`, não uma limpeza imediata no cancelamento.
+ */
+export function criarTreinoLivre(): CriarTreinoLivreResult {
+  const todayStr = getTodayDateString();
+
+  return db.transaction((tx) => {
+    const existingToday = tx.select({ id: sessions.id }).from(sessions).where(eq(sessions.data, todayStr)).all();
+    if (existingToday.length > 0) {
+      return { status: 'already_has_session_today' };
+    }
+
+    limparPlanosEfemerosOrfaos(tx);
+
+    const plan = tx
+      .insert(workoutPlans)
+      .values({ nome: 'Treino Livre', tipo: 'Livre', criadoEm: new Date().toISOString() })
+      .returning()
+      .get();
+
+    const day = tx
+      .insert(workoutDays)
+      .values({ planId: plan.id, label: 'Treino Livre', ordem: 0 })
+      .returning()
+      .get();
+
+    const session = tx
+      .insert(sessions)
+      .values({ workoutDayId: day.id, data: todayStr, concluida: false, horaInicio: Date.now() })
       .returning()
       .get();
 
