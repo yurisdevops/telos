@@ -150,7 +150,11 @@ export default function DashboardScreen() {
   const latestPR = useDbQuery(getLatestPR, ['sessions', 'set_logs'], []);
   const nextWorkout = useDbQuery(getNextSuggestedWorkout, WATCH_PLANO_ATIVO, []);
   const planDays = useDbQuery(getActivePlanDays, WATCH_PLANO_ATIVO, []);
-  const totalExercicios = useDbQuery(() => db.$count(exercises), ['exercises'], []);
+  // `visivel` é curadoria de navegação (148 de 872, ver exercise-catalog-list.tsx)
+  // — o header do catálogo precisa refletir o mesmo filtro que a lista usa,
+  // senão mostra a contagem da tabela inteira (872), não o que o usuário
+  // realmente vê rolando a lista.
+  const totalExercicios = useDbQuery(() => db.$count(exercises, eq(exercises.visivel, true)), ['exercises'], []);
 
   const metaEfetiva = meta ?? 3;
   const weekProgress = weekCount != null ? Math.max(0, Math.min(1, weekCount / metaEfetiva)) : 0;
