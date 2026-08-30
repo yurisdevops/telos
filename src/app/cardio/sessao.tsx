@@ -13,7 +13,7 @@ import { ScreenTitle } from '@/components/ui/screen-title';
 import { db } from '@/db';
 import { cardioLogs, cardioSessions } from '@/db/schema';
 import { deleteCardioSession } from '@/db/cardio-stats';
-import { INTENSIDADES_CARDIO, MODALIDADES_CARDIO } from '@/lib/cardio';
+import { formatPace, INTENSIDADES_CARDIO, MODALIDADES_CARDIO } from '@/lib/cardio';
 import { useConfirmDialog } from '@/lib/use-confirm-dialog';
 import { colors } from '@/theme/tokens';
 
@@ -118,15 +118,16 @@ export default function CardioSessaoScreen() {
       {(blocks ?? []).map((log) => {
         const modalidade = MODALIDADES_CARDIO.find((m) => m.key === log.modalidade);
         const intensidade = INTENSIDADES_CARDIO.find((i) => i.key === log.intensidade);
+        const pace = formatPace(log.duracaoMin, log.distanciaKm);
         return (
           <Card key={log.id} className="mb-3 flex-row items-center gap-3 px-4 py-3">
             <Ionicons name={modalidade?.icon ?? 'fitness-outline'} size={20} color={colors.accent} />
             <View className="flex-1">
               <Text className="font-card-title text-sm text-text">{modalidade?.label ?? log.modalidade}</Text>
               <Text className="font-label text-xs text-muted">
-                {`${log.duracaoMin} min${log.distanciaKm ? ` · ${log.distanciaKm}km` : ''} · ${
-                  intensidade?.label ?? log.intensidade
-                }`}
+                {`${log.duracaoMin} min${log.distanciaKm ? ` · ${log.distanciaKm}km` : ''}${
+                  pace ? ` · ${pace}` : ''
+                } · ${intensidade?.label ?? log.intensidade}`}
               </Text>
             </View>
             <Pressable onPress={() => handleDeleteBlock(log.id)} hitSlop={8}>

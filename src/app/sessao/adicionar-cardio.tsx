@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Alert, Pressable, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { desc } from 'drizzle-orm';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { Screen } from '@/components/screen';
@@ -11,6 +12,7 @@ import { ScreenTitle } from '@/components/ui/screen-title';
 import { db } from '@/db';
 import { cardioLogs } from '@/db/schema';
 import { INTENSIDADES_CARDIO, MODALIDADES_CARDIO, type IntensidadeCardio, type ModalidadeCardio } from '@/lib/cardio';
+import { useDbQuery } from '@/lib/use-db-query';
 import { colors } from '@/theme/tokens';
 
 // Só faz sentido registrar distância pra modalidades onde ela é uma medida
@@ -46,6 +48,38 @@ export default function AdicionarCardioScreen() {
   const [distancia, setDistancia] = useState('');
   const [intensidade, setIntensidade] = useState<IntensidadeCardio | null>(null);
   const [saving, setSaving] = useState(false);
+
+  // Pré-preenche com a modalidade/intensidade do ÚLTIMO bloco de cardio
+  // registrado (qualquer sessão, força ou cardio separado — `orderBy(id)`
+  // é o próprio histórico de inserção, mais direto que ordenar por data de
+  // sessão pra "o que escolhi da última vez"). Só o caminho mais simples já
+  // disponível: lê um dado que já existe, sem criar preferência nova
+  // persistida. `modalidadeTouched`/`intensidadeTouched` (mesmo padrão de
+  // assistente.tsx pré-preenchendo do Perfil) evitam sobrescrever uma escolha
+  // que o usuário já fez enquanto a query ainda estava em voo.
+  const [modalidadeTouched, setModalidadeTouched] = useState(false);
+  const [intensidadeTouched, setIntensidadeTouched] = useState(false);
+  const ultimoLogRows = useDbQuery(
+    () =>
+      db
+        .select({ modalidade: cardioLogs.modalidade, intensidade: cardioLogs.intensidade })
+        .from(cardioLogs)
+        .orderBy(desc(cardioLogs.id))
+        .limit(1),
+    ['cardio_logs'],
+    []
+  );
+  const ultimoLog = ultimoLogRows?.[0];
+
+  useEffect(() => {
+    if (modalidadeTouched || !ultimoLog) return;
+    setModalidade(ultimoLog.modalidade as ModalidadeCardio);
+  }, [ultimoLog, modalidadeTouched]);
+
+  useEffect(() => {
+    if (intensidadeTouched || !ultimoLog) return;
+    setIntensidade(ultimoLog.intensidade as IntensidadeCardio);
+  }, [ultimoLog, intensidadeTouched]);
 
   const showDistancia = modalidade != null && MODALIDADES_COM_DISTANCIA.has(modalidade);
 
@@ -90,7 +124,10 @@ export default function AdicionarCardioScreen() {
           return (
             <Pressable
               key={item.key}
-              onPress={() => setModalidade(item.key)}
+              onPress={() => {
+                setModalidadeTouched(true);
+                setModalidade(item.key);
+              }}
               className={`mb-2 flex-row items-center gap-2 rounded border px-3 py-3 ${
                 selected ? 'border-accent bg-accent' : 'border-border bg-surface'
               }`}
@@ -138,7 +175,10 @@ export default function AdicionarCardioScreen() {
           return (
             <Pressable
               key={item.key}
-              onPress={() => setIntensidade(item.key)}
+              onPress={() => {
+                setIntensidadeTouched(true);
+                setIntensidade(item.key);
+              }}
               className={`flex-1 items-center rounded border px-3 py-3 ${
                 selected ? `${classNames.border} ${classNames.bg}` : 'border-border bg-surface'
               }`}>

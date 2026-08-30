@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { Alert, Pressable, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { eq } from 'drizzle-orm';
-import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { CelebrationModal } from '@/components/ui/celebration-modal';
@@ -17,6 +16,7 @@ import {
   computeWeekTrainingCount,
   getActivePlanDays,
   getActivePlanFrequency,
+  getAllTrainedDates,
   getLatestPR,
   getMonthTrainingDays,
   getNextSuggestedWorkout,
@@ -118,35 +118,43 @@ export default function DashboardScreen() {
     setCelebrationData({ treinos: anterior || 1, mesNome: capitalize(mesAnteriorNome) });
   };
 
-  // Datas de sessões concluídas — alimenta o streak (computeWeekStreak) e os
-  // dots de dias da semana (computeTrainedDaysInWeek, mesma função pura já
-  // usada no card de compartilhamento — ver workout-share-card.tsx), e
-  // também detecta "usuário novo" (nenhuma sessão concluída ainda), sem
-  // precisar de uma query extra só pra isso.
-  const { data: concludedSessionRows } = useLiveQuery(
-    db.select({ data: sessions.data }).from(sessions).where(eq(sessions.concluida, true))
-  );
-  const concludedDates = useMemo(() => (concludedSessionRows ?? []).map((row) => row.data), [concludedSessionRows]);
+  // Datas de treino concluído — força (`sessions`) OU cardio (`cardioSessions`,
+  // ver getAllTrainedDates em dashboard-stats.ts) — alimenta o streak
+  // (computeWeekStreak) e os dots de dias da semana (computeTrainedDaysInWeek,
+  // mesma função pura já usada no card de compartilhamento — ver
+  // workout-share-card.tsx), e também detecta "usuário novo" (nenhum treino
+  // concluído ainda, nem força nem cardio). `useDbQuery` (não `useLiveQuery`)
+  // porque a união dos 2 modos precisa observar as DUAS tabelas — mesmo
+  // padrão de cardio-stats.ts pra unir os 2 modos internos do cardio.
+  const allTrainedDates = useDbQuery(getAllTrainedDates, ['sessions', 'cardio_sessions'], []);
+  const concludedDates = useMemo(() => allTrainedDates ?? [], [allTrainedDates]);
   const streak = useMemo(() => computeWeekStreak(concludedDates), [concludedDates]);
   const diasSemana = useMemo(
     () => computeTrainedDaysInWeek(concludedDates, weekStartIso),
     [concludedDates, weekStartIso]
   );
-  // `undefined` (1ª emissão do useLiveQuery ainda não chegou) NÃO conta como
+  // `undefined` (1ª emissão da query ainda não chegou) NÃO conta como
   // "novo" — evita o flash do card de boas-vindas pra quem já tem histórico
   // só porque a query ainda não respondeu.
-  const isUsuarioNovo = concludedSessionRows !== undefined && concludedSessionRows.length === 0;
+  const isUsuarioNovo = allTrainedDates !== undefined && allTrainedDates.length === 0;
 
   // Meta semanal REAL (Passo 1) — dias do plano ativo, não mais um "3" fixo.
   // Mesmas tabelas de getNextSuggestedWorkout (as duas consultam o "plano
   // ativo"), por isso os mesmos watchTables.
   const WATCH_PLANO_ATIVO = ['sessions', 'workout_days', 'workout_plans'];
   const meta = useDbQuery(getActivePlanFrequency, WATCH_PLANO_ATIVO, []);
-  const weekCount = useDbQuery(computeWeekTrainingCount, ['sessions'], []);
+  // As 4 abaixo agora leem sessions E cardioSessions por baixo (ver
+  // getAllTrainedDates, dashboard-stats.ts) — 'cardio_sessions' entra no
+  // watch pra reagir a concluir/apagar cardio, não só musculação.
+  const weekCount = useDbQuery(computeWeekTrainingCount, ['sessions', 'cardio_sessions'], []);
   const volume = useDbQuery(computeWeeklyVolumeKg, ['sessions', 'set_logs'], []);
-  const monthlyCounts = useDbQuery(computeMonthlyTrainingCounts, ['sessions'], []);
-  const monthTrainingDays = useDbQuery(getMonthTrainingDays, ['sessions'], []);
-  const lastMonths = useDbQuery(() => computeLastMonthsTrainingCounts(MESES_MINI_BARRAS), ['sessions'], []);
+  const monthlyCounts = useDbQuery(computeMonthlyTrainingCounts, ['sessions', 'cardio_sessions'], []);
+  const monthTrainingDays = useDbQuery(getMonthTrainingDays, ['sessions', 'cardio_sessions'], []);
+  const lastMonths = useDbQuery(
+    () => computeLastMonthsTrainingCounts(MESES_MINI_BARRAS),
+    ['sessions', 'cardio_sessions'],
+    []
+  );
   const latestPR = useDbQuery(getLatestPR, ['sessions', 'set_logs'], []);
   const nextWorkout = useDbQuery(getNextSuggestedWorkout, WATCH_PLANO_ATIVO, []);
   const planDays = useDbQuery(getActivePlanDays, WATCH_PLANO_ATIVO, []);

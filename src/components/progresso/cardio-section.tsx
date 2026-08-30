@@ -13,7 +13,7 @@ import {
   getCardioWeekSummary,
   type CardioHistoryItem,
 } from '@/db/cardio-stats';
-import { MODALIDADES_CARDIO } from '@/lib/cardio';
+import { formatPace, MODALIDADES_CARDIO } from '@/lib/cardio';
 import { formatShortDateLabel, getTodayDateString, getWeekStartIso, parseLocalIsoDate, toLocalIsoDate } from '@/lib/date';
 import { useConfirmDialog } from '@/lib/use-confirm-dialog';
 import { useDbQuery } from '@/lib/use-db-query';
@@ -76,8 +76,20 @@ export function CardioSection() {
     }
   };
 
+  // `key` força CollapsibleSection a REMONTAR (reinicializando seu próprio
+  // `useState(defaultExpanded)`) na transição de `summary === undefined`
+  // (query ainda não resolveu — cabeçalho aparece fechado, como sempre) pra
+  // um valor real. Sem isso, o `useState` interno já teria travado no
+  // `false` do 1º paint (a resposta da query é assíncrona, não dá pra saber
+  // no mount) e nunca reagiria ao dado chegar um instante depois.
+  const jaTeveCardioNaSemana = (summary?.totalSessoes ?? 0) > 0;
+
   return (
-    <CollapsibleSection title="Cardio" icon="flash-outline">
+    <CollapsibleSection
+      key={summary === undefined ? 'carregando' : 'carregado'}
+      title="Cardio"
+      icon="flash-outline"
+      defaultExpanded={jaTeveCardioNaSemana}>
       {summary && (
         <View>
           {summary.totalMinutos === 0 ? (
@@ -117,25 +129,40 @@ export function CardioSection() {
       {history && history.length > 0 && (
         <View className="mt-5 gap-2">
           <Label>Histórico</Label>
-          {history.map((item, index) => (
-            <Card key={`${item.tipo}-${item.data}-${index}`} className="px-4 py-3">
-              <View className="flex-row items-center justify-between">
-                <Text className="font-card-title text-sm text-text">{formatShortDateLabel(item.data)}</Text>
-                <View className="flex-row items-center gap-3">
-                  <Label>{item.tipo === 'forca_com_cardio' ? 'Treino + Cardio' : 'Cardio'}</Label>
-                  <Pressable onPress={() => handleDeleteHistoryItem(item)} hitSlop={10}>
-                    <Ionicons name="trash-outline" size={16} color={colors.muted} />
-                  </Pressable>
+          {history.map((item, index) => {
+            // Distância total do item (soma dos blocos que têm distância) —
+            // não existia exibição nenhuma de distância aqui antes; some
+            // junto com o pace (que depende dela) só quando pelo menos um
+            // bloco registrou distância, sem inventar uma seção nova.
+            const distanciaTotalKm = item.blocos.reduce((sum, b) => sum + (b.distanciaKm ?? 0), 0);
+            const pace = formatPace(item.duracaoTotalMin, distanciaTotalKm > 0 ? distanciaTotalKm : null);
+            return (
+              <Card key={`${item.tipo}-${item.data}-${index}`} className="px-4 py-3">
+                <View className="flex-row items-center justify-between">
+                  <Text className="font-card-title text-sm text-text">{formatShortDateLabel(item.data)}</Text>
+                  <View className="flex-row items-center gap-3">
+                    <Label>{item.tipo === 'forca_com_cardio' ? 'Treino + Cardio' : 'Cardio'}</Label>
+                    <Pressable onPress={() => handleDeleteHistoryItem(item)} hitSlop={10}>
+                      <Ionicons name="trash-outline" size={16} color={colors.muted} />
+                    </Pressable>
+                  </View>
                 </View>
-              </View>
-              <Label className="mt-1">{`${item.duracaoTotalMin} min`}</Label>
-              <View className="mt-2 flex-row flex-wrap gap-1">
-                {[...new Set(item.blocos.map((b) => b.modalidade))].map((modalidade) => (
-                  <Chip key={modalidade} label={MODALIDADES_CARDIO.find((m) => m.key === modalidade)?.label ?? modalidade} />
-                ))}
-              </View>
-            </Card>
-          ))}
+                <Label className="mt-1">
+                  {`${item.duracaoTotalMin} min${distanciaTotalKm > 0 ? ` · ${distanciaTotalKm}km` : ''}${
+                    pace ? ` · ${pace}` : ''
+                  }`}
+                </Label>
+                <View className="mt-2 flex-row flex-wrap gap-1">
+                  {[...new Set(item.blocos.map((b) => b.modalidade))].map((modalidade) => (
+                    <Chip
+                      key={modalidade}
+                      label={MODALIDADES_CARDIO.find((m) => m.key === modalidade)?.label ?? modalidade}
+                    />
+                  ))}
+                </View>
+              </Card>
+            );
+          })}
         </View>
       )}
 

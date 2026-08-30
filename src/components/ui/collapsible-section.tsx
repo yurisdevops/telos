@@ -12,6 +12,12 @@ type CollapsibleSectionProps = {
   // existentes (Análise de volume/Medidas corporais/Histórico de treinos,
   // todos no Perfil) que nunca passaram essa prop.
   icon?: ComponentProps<typeof Ionicons>['name'];
+  // Opcional — estado inicial (ex: CardioSection abre já expandida quando
+  // houve cardio na semana). `false` por padrão, idêntico ao comportamento
+  // de sempre pros usos existentes que não passam essa prop. Só o valor
+  // inicial do `useState` — depois de montado, o toque no cabeçalho continua
+  // controlando normalmente (não é um prop controlado).
+  defaultExpanded?: boolean;
   children: ReactNode;
 };
 
@@ -19,7 +25,10 @@ type CollapsibleSectionProps = {
  * Seção com cabeçalho tocável que expande/colapsa o conteúdo — reutilizável
  * (hoje: Análise de volume e Histórico no Perfil, que sozinhas deixavam a
  * tela comprida demais; qualquer seção pesada futura pode usar o mesmo
- * wrapper). Sempre começa COLAPSADA (`useState(false)`).
+ * wrapper). Começa COLAPSADA por padrão (`useState(defaultExpanded)`, que é
+ * `false` se a prop não for passada — os 3 usos originais continuam assim);
+ * `defaultExpanded` deixa um uso específico (ex: CardioSection) nascer já
+ * aberto quando fizer sentido.
  *
  * Lazy por construção, sem flag extra: `children` só entra no JSX quando
  * `expanded` é `true` — enquanto colapsado, o que foi passado como filho
@@ -30,8 +39,8 @@ type CollapsibleSectionProps = {
  * barata) isso é preferível a manter uma seção escondida "viva" recebendo
  * atualizações à toa.
  */
-export function CollapsibleSection({ title, icon, children }: CollapsibleSectionProps) {
-  const [expanded, setExpanded] = useState(false);
+export function CollapsibleSection({ title, icon, defaultExpanded = false, children }: CollapsibleSectionProps) {
+  const [expanded, setExpanded] = useState(defaultExpanded);
 
   return (
     <Card className="mb-6">

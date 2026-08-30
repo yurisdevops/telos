@@ -1,7 +1,7 @@
 import { and, desc, eq, gte, inArray, lt, ne, sql } from 'drizzle-orm';
 
 import { db } from './index';
-import { exercises, sessions, setLogs, workoutDayExercises, workoutDays, workoutPlans } from './schema';
+import { cardioSessions, exercises, sessions, setLogs, workoutDayExercises, workoutDays, workoutPlans } from './schema';
 import { findSessionPrs, type SessionPr } from '@/lib/personal-records';
 import { getTodayDateString, getWeekStartIso, parseLocalIsoDate, toLocalIsoDate } from '@/lib/date';
 import { computeTrainedDaysInMonth, getCurrentMonthPrefix } from '@/lib/stats';
@@ -77,9 +77,38 @@ export async function getActivePlanDays(): Promise<PlanDay[]> {
 }
 
 /**
- * Treinos concluídos na semana atual (count) — mesmo boundary [início, +7
- * dias) de `computeCurrentWeekVolume` (stats.ts), só trocando o agregado de
- * soma de volume por contagem de sessões.
+ * Datas (ISO) com QUALQUER treino concluído — musculação (`sessions`) OU
+ * cardio (`cardioSessions`, os dois modos já unidos por cardio-stats.ts na
+ * origem: aqui só interessa a DATA, não o modo) — deduplicadas por data via
+ * `Set`, então um dia com os dois nunca conta 2x. Fonte única reaproveitada
+ * por todo agregado abaixo que deveria refletir "dia treinado" incluindo
+ * cardio (frequência semanal/mensal, calendário, barras de meses) — mesmo
+ * espírito de união em memória que `getCardioWeekSummary`/`getCardioHistory`
+ * (cardio-stats.ts) já usam pros 2 modos internos do cardio, só que aqui
+ * unindo cardio com FORÇA em vez dos 2 modos de cardio entre si.
+ *
+ * Sem filtro de período (busca tudo) — os agregados que precisam de uma
+ * janela filtram o array resultante em memória (comparação de string ISO
+ * funciona igual à cronológica); pro volume de dados de um único usuário
+ * (dezenas a poucos milhares de sessões ao longo de anos), isso é mais
+ * simples e barato que uma query SQL por período por chamador, e faz cada
+ * função abaixo precisar de só 1 chamada em vez de repetir a união.
+ */
+export async function getAllTrainedDates(): Promise<string[]> {
+  const [sessionRows, cardioRows] = await Promise.all([
+    db.select({ data: sessions.data }).from(sessions).where(eq(sessions.concluida, true)),
+    db.select({ data: cardioSessions.data }).from(cardioSessions).where(eq(cardioSessions.concluida, true)),
+  ]);
+  return [...new Set([...sessionRows.map((r) => r.data), ...cardioRows.map((r) => r.data)])];
+}
+
+/**
+ * Treinos concluídos na semana atual (count de DIAS distintos, não de
+ * sessões — um dia com força E cardio conta 1x, não 2x) — mesmo boundary
+ * [início, +7 dias) de `computeCurrentWeekVolume` (stats.ts). Conta cardio
+ * (ver `getAllTrainedDates`): é a "frequência" que a barra de progresso da
+ * meta semanal mostra, e um dia só de cardio é, pro usuário, um dia
+ * treinado igual.
  */
 export async function computeWeekTrainingCount(): Promise<number> {
   const weekStartIso = getWeekStartIso(getTodayDateString());
@@ -88,12 +117,8 @@ export async function computeWeekTrainingCount(): Promise<number> {
   weekEnd.setDate(weekEnd.getDate() + 7);
   const weekEndIso = toLocalIsoDate(weekEnd);
 
-  const rows = await db
-    .select({ count: sql<number>`count(*)` })
-    .from(sessions)
-    .where(and(eq(sessions.concluida, true), gte(sessions.data, weekStartIso), lt(sessions.data, weekEndIso)));
-
-  return Number(rows[0]?.count ?? 0);
+  const allDates = await getAllTrainedDates();
+  return allDates.filter((data) => data >= weekStartIso && data < weekEndIso).length;
 }
 
 /** Primeiro dia (ISO) do mês que contém hoje, deslocado por `monthOffset`
@@ -104,8 +129,10 @@ function startOfMonthIso(monthOffset: number): string {
   return toLocalIsoDate(new Date(now.getFullYear(), now.getMonth() + monthOffset, 1));
 }
 
-/** Treinos concluídos no mês atual e anterior, + nome do mês anterior em
- * português (pro texto comparativo "vs {mesAnterior}" do card MÊS). */
+/** Treinos concluídos no mês atual e anterior (dias distintos, cardio
+ * incluído — mesmo raciocínio de `computeWeekTrainingCount`), + nome do mês
+ * anterior em português (pro texto comparativo "vs {mesAnterior}" do card
+ * MÊS). */
 export async function computeMonthlyTrainingCounts(): Promise<{
   atual: number;
   anterior: number;
@@ -115,23 +142,12 @@ export async function computeMonthlyTrainingCounts(): Promise<{
   const inicioAtual = startOfMonthIso(0);
   const inicioProximo = startOfMonthIso(1);
 
-  const [atualRows, anteriorRows] = await Promise.all([
-    db
-      .select({ count: sql<number>`count(*)` })
-      .from(sessions)
-      .where(and(eq(sessions.concluida, true), gte(sessions.data, inicioAtual), lt(sessions.data, inicioProximo))),
-    db
-      .select({ count: sql<number>`count(*)` })
-      .from(sessions)
-      .where(and(eq(sessions.concluida, true), gte(sessions.data, inicioAnterior), lt(sessions.data, inicioAtual))),
-  ]);
+  const allDates = await getAllTrainedDates();
+  const atual = allDates.filter((data) => data >= inicioAtual && data < inicioProximo).length;
+  const anterior = allDates.filter((data) => data >= inicioAnterior && data < inicioAtual).length;
 
   const mesAnteriorIndex = (new Date().getMonth() + 11) % 12;
-  return {
-    atual: Number(atualRows[0]?.count ?? 0),
-    anterior: Number(anteriorRows[0]?.count ?? 0),
-    mesAnteriorNome: MESES_PT[mesAnteriorIndex],
-  };
+  return { atual, anterior, mesAnteriorNome: MESES_PT[mesAnteriorIndex] };
 }
 
 /**
@@ -176,7 +192,9 @@ export async function computeWeeklyVolumeKg(): Promise<{ atual: number; anterior
   return { atual, anterior };
 }
 
-/** Dias do mês atual (1-31) com sessão concluída — reusa
+/** Dias do mês atual (1-31) com treino concluído — força OU cardio (ver
+ * `getAllTrainedDates`), pros pontos do calendário refletirem um dia só de
+ * cardio igual a um dia de musculação. Reusa
  * `computeTrainedDaysInMonth`/`getCurrentMonthPrefix` (lib/stats.ts, já
  * existentes, mesma lógica do FrequencySection no Progresso) em vez de
  * reimplementar o parse de dia-do-mês a partir da data ISO. */
@@ -184,35 +202,29 @@ export async function getMonthTrainingDays(): Promise<Set<number>> {
   const inicioAtual = startOfMonthIso(0);
   const inicioProximo = startOfMonthIso(1);
 
-  const rows = await db
-    .select({ data: sessions.data })
-    .from(sessions)
-    .where(and(eq(sessions.concluida, true), gte(sessions.data, inicioAtual), lt(sessions.data, inicioProximo)));
+  const allDates = await getAllTrainedDates();
+  const datasDoMes = allDates.filter((data) => data >= inicioAtual && data < inicioProximo);
 
-  return computeTrainedDaysInMonth(
-    rows.map((row) => row.data),
-    getCurrentMonthPrefix()
-  );
+  return computeTrainedDaysInMonth(datasDoMes, getCurrentMonthPrefix());
 }
 
 /**
- * Contagem de treinos concluídos por mês, dos últimos `months` meses
- * (incluindo o atual), do mais antigo pro mais recente — alimenta as mini
- * barras do card MÊS. Não fazia parte da lista literal de funções do pedido
- * (só as 4 nomeadas), mas o layout aprovado pede "6 barras (últimos 6
- * meses)" — sem essa contagem elas seriam decoração sem dado nenhum atrás.
- * Mesmo arquivo, nenhum arquivo novo além do combinado.
+ * Contagem de treinos concluídos por mês (dias distintos, cardio incluído),
+ * dos últimos `months` meses (incluindo o atual), do mais antigo pro mais
+ * recente — alimenta as mini barras do card MÊS. Não fazia parte da lista
+ * literal de funções do pedido (só as 4 nomeadas), mas o layout aprovado
+ * pede "6 barras (últimos 6 meses)" — sem essa contagem elas seriam
+ * decoração sem dado nenhum atrás. Mesmo arquivo, nenhum arquivo novo além
+ * do combinado. Uma única chamada a `getAllTrainedDates` fora do loop (antes
+ * eram `months` queries separadas ao banco, uma por mês).
  */
 export async function computeLastMonthsTrainingCounts(months: number): Promise<number[]> {
+  const allDates = await getAllTrainedDates();
   const counts: number[] = [];
   for (let i = months - 1; i >= 0; i -= 1) {
     const inicio = startOfMonthIso(-i);
     const fim = startOfMonthIso(-i + 1);
-    const rows = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(sessions)
-      .where(and(eq(sessions.concluida, true), gte(sessions.data, inicio), lt(sessions.data, fim)));
-    counts.push(Number(rows[0]?.count ?? 0));
+    counts.push(allDates.filter((data) => data >= inicio && data < fim).length);
   }
   return counts;
 }
