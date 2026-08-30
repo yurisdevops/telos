@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
+import { eq } from 'drizzle-orm';
 
 import { ExerciseCatalogList } from '@/components/exercise-catalog-list';
 import { Screen } from '@/components/screen';
@@ -12,7 +13,9 @@ export default function CatalogoScreen() {
   const [totalCount, setTotalCount] = useState<number | null>(null);
 
   useEffect(() => {
-    db.$count(exercises).then(setTotalCount);
+    // Mesma curadoria da lista abaixo (visivel = true) — o header conta o
+    // que a busca realmente mostra, não o catálogo inteiro (872 no banco).
+    db.$count(exercises, eq(exercises.visivel, true)).then(setTotalCount);
   }, []);
 
   return (

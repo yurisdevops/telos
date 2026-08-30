@@ -55,7 +55,12 @@ export function ExerciseCatalogList({
   const [nivel, setNivel] = useState<string | null>(null);
   const [favoritesOnly, setFavoritesOnly] = useState(false);
 
-  const { data } = useLiveQuery(db.select().from(exercises));
+  // `visivel` é curadoria de navegação (148 de 872) — não filtra histórico/
+  // plano em lugar nenhum, só esconde daqui (busca/seleção de exercício
+  // novo). Um exercício já usado continua acessível pela tela de detalhe
+  // dele mesmo escondido daqui (ver src/app/exercicio/[id].tsx, que busca
+  // por id, não por essa lista).
+  const { data } = useLiveQuery(db.select().from(exercises).where(eq(exercises.visivel, true)));
   const { data: preferenceRows } = useLiveQuery(db.select().from(exercisePreferences));
 
   const favoriteWgerIds = useMemo(

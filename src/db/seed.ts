@@ -17,6 +17,7 @@ type SeedExercise = {
   descricao: string | null;
   dica: string | null;
   nivel: string | null;
+  visivel: boolean;
 };
 
 const CHUNK_SIZE = 100;
@@ -115,6 +116,7 @@ function toRow(item: SeedExercise) {
     descricao: item.descricao,
     dica: item.dica,
     nivel: item.nivel,
+    visivel: item.visivel,
   };
 }
 
@@ -258,41 +260,54 @@ function logAndAlertResult(result: ReconcileResult) {
 
 /**
  * 2026-07: campo `nivel` adicionado ao catálogo (coluna aditiva, migração
- * 0006). Os wgerId não mudaram, então `alreadyMigrated` abaixo continuaria
- * batendo e puloria o UPDATE que sincroniza esse campo nas linhas já
+ * 0006). 2026-08: mesma ideia pro campo `visivel` (curadoria do catálogo —
+ * 148 de 872 marcados pra aparecer na navegação, migração 0018). Em ambos
+ * os casos os wgerId não mudam, então `alreadyMigrated` abaixo continuaria
+ * batendo e puloria o UPDATE que sincroniza esses campos nas linhas já
  * existentes — por isso essa sincronização roda à parte, fora do reconcile
  * completo.
  *
- * Sincroniza tanto o preenchimento inicial (nivel NULL) quanto correções
- * pontuais do seed (uma leva anterior classificou 128 exercícios errado;
- * dispositivos que já rodaram aquele seed ficaram com o valor antigo
- * gravado). Só toca a coluna `nivel`, por UPDATE via wgerId — nunca mexe em
- * id, nas demais colunas de catálogo, nem em tabela de usuário (planos,
- * séries, histórico). Idempotente: compara em memória antes de escrever, só
- * gera UPDATE para wgerId cujo nivel gravado diverge do seed atual; roda de
- * novo sem nada divergente é um no-op (nenhuma escrita).
+ * Sincroniza tanto o preenchimento inicial (coluna recém-criada, valor
+ * default em toda linha) quanto correções pontuais do seed (uma leva
+ * anterior classificou exercícios errado; dispositivos que já rodaram
+ * aquele seed ficaram com o valor antigo gravado). Só toca `nivel`/
+ * `visivel`, por UPDATE via wgerId — nunca mexe em id, nas demais colunas
+ * de catálogo, nem em tabela de usuário (planos, séries, histórico).
+ * Idempotente: compara em memória antes de escrever, só gera UPDATE para
+ * wgerId cujo valor gravado diverge do seed atual; roda de novo sem nada
+ * divergente é um no-op (nenhuma escrita).
  */
-function syncNivelFromSeed(existingRows: { id: number; wgerId: number; nivel: string | null }[]) {
-  const nivelByWgerId = new Map((seedData as SeedExercise[]).map((item) => [item.wgerId, item.nivel]));
+function syncCatalogFieldsFromSeed(
+  existingRows: { id: number; wgerId: number; nivel: string | null; visivel: boolean }[]
+) {
+  const seedByWgerId = new Map(
+    (seedData as SeedExercise[]).map((item) => [item.wgerId, { nivel: item.nivel, visivel: item.visivel }])
+  );
 
-  const outOfSync = existingRows.filter((row) => {
-    const seedNivel = nivelByWgerId.get(row.wgerId);
-    return seedNivel !== undefined && seedNivel !== row.nivel;
-  });
+  const outOfSync = existingRows
+    .map((row) => {
+      const seedValues = seedByWgerId.get(row.wgerId);
+      if (!seedValues) return null;
+      const patch: { nivel?: string | null; visivel?: boolean } = {};
+      if (seedValues.nivel !== row.nivel) patch.nivel = seedValues.nivel;
+      if (seedValues.visivel !== row.visivel) patch.visivel = seedValues.visivel;
+      return Object.keys(patch).length > 0 ? { id: row.id, patch } : null;
+    })
+    .filter((entry): entry is { id: number; patch: { nivel?: string | null; visivel?: boolean } } => entry !== null);
   if (outOfSync.length === 0) return;
 
   db.transaction((tx) => {
-    for (const row of outOfSync) {
-      tx.update(exercises).set({ nivel: nivelByWgerId.get(row.wgerId) }).where(eq(exercises.id, row.id)).run();
+    for (const { id, patch } of outOfSync) {
+      tx.update(exercises).set(patch).where(eq(exercises.id, id)).run();
     }
   });
-  console.log(`[catalog] Campo "nivel" sincronizado com o seed em ${outOfSync.length} de ${existingRows.length} exercício(s).`);
+  console.log(`[catalog] Campos "nivel"/"visivel" sincronizados com o seed em ${outOfSync.length} de ${existingRows.length} exercício(s).`);
 }
 
 export function seedDatabase() {
   try {
     const existingRows = db
-      .select({ id: exercises.id, wgerId: exercises.wgerId, nivel: exercises.nivel })
+      .select({ id: exercises.id, wgerId: exercises.wgerId, nivel: exercises.nivel, visivel: exercises.visivel })
       .from(exercises)
       .all();
 
@@ -316,7 +331,7 @@ export function seedDatabase() {
       newWgerIds.every((id) => currentWgerIds.has(id));
 
     if (alreadyMigrated) {
-      syncNivelFromSeed(existingRows);
+      syncCatalogFieldsFromSeed(existingRows);
       return;
     }
 

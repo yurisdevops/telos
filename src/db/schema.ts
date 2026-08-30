@@ -12,6 +12,16 @@ export const exercises = sqliteTable('exercises', {
   descricao: text('descricao'),
   dica: text('dica'),
   nivel: text('nivel'),
+  // 2026-08: curadoria do catálogo (872 exercícios reais no banco, 148
+  // marcados como "vitrine" pro Catálogo/seletor de exercício — ver
+  // assets/data/seed_final.json). Default `true` protege quem já tinha
+  // linhas antes desta coluna existir (ALTER TABLE ADD COLUMN aplica o
+  // default a toda linha existente); o seed corrige os 724 pra `false` logo
+  // em seguida (syncVisivelFromSeed em src/db/seed.ts). Nunca filtra
+  // histórico/plano — só a lista de navegação usa isso (ver
+  // exercise-catalog-list.tsx), pra um exercício antigo já usado continuar
+  // acessível pelo próprio histórico mesmo escondido da busca.
+  visivel: integer('visivel', { mode: 'boolean' }).notNull().default(true),
 });
 
 export type Exercise = typeof exercises.$inferSelect;
