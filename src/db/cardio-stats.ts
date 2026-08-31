@@ -5,6 +5,8 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { db } from './index';
 import { cardioLogs, cardioSessions, sessions, type CardioLog } from './schema';
 import { MODALIDADES_CARDIO, type ModalidadeCardio } from '@/lib/cardio';
+import { getWeekStartIso } from '@/lib/date';
+import { buildWeekWindow } from '@/lib/weeks';
 
 type IoniconsName = ComponentProps<typeof Ionicons>['name'];
 
@@ -77,6 +79,40 @@ export async function getCardioWeekSummary(startIso: string, endIso: string): Pr
   const totalSessoes = new Set(allRows.map((r) => r.sessionKey)).size;
 
   return { totalMinutos, porModalidade, totalSessoes };
+}
+
+export type CardioWeeklyMinutes = { weekKey: string; minutos: number };
+
+/**
+ * Série de minutos de cardio por semana, últimas `weeksCount` semanas
+ * (mesma janela de buildWeekWindow, weeks.ts — usada por WeeklyVolumeSection/
+ * DensitySection no Progresso) — pro gráfico de tendência (CardioTrendSection).
+ * Mesma união dos 2 modos de getCardioWeekSummary acima (UNION EM MEMÓRIA:
+ * modo A via sessions, modo B via cardioSessions), mas sem filtro de janela
+ * na query — igual WeeklyVolumeSection, busca tudo que já foi concluído e
+ * agrupa por getWeekStartIso(data) em memória, preenchendo 0 nas semanas do
+ * window que não têm linha no Map.
+ */
+export async function getCardioWeeklyMinutes(weeksCount: number): Promise<CardioWeeklyMinutes[]> {
+  const modoARows = await db
+    .select({ data: sessions.data, duracaoMin: cardioLogs.duracaoMin })
+    .from(cardioLogs)
+    .innerJoin(sessions, eq(cardioLogs.sessionId, sessions.id))
+    .where(eq(sessions.concluida, true));
+
+  const modoBRows = await db
+    .select({ data: cardioSessions.data, duracaoMin: cardioLogs.duracaoMin })
+    .from(cardioLogs)
+    .innerJoin(cardioSessions, eq(cardioLogs.cardioSessionId, cardioSessions.id))
+    .where(eq(cardioSessions.concluida, true));
+
+  const byWeek = new Map<string, number>();
+  for (const row of [...modoARows, ...modoBRows]) {
+    const weekKey = getWeekStartIso(row.data);
+    byWeek.set(weekKey, (byWeek.get(weekKey) ?? 0) + row.duracaoMin);
+  }
+
+  return buildWeekWindow(weeksCount).map((weekKey) => ({ weekKey, minutos: byWeek.get(weekKey) ?? 0 }));
 }
 
 export type CardioHistoryItem = {

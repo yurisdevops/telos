@@ -6,6 +6,7 @@ import { Screen } from '@/components/screen';
 import { AdherenceSection } from '@/components/progresso/adherence-section';
 import { BodyWeightSection } from '@/components/progresso/body-weight-section';
 import { CardioSection } from '@/components/progresso/cardio-section';
+import { CardioTrendSection } from '@/components/progresso/cardio-trend-section';
 import { CoachSection } from '@/components/progresso/coach-section';
 import { DensitySection } from '@/components/progresso/density-section';
 import { FrequencySection } from '@/components/progresso/frequency-section';
@@ -60,6 +61,7 @@ export default function ProgressoScreen() {
         <BodyWeightSection />
         <PersonalRecordsSection />
         <AdherenceSection />
+        <CardioTrendSection />
         <CardioSection />
       </View>
     </Screen>
