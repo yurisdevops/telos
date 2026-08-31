@@ -289,6 +289,11 @@ export function assertValidBackupPayload(json: unknown): BackupPayload {
     // backups anteriores a essa feature, normaliza pra `null`.
     assertOptionalNullableString(json.userProfile.lastCelebrationMonth, 'userProfile.lastCelebrationMonth');
     if (json.userProfile.lastCelebrationMonth === undefined) json.userProfile.lastCelebrationMonth = null;
+    // metaCardioMinutosSemana (meta semanal de cardio) — mesma regra que
+    // lastSeenChangelogVersion (mesmo tipo: número nullable), ausente em
+    // backups anteriores a essa feature, normaliza pra `null`.
+    assertOptionalNullableNumber(json.userProfile.metaCardioMinutosSemana, 'userProfile.metaCardioMinutosSemana');
+    if (json.userProfile.metaCardioMinutosSemana === undefined) json.userProfile.metaCardioMinutosSemana = null;
   }
 
   json.cardioSessions.forEach((row, index) => {

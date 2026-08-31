@@ -185,6 +185,7 @@ export async function buildBackupPayload(): Promise<BackupPayload> {
           lastSeenChangelogVersion: profile.lastSeenChangelogVersion,
           sexo: profile.sexo,
           lastCelebrationMonth: profile.lastCelebrationMonth,
+          metaCardioMinutosSemana: profile.metaCardioMinutosSemana,
         }
       : null,
     cardioSessions: cardioSessionRows.map((cs) => ({

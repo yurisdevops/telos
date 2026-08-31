@@ -187,6 +187,14 @@ export default function PerfilScreen() {
   const nomeValue = nomeDraft ?? profile?.nome ?? '';
   const alturaValue = alturaDraft ?? (profile?.alturaCm != null ? String(profile.alturaCm) : '');
 
+  // Meta de cardio (min/semana) — mesmo padrão draft de nome/altura, mesmo
+  // botão "Salvar" (não um botão próprio): campo vazio ao salvar grava
+  // `null` ("sem meta definida"), nunca 0 — CardioSection (Progresso) só
+  // mostra o card de meta quando não é `null`.
+  const [metaCardioDraft, setMetaCardioDraft] = useState<string | null>(null);
+  const metaCardioValue =
+    metaCardioDraft ?? (profile?.metaCardioMinutosSemana != null ? String(profile.metaCardioMinutosSemana) : '');
+
   const [pesoDraft, setPesoDraft] = useState('');
   const latestPesoKg = useDbQuery(() => getLatestBodyWeightKg(), ['body_weight_logs'], []);
 
@@ -219,14 +227,20 @@ export default function PerfilScreen() {
     const alturaTrim = alturaValue.trim();
     const alturaNum = alturaTrim ? Number(alturaTrim) : null;
     const alturaValida = alturaNum != null && Number.isFinite(alturaNum) && alturaNum > 0 ? Math.round(alturaNum) : null;
+    const metaCardioTrim = metaCardioValue.trim();
+    const metaCardioNum = metaCardioTrim ? Number(metaCardioTrim) : null;
+    const metaCardioValida =
+      metaCardioNum != null && Number.isFinite(metaCardioNum) && metaCardioNum > 0 ? Math.round(metaCardioNum) : null;
 
     try {
       await updateUserProfile({
         nome: trimmedNome ? trimmedNome : null,
         alturaCm: alturaValida,
+        metaCardioMinutosSemana: metaCardioValida,
       });
       setNomeDraft(null);
       setAlturaDraft(null);
+      setMetaCardioDraft(null);
       setSavedFeedback(true);
       if (savedFeedbackTimeout.current) clearTimeout(savedFeedbackTimeout.current);
       savedFeedbackTimeout.current = setTimeout(() => setSavedFeedback(false), 1500);
@@ -327,6 +341,16 @@ export default function PerfilScreen() {
           onChangeText={setAlturaDraft}
           keyboardType="number-pad"
           placeholder="Ex: 175"
+          className="mb-4"
+        />
+
+        <Label className="mb-1">Meta de cardio (min/semana)</Label>
+        <Label className="mb-2 text-muted">Opcional — deixe em branco pra não ter meta.</Label>
+        <Input
+          value={metaCardioValue}
+          onChangeText={setMetaCardioDraft}
+          keyboardType="number-pad"
+          placeholder="Ex: 90"
           className="mb-4"
         />
 

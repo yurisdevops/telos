@@ -20,6 +20,7 @@ import m0015 from './0015_nebulous_centennial.sql';
 import m0016 from './0016_new_cloak.sql';
 import m0017 from './0017_typical_the_executioner.sql';
 import m0018 from './0018_misty_luminals.sql';
+import m0019 from './0019_tranquil_synch.sql';
 
   export default {
     journal,
@@ -42,7 +43,8 @@ m0014,
 m0015,
 m0016,
 m0017,
-m0018
+m0018,
+m0019
     }
   }
   

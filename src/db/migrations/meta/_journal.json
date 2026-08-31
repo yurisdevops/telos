@@ -134,6 +134,13 @@
       "when": 1788043419792,
       "tag": "0018_misty_luminals",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "6",
+      "when": 1788137798068,
+      "tag": "0019_tranquil_synch",
+      "breakpoints": true
     }
   ]
 }

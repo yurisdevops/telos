@@ -168,6 +168,10 @@ export type BackupExerciseSubstitution = {
 // `lastCelebrationMonth` (celebração mensal, lib/monthly-celebration.ts) é a
 // mesma categoria de `lastSeenChangelogVersion` — flag de "já vi isso", não
 // um segredo do device — então entra no backup normalmente também.
+//
+// `metaCardioMinutosSemana` (meta semanal de cardio, CardioSection no
+// Progresso) é dado de preferência de verdade, mesma categoria de `sexo` —
+// entra no backup normalmente.
 export type BackupUserProfile = {
   nome: string | null;
   alturaCm: number | null;
@@ -176,6 +180,7 @@ export type BackupUserProfile = {
   lastSeenChangelogVersion: number | null;
   sexo: string | null;
   lastCelebrationMonth: string | null;
+  metaCardioMinutosSemana: number | null;
 };
 
 // Fundação de cardio (Etapa A) — cardioSessions é standalone de verdade

@@ -566,6 +566,7 @@ function restoreUserProfile(tx: Tx, row: BackupUserProfile | null, summary: Impo
       lastSeenChangelogVersion: row.lastSeenChangelogVersion,
       sexo: row.sexo,
       lastCelebrationMonth: row.lastCelebrationMonth,
+      metaCardioMinutosSemana: row.metaCardioMinutosSemana,
     })
     .onConflictDoUpdate({
       target: userProfile.id,
@@ -577,6 +578,7 @@ function restoreUserProfile(tx: Tx, row: BackupUserProfile | null, summary: Impo
         lastSeenChangelogVersion: row.lastSeenChangelogVersion,
         sexo: row.sexo,
         lastCelebrationMonth: row.lastCelebrationMonth,
+        metaCardioMinutosSemana: row.metaCardioMinutosSemana,
       },
     })
     .run();

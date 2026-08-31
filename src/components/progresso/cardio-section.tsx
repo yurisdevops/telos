@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Chip } from '@/components/ui/chip';
 import { CollapsibleSection } from '@/components/ui/collapsible-section';
 import { Label } from '@/components/ui/label';
+import { ProgressBar } from '@/components/ui/progress-bar';
 import {
   deleteCardioLogsForSession,
   deleteCardioSession,
@@ -13,6 +14,7 @@ import {
   getCardioWeekSummary,
   type CardioHistoryItem,
 } from '@/db/cardio-stats';
+import { useUserProfile } from '@/db/user-profile';
 import { formatPace, MODALIDADES_CARDIO } from '@/lib/cardio';
 import { formatShortDateLabel, getTodayDateString, getWeekStartIso, parseLocalIsoDate, toLocalIsoDate } from '@/lib/date';
 import { useConfirmDialog } from '@/lib/use-confirm-dialog';
@@ -46,6 +48,10 @@ export function CardioSection() {
     [startIso, endIso]
   );
   const history = useDbQuery(() => getCardioHistory(HISTORY_LIMIT), ['cardio_logs', 'sessions', 'cardio_sessions'], []);
+  // Reativo por si só (useLiveQuery por baixo, ver db/user-profile.ts) — não
+  // precisa entrar em nenhum watchTables acima, já reage sozinho a mudança
+  // de meta salva no Perfil.
+  const profile = useUserProfile();
   const { confirm, dialog } = useConfirmDialog();
 
   // `blocos[0]` já basta pra achar o id certo — todo bloco de um mesmo item
@@ -77,21 +83,42 @@ export function CardioSection() {
   };
 
   // `key` força CollapsibleSection a REMONTAR (reinicializando seu próprio
-  // `useState(defaultExpanded)`) na transição de `summary === undefined`
-  // (query ainda não resolveu — cabeçalho aparece fechado, como sempre) pra
-  // um valor real. Sem isso, o `useState` interno já teria travado no
-  // `false` do 1º paint (a resposta da query é assíncrona, não dá pra saber
-  // no mount) e nunca reagiria ao dado chegar um instante depois.
-  const jaTeveCardioNaSemana = (summary?.totalSessoes ?? 0) > 0;
+  // `useState(defaultExpanded)`) na transição de `summary`/`profile` ainda
+  // não resolvidos (cabeçalho aparece fechado, como sempre) pra um valor
+  // real. Sem isso, o `useState` interno já teria travado no `false` do 1º
+  // paint (as duas respostas são assíncronas, não dá pra saber no mount) e
+  // nunca reagiria ao dado chegar um instante depois.
+  //
+  // Nasce aberta se já houve cardio essa semana OU se existe uma meta
+  // definida — quem tem meta quer ver o progresso (mesmo "0/90 min") sem
+  // precisar tocar pra abrir, não só depois de já ter feito algo.
+  const deveNascerAberta = (summary?.totalSessoes ?? 0) > 0 || profile?.metaCardioMinutosSemana != null;
 
   return (
     <CollapsibleSection
-      key={summary === undefined ? 'carregando' : 'carregado'}
+      key={summary === undefined || profile === undefined ? 'carregando' : 'carregado'}
       title="Cardio"
       icon="flash-outline"
-      defaultExpanded={jaTeveCardioNaSemana}>
+      defaultExpanded={deveNascerAberta}>
       {summary && (
         <View>
+          {/* Meta semanal — só aparece se o usuário definiu uma (Perfil,
+              metaCardioMinutosSemana). Antes do bloco de resumo/vazio abaixo
+              (não dentro do `totalMinutos === 0 ? ... : ...`), pra continuar
+              visível mesmo numa semana sem cardio ainda — "0 / 90 min" é
+              mais útil que sumir a meta só porque ainda não há realizado. */}
+          {profile?.metaCardioMinutosSemana != null && (
+            <View className="mb-4">
+              <View className="mb-1 flex-row items-baseline justify-between">
+                <Label>Meta semanal</Label>
+                <Text className="font-label text-xs text-muted">
+                  {`${summary.totalMinutos} / ${profile.metaCardioMinutosSemana} min`}
+                </Text>
+              </View>
+              <ProgressBar progress={summary.totalMinutos / profile.metaCardioMinutosSemana} />
+            </View>
+          )}
+
           {summary.totalMinutos === 0 ? (
             <View className="items-center py-2">
               <Text className="text-center font-body text-sm text-muted">Nenhum cardio esta semana</Text>

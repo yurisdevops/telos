@@ -1,0 +1,1 @@
+ALTER TABLE `user_profile` ADD `meta_cardio_minutos_semana` integer;

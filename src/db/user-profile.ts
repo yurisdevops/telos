@@ -31,7 +31,14 @@ export function useUserProfile() {
 export type UserProfilePatch = Partial<
   Pick<
     UserProfile,
-    'nome' | 'alturaCm' | 'experiencia' | 'fotoUri' | 'lastSeenChangelogVersion' | 'sexo' | 'lastCelebrationMonth'
+    | 'nome'
+    | 'alturaCm'
+    | 'experiencia'
+    | 'fotoUri'
+    | 'lastSeenChangelogVersion'
+    | 'sexo'
+    | 'lastCelebrationMonth'
+    | 'metaCardioMinutosSemana'
   >
 >;
 

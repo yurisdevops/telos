@@ -260,6 +260,12 @@ export const userProfile = sqliteTable('user_profile', {
   // e usuário que nunca viu a celebração — tratado como "nunca mostrado"
   // (shouldShowCelebration), nunca como "já mostrado neste mês".
   lastCelebrationMonth: text('last_celebration_month'),
+  // Meta semanal de cardio, em minutos — definida pelo usuário no Perfil
+  // (CardioSection, Progresso, mostra realizado vs. esta meta). Nullable SEM
+  // default de propósito: `null` = "sem meta definida" (nunca "meta zero"),
+  // e é o valor que toda linha existente ganha quando a migração aditiva
+  // rodar, mesmo padrão de `lastSeenChangelogVersion`/`lastCelebrationMonth`.
+  metaCardioMinutosSemana: integer('meta_cardio_minutos_semana'),
 });
 
 export type UserProfile = typeof userProfile.$inferSelect;
