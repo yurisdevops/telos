@@ -1,0 +1,1 @@
+ALTER TABLE `user_profile` ADD `frase_seed` integer;

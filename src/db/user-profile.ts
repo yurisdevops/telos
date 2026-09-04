@@ -39,6 +39,7 @@ export type UserProfilePatch = Partial<
     | 'sexo'
     | 'lastCelebrationMonth'
     | 'metaCardioMinutosSemana'
+    | 'fraseSeed'
   >
 >;
 
@@ -94,6 +95,31 @@ export async function getLastCelebrationMonth(): Promise<string | null> {
  * mês virar). */
 export async function setLastCelebrationMonth(month: string | null): Promise<void> {
   await updateUserProfile({ lastCelebrationMonth: month });
+}
+
+/**
+ * Garante (idempotente, mesmo espírito de `ensureUserProfileRow`) que este
+ * device tem uma semente própria pra embaralhar a "frase do dia"
+ * (lib/motivational.ts) — gera e persiste só na PRIMEIRA vez que
+ * `fraseSeed` aparece `null` (linha nova, ou usuário antigo atualizando
+ * pra depois desta migração aditiva); daí em diante sempre devolve a
+ * mesma, sem gravar de novo. `Math.random()` (não CSPRNG) é suficiente
+ * aqui — não é segredo nenhum, só precisa diferir entre devices, mesmo
+ * raciocínio de `randomSaltHex` em lib/sha256.ts.
+ *
+ * Deliberadamente NÃO entra no backup (types.ts/serialize.ts/restore.ts) —
+ * mesma categoria de pinHash/pinSalt, não de metaCardioMinutosSemana/
+ * lastCelebrationMonth: é uma trava de identidade LOCAL ao device (o
+ * objetivo inteiro é "devices diferentes veem frases diferentes"), então
+ * viajar num backup restaurado num aparelho novo seria o oposto do que a
+ * feature quer. Restaurar um backup só troca qual frase aparece hoje nesse
+ * device (efeito cosmético, sem perda de dado real) — não a semente em si.
+ */
+export async function ensureFraseSeed(currentSeed: number | null): Promise<number> {
+  if (currentSeed != null) return currentSeed;
+  const seed = Math.floor(Math.random() * 2 ** 31);
+  await updateUserProfile({ fraseSeed: seed });
+  return seed;
 }
 
 const PROFILE_PHOTO_BASENAME = 'profile-photo';

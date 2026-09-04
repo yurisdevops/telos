@@ -23,7 +23,7 @@ import {
   MESES_PT,
   type PlanDay,
 } from '@/db/dashboard-stats';
-import { useUserProfile } from '@/db/user-profile';
+import { ensureFraseSeed, useUserProfile } from '@/db/user-profile';
 import { computeWeekStreak, getTodayDateString, getWeekStartIso } from '@/lib/date';
 import {
   buildCelebrationMessage,
@@ -76,11 +76,28 @@ function reportError(context: string, err: unknown) {
 export default function DashboardScreen() {
   const router = useRouter();
   const profile = useUserProfile();
-  // `useMemo(..., [])`: saudação e frase do dia não devem mudar a cada
-  // re-render (só importa a hora/dia em que a tela MONTOU) — recalcular a
-  // cada render trocaria "Boa tarde" por "Boa noite" no meio do uso se o
-  // usuário ficar com o app aberto atravessando a hora de corte.
-  const frase = useMemo(() => getFraseDoDia(), []);
+
+  // Gera a semente da frase do dia (lib/motivational.ts) na primeira vez
+  // que o perfil chega sem uma — idempotente (ensureFraseSeed só grava se
+  // `fraseSeed` ainda for `null`), então rodar de novo a cada re-render do
+  // efeito (toda vez que `profile` muda) é inofensivo. Cobre tanto o
+  // device novo (linha recém-criada) quanto o usuário antigo atualizando
+  // pra depois da migração aditiva (linha existente com `fraseSeed` NULL).
+  useEffect(() => {
+    if (profile === undefined) return;
+    ensureFraseSeed(profile.fraseSeed).catch((err) => console.error('Erro ao gerar semente da frase do dia:', err));
+  }, [profile]);
+
+  // `useMemo`: saudação e frase do dia não devem mudar a cada re-render (só
+  // importa a hora/dia em que a tela MONTOU, e a semente do device) —
+  // recalcular a cada render trocaria "Boa tarde" por "Boa noite" (ou a
+  // frase) no meio do uso se o usuário ficar com o app aberto atravessando
+  // a hora de corte. `profile?.fraseSeed ?? 0` é só o valor de UM frame —
+  // antes de `ensureFraseSeed` (acima) persistir a semente real, mostra
+  // uma frase qualquer com semente 0; assim que a linha reativa
+  // (useUserProfile) traz a semente gerada, este memo recalcula uma única
+  // vez e estabiliza pro resto da sessão.
+  const frase = useMemo(() => getFraseDoDia(profile?.fraseSeed ?? 0), [profile?.fraseSeed]);
   const saudacao = useMemo(() => getSaudacao(new Date().getHours()), []);
   const weekStartIso = useMemo(() => getWeekStartIso(getTodayDateString()), []);
 

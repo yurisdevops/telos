@@ -266,6 +266,16 @@ export const userProfile = sqliteTable('user_profile', {
   // e é o valor que toda linha existente ganha quando a migração aditiva
   // rodar, mesmo padrão de `lastSeenChangelogVersion`/`lastCelebrationMonth`.
   metaCardioMinutosSemana: integer('meta_cardio_minutos_semana'),
+  // Semente aleatória do device pra embaralhar a ordem da "frase do dia"
+  // (lib/motivational.ts) — cada device gera a sua própria na primeira
+  // leitura (ensureFraseSeed) e ela nunca muda depois, só assim a mesma
+  // conta em dois aparelhos diferentes vê frases diferentes no mesmo dia,
+  // em vez do índice cru por dia-do-ano (igual pra todo mundo) de antes.
+  // Nullable SEM default de propósito, mesmo padrão de metaCardioMinutosSemana
+  // acima: `null` = ainda não gerada (linhas existentes ficam assim até a
+  // migração aditiva rodar E o app gerar/salvar uma na primeira abertura
+  // pós-update), nunca um valor mágico tipo 0.
+  fraseSeed: integer('frase_seed'),
 });
 
 export type UserProfile = typeof userProfile.$inferSelect;
