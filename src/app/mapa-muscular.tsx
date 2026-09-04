@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import Body, { type Slug } from 'react-native-body-highlighter';
 
 import { FormModal } from '@/components/form-modal';
@@ -49,6 +50,14 @@ export default function MapaMuscularScreen() {
     router.push({ pathname: '/exercicio/[id]', params: { id: String(exerciseId) } });
   };
 
+  // Mesmo estado `side` do Chip acima — as setas são só um atalho a mais
+  // pra alternar, nunca ficam fora de sincronia porque não existe um
+  // terceiro estado: as duas leem e escrevem o mesmo `side`. Com só 2 lados
+  // possíveis, "virar" é sempre o mesmo alternar, então as duas setas
+  // chamam a mesma função de propósito (não faria sentido uma girar num
+  // sentido e outra no outro, só há frente/costas).
+  const toggleSide = () => setSide((current) => (current === 'front' ? 'back' : 'front'));
+
   return (
     <Screen showBack scrollable>
       <ScreenTitle title="Mapa muscular" />
@@ -58,7 +67,11 @@ export default function MapaMuscularScreen() {
         <Chip label="Costas" selected={side === 'back'} onPress={() => setSide('back')} />
       </View>
 
-      <View className="items-center">
+      <View className="flex-row items-center justify-center">
+        <Pressable onPress={toggleSide} hitSlop={12} className="px-2">
+          <Ionicons name="chevron-back" size={28} color={colors.muted} />
+        </Pressable>
+
         <Body
           side={side}
           gender="male"
@@ -73,6 +86,10 @@ export default function MapaMuscularScreen() {
           data={selectedSlug ? [{ slug: selectedSlug, color: colors.accent }] : []}
           onBodyPartPress={(bodyPart) => handleBodyPartPress(bodyPart.slug)}
         />
+
+        <Pressable onPress={toggleSide} hitSlop={12} className="px-2">
+          <Ionicons name="chevron-forward" size={28} color={colors.muted} />
+        </Pressable>
       </View>
 
       <FormModal visible={selectedKey != null} onRequestClose={() => setSelectedSlug(null)}>

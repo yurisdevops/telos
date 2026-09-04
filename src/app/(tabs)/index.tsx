@@ -531,7 +531,7 @@ export default function DashboardScreen() {
       </View>
 
       {/* CARD CATÁLOGO */}
-      <Pressable onPress={() => router.push('/catalogo')} className="mb-4 mt-2.5">
+      <Pressable onPress={() => router.push('/catalogo')} className="mb-2.5 mt-2.5">
         <View className={`${CARD_BASE} flex-row items-center px-4 py-3.5`}>
           <View className="items-center justify-center rounded-xl bg-border" style={{ width: 34, height: 34 }}>
             <Ionicons name="barbell-outline" size={18} color={colors.muted} />
@@ -542,6 +542,28 @@ export default function DashboardScreen() {
             </Text>
             <Text className="font-label text-muted" style={{ fontSize: 11 }}>
               {`${totalExercicios ?? '...'} exercícios`}
+            </Text>
+          </View>
+          <Ionicons name="chevron-forward" size={18} color={colors.muted} />
+        </View>
+      </Pressable>
+
+      {/* CARD MAPA MUSCULAR — mesmo atalho, mesma pegada visual da Catálogo
+          logo acima; posicionado junto dela de propósito (é a mesma área de
+          "atalhos" no fim do Dashboard, não empurra nenhum conteúdo
+          principal — hero/semana/próximo treino/calendário/PR já vêm
+          antes). */}
+      <Pressable onPress={() => router.push('/mapa-muscular')} className="mb-4">
+        <View className={`${CARD_BASE} flex-row items-center px-4 py-3.5`}>
+          <View className="items-center justify-center rounded-xl bg-border" style={{ width: 34, height: 34 }}>
+            <Ionicons name="body-outline" size={18} color={colors.muted} />
+          </View>
+          <View className="ml-3 flex-1">
+            <Text className="font-card-title text-text" style={{ fontSize: 14 }}>
+              Mapa muscular
+            </Text>
+            <Text className="font-label text-muted" style={{ fontSize: 11 }}>
+              Explore exercícios por músculo
             </Text>
           </View>
           <Ionicons name="chevron-forward" size={18} color={colors.muted} />
